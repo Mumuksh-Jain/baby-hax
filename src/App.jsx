@@ -5,6 +5,12 @@ import InventionWorkshop from './components/InventionWorkshop';
 import MagicalStarTheater from './components/MagicalStarTheater';
 import RetroAchievementPopup from './components/RetroAchievementPopup';
 import PipOriginStory from './components/PipOriginStory';
+import LivingDreamspace from './components/LivingDreamspace';
+import BedtimeEndingModal from './components/BedtimeEndingModal';
+import CreditsFooter from './components/CreditsFooter';
+import OrchestraExperience from './experiences/orchestra/OrchestraExperience';
+import MoonlightExperience from './experiences/moonlight/MoonlightExperience';
+import DreamExpressExperience from './experiences/express/DreamExpressExperience';
 import {
   setSoundEnabled as updateSoundEngine,
   isSoundEnabled,
@@ -17,6 +23,7 @@ import {
   playPanicSound,
   stopAllOrchestraAudio,
   playFaahSound,
+  playStampEarnedSound,
 } from './utils/soundEngine';
 import './App.css';
 
@@ -143,6 +150,95 @@ export default function App() {
   const [isTheaterOpen, setIsTheaterOpen] = useState(false);
   const [isAchievementOpen, setIsAchievementOpen] = useState(false);
   const [hasUnlockedTheater, setHasUnlockedTheater] = useState(false);
+
+  // PASS 03: Dream Passport Stamps & Dedicated Experiences
+  const [stamps, setStamps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pip_stamps_v1');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return { orchestra: false, moonlight: false, express: false };
+  });
+
+  const [activeExperience, setActiveExperience] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const exp = params.get('experience');
+      if (['orchestra', 'moonlight', 'express'].includes(exp)) {
+        return exp;
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  });
+
+  const [isBedtimeModalOpen, setIsBedtimeModalOpen] = useState(false);
+
+  // Sync URL query params with activeExperience and browser Back/Forward (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const exp = params.get('experience');
+        if (['orchestra', 'moonlight', 'express'].includes(exp)) {
+          setActiveExperience(exp);
+        } else {
+          setActiveExperience(null);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleOpenExperience = useCallback((expId) => {
+    setActiveExperience(expId);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('experience', expId);
+      window.history.pushState({}, '', url);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const handleCloseExperience = useCallback(() => {
+    setActiveExperience(null);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('experience');
+      window.history.pushState({}, '', url);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const handleEarnStamp = useCallback((stampId) => {
+    setStamps((prev) => {
+      if (prev[stampId]) return prev;
+      const updated = { ...prev, [stampId]: true };
+      try {
+        localStorage.setItem('pip_stamps_v1', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      playStampEarnedSound();
+      return updated;
+    });
+  }, []);
+
+  const handleTuckBedtimeClick = useCallback(() => {
+    setIsBedtimeModalOpen(true);
+  }, []);
+
+  const handleWakeWebsite = useCallback(() => {
+    setIsBedtimeModalOpen(false);
+  }, []);
 
   // pipMotionState: 'idle' | 'surprised' | 'curious' | 'listening' | 'celebrating'
   const [pipMotionState, setPipMotionState] = useState('idle');
@@ -435,10 +531,11 @@ export default function App() {
     // Trigger the early-web retro achievement popup inside the restored bedroom!
     setHasUnlockedTheater(true);
     setIsAchievementOpen(true);
+    handleEarnStamp('orchestra');
     setSrAnnouncement(
       'Achievement Unlocked! You turned three ordinary stars into Pip’s very first concert.'
     );
-  }, [clearOrchestraTimers]);
+  }, [clearOrchestraTimers, handleEarnStamp]);
 
   /**
    * PASS 02: Safe Replay & Attention Highlight Handlers for Invention Workshop
@@ -628,8 +725,11 @@ export default function App() {
           onSkipLullaby={handleSkipLullaby}
         />
 
-        {/* PASS 02: Pip's Little Invention Workshop Portfolio Showcase */}
+        {/* PASS 03: Pip's Little Invention Workshop Portfolio Showcase (Gallery of Doorways) */}
         <InventionWorkshop
+          stamps={stamps}
+          onOpenExperience={handleOpenExperience}
+          onTuckBedtimeClick={handleTuckBedtimeClick}
           theaterUnlocked={hasUnlockedTheater}
           onPlayStars={handlePlayWorkshopStars}
           onHighlightBedroomStars={handleHighlightBedroomStars}
@@ -638,7 +738,13 @@ export default function App() {
 
         {/* PASS 02 MASTER: Pip's Canonical Origin Story Flipbook */}
         <PipOriginStory />
+
+        {/* PASS 03: Credits and Attribution Footer */}
+        <CreditsFooter />
       </RetroBrowserFrame>
+
+      {/* PASS 03: The Living Dreamspace (Atmosphere around frame) */}
+      <LivingDreamspace stamps={stamps} soundEnabled={soundOn} />
 
       {/* PASS 01C.4: Fullscreen Cinematic Star Theater */}
       <MagicalStarTheater
@@ -653,6 +759,43 @@ export default function App() {
       <RetroAchievementPopup
         isOpen={isAchievementOpen}
         onClose={() => setIsAchievementOpen(false)}
+      />
+
+      {/* PASS 03: Dedicated Invention 1 - The Star Orchestra */}
+      <OrchestraExperience
+        isOpen={activeExperience === 'orchestra'}
+        soundEnabled={soundOn}
+        onToggleSound={handleToggleSound}
+        onClose={handleCloseExperience}
+        onEarnStamp={() => handleEarnStamp('orchestra')}
+        hasStamp={stamps.orchestra}
+      />
+
+      {/* PASS 03: Dedicated Invention 2 - The Moonlight Lab */}
+      <MoonlightExperience
+        isOpen={activeExperience === 'moonlight'}
+        soundEnabled={soundOn}
+        onToggleSound={handleToggleSound}
+        onClose={handleCloseExperience}
+        onEarnStamp={() => handleEarnStamp('moonlight')}
+        hasStamp={stamps.moonlight}
+      />
+
+      {/* PASS 03: Dedicated Invention 3 - The Living Dream Express */}
+      <DreamExpressExperience
+        isOpen={activeExperience === 'express'}
+        soundEnabled={soundOn}
+        onToggleSound={handleToggleSound}
+        onClose={handleCloseExperience}
+        onEarnStamp={() => handleEarnStamp('express')}
+        hasStamp={stamps.express}
+      />
+
+      {/* PASS 03: Bedtime Narrative Ending Payoff ("Tuck the Website In") */}
+      <BedtimeEndingModal
+        isOpen={isBedtimeModalOpen}
+        onWake={handleWakeWebsite}
+        soundEnabled={soundOn}
       />
     </div>
   );

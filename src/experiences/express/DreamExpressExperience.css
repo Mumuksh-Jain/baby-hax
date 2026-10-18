@@ -1,0 +1,457 @@
+/* DreamExpressExperience.css — Dedicated Full-Screen Railway Adventure */
+
+.dream-express-experience-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  height: 100%;
+  min-height: 520px;
+  box-sizing: border-box;
+  padding: 16px 20px 24px;
+}
+
+/* Railway Stage Viewport */
+.express-stage-viewport {
+  position: relative;
+  background: linear-gradient(180deg, #070B19 0%, #0F1A34 60%, #172554 100%);
+  border-radius: 20px;
+  border: 3px solid #2A3B66;
+  box-shadow: inset 0 4px 30px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.express-wayfinder {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid #F5D88C;
+  border-radius: 999px;
+  color: #F5D88C;
+  font-family: var(--font-hand, 'Comic Sans MS', cursive, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.wayfinder-star {
+  color: #FFD166;
+  animation: wayfinderGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes wayfinderGlow {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+.express-sky-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 600px;
+  display: block;
+}
+
+/* Ghost animation in window */
+.sleepy-ghost-figure {
+  animation: ghostHover 3s ease-in-out infinite alternate;
+  transform-origin: 760px 240px;
+}
+
+@keyframes ghostHover {
+  0% { transform: translateY(0) rotate(-2deg); }
+  100% { transform: translateY(-8px) rotate(3deg); }
+}
+
+/* Beacon Beam Animations */
+.beacon-idle-sweep {
+  animation: beaconSweep 6s ease-in-out infinite alternate;
+  transform-origin: 1050px 105px;
+}
+
+.beacon-tracking-mode {
+  animation: beaconTrack 1.5s ease-in-out infinite alternate;
+  transform-origin: 1050px 105px;
+}
+
+.beacon-celebration-mode {
+  animation: beaconCelebrate 0.8s ease-in-out infinite alternate;
+  transform-origin: 1050px 105px;
+}
+
+@keyframes beaconSweep {
+  0% { transform: rotate(-18deg); opacity: 0.35; }
+  100% { transform: rotate(18deg); opacity: 0.6; }
+}
+
+@keyframes beaconTrack {
+  0% { transform: rotate(-5deg); opacity: 0.7; }
+  100% { transform: rotate(8deg); opacity: 0.9; }
+}
+
+@keyframes beaconCelebrate {
+  0% { transform: rotate(-35deg) scale(1.1); opacity: 0.8; }
+  100% { transform: rotate(35deg) scale(1.2); opacity: 1; }
+}
+
+/* Chimney smoke puffs */
+.chimney-puff-1 {
+  animation: smokePuff 3.5s ease-out infinite;
+}
+
+.chimney-puff-2 {
+  animation: smokePuff 3.5s ease-out infinite 1.8s;
+}
+
+@keyframes smokePuff {
+  0% { transform: translate(0, 0) scale(0.8); opacity: 0.7; }
+  50% { transform: translate(-12px, -24px) scale(1.2); opacity: 0.45; }
+  100% { transform: translate(-25px, -50px) scale(1.6); opacity: 0; }
+}
+
+/* Steam particles */
+.steam-puff-a {
+  animation: steamDrift 1.2s ease-out infinite;
+}
+
+.steam-puff-b {
+  animation: steamDrift 1.2s ease-out infinite 0.6s;
+}
+
+@keyframes steamDrift {
+  0% { transform: translate(0, 0) scale(0.7); opacity: 0.8; }
+  100% { transform: translate(-20px, -28px) scale(1.4); opacity: 0; }
+}
+
+/* Wheels spin only when train is in flight */
+.wheels-spinning {
+  animation: wheelsSpin 0.35s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes wheelsSpin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Vintage Delivery Receipt Pop-up */
+.express-delivery-receipt {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 320px;
+  background: #FFFDF5;
+  border: 3px dashed #A34063;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(163, 64, 99, 0.2);
+  z-index: 25;
+  animation: receiptSlideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes receiptSlideUp {
+  0% { transform: translateY(40px) scale(0.9); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.exp-receipt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dashed #E2CEB9;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.exp-receipt-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #A34063;
+  text-transform: uppercase;
+  font-family: monospace;
+}
+
+.exp-receipt-close {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #7A5C43;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.exp-receipt-close:hover {
+  background: #F3E5D8;
+  color: #2D1810;
+}
+
+.exp-receipt-destination {
+  margin: 0 0 6px;
+  font-family: var(--font-hand, 'Comic Sans MS', cursive, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #3D2619;
+}
+
+.exp-receipt-cargo {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: #5C4033;
+}
+
+.exp-receipt-note {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #2D6A4F;
+  font-weight: 600;
+  background: #E8F5E9;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.exp-receipt-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #EFE4D6;
+  padding-top: 8px;
+  font-size: 0.7rem;
+  color: #7A5C43;
+}
+
+.exp-receipt-pass {
+  font-weight: 800;
+  color: #2D6A4F;
+}
+
+/* Dispatch Control Desk */
+.express-control-desk {
+  background: #FFF8F1;
+  border: 3px solid #5C4033;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(92, 64, 51, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.desk-header {
+  border-bottom: 2px solid #EADBCC;
+  padding-bottom: 12px;
+}
+
+.desk-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #A34063;
+  background: #FFE8EF;
+  border: 1px solid #F5C6D6;
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin-bottom: 6px;
+}
+
+.desk-title {
+  margin: 0 0 4px;
+  font-family: var(--font-hand, 'Comic Sans MS', cursive, sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #3D2619;
+}
+
+.desk-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #6B4E3D;
+  line-height: 1.4;
+}
+
+.desk-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.desk-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #5C4033;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Stack Buttons */
+.destinations-stack,
+.cargos-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dest-select-btn,
+.cargo-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #FFFDF9;
+  border: 2px solid #D6C2AF;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.dest-select-btn:hover:not(:disabled),
+.cargo-select-btn:hover:not(:disabled) {
+  border-color: #A34063;
+  background: #FFF5F7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(163, 64, 99, 0.15);
+}
+
+.dest-select-btn.is-selected,
+.cargo-select-btn.is-selected {
+  border-color: #A34063;
+  background: #FFE8B6;
+  box-shadow: 0 4px 12px rgba(245, 216, 140, 0.4);
+}
+
+.dest-select-btn:disabled,
+.cargo-select-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dest-btn-icon,
+.cargo-btn-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.dest-btn-info,
+.cargo-btn-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dest-btn-name,
+.cargo-btn-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #3D2619;
+}
+
+.dest-btn-sub,
+.cargo-btn-sub {
+  font-size: 0.72rem;
+  color: #7A5C43;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dispatch CTA */
+.desk-dispatch-action {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dispatch-train-btn {
+  width: 100%;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #A34063 0%, #802646 100%);
+  border: 2px solid #5A1930;
+  border-radius: 14px;
+  color: #FFFFFF;
+  font-family: var(--font-hand, 'Comic Sans MS', cursive, sans-serif);
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(163, 64, 99, 0.35);
+  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.dispatch-train-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(163, 64, 99, 0.45);
+}
+
+.dispatch-train-btn.is-traveling {
+  background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%);
+  border-color: #1E3A8A;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.35);
+}
+
+.dispatch-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #7A5C43;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+  .dream-express-experience-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    overflow-y: auto;
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .express-stage-viewport {
+    height: 380px;
+    min-height: 380px;
+  }
+
+  .express-delivery-receipt {
+    width: calc(100% - 32px);
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .express-stage-viewport {
+    height: 280px;
+    min-height: 280px;
+  }
+
+  .express-wayfinder {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    top: 10px;
+    left: 10px;
+  }
+
+  .desk-title {
+    font-size: 1.15rem;
+  }
+
+  .dest-select-btn,
+  .cargo-select-btn {
+    padding: 8px 10px;
+  }
+}

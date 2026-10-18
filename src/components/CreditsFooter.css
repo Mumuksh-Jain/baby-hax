@@ -1,0 +1,116 @@
+/* CreditsFooter.css — Warm Storybook Attribution Footer */
+
+.pip-credits-footer {
+  width: 100%;
+  background: #F5EBE1;
+  border-top: 3px solid #E2CEB9;
+  padding: 32px 24px 28px;
+  box-sizing: border-box;
+  margin-top: 40px;
+}
+
+.credits-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.credits-flourish {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.flourish-line {
+  flex: 1;
+  height: 2px;
+  background: #D9C3AD;
+  border-radius: 2px;
+}
+
+.flourish-star {
+  color: #A34063;
+  font-size: 0.9rem;
+}
+
+.flourish-icon {
+  font-size: 1.1rem;
+}
+
+.credits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  text-align: left;
+}
+
+.credits-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.credits-heading {
+  margin: 0;
+  font-family: var(--font-hand, 'Comic Sans MS', cursive, sans-serif);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #3D2619;
+}
+
+.credits-text {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #6B4E3D;
+}
+
+.credits-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #A34063;
+  background: #FFE8EF;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.credits-link {
+  color: #A34063;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.credits-link:hover {
+  color: #802646;
+}
+
+.credits-bottom-bar {
+  border-top: 1px dashed #D9C3AD;
+  padding-top: 14px;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font-hand, 'Comic Sans MS', cursive, sans-serif);
+  font-size: 0.8rem;
+  color: #7A5C43;
+}
+
+@media (max-width: 768px) {
+  .credits-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    text-align: center;
+  }
+
+  .credits-col {
+    align-items: center;
+  }
+}

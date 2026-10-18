@@ -1,0 +1,521 @@
+/* ========================================================= */
+/* MOONLIGHT LAB EXPERIENCE STYLING                          */
+/* Split view: Miniature Bedroom (68%) + Workbench (32%)     */
+/* ========================================================= */
+
+.moonlight-lab-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  background: #FFFDF9;
+  min-height: 520px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------- */
+/* LEFT COLUMN: NURSERY BEDROOM CHAMBER                      */
+/* --------------------------------------------------------- */
+.moonlight-bedroom-chamber {
+  position: relative;
+  background-color: #172343;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  overflow: hidden;
+  border-right: 2px solid var(--color-stitch);
+  transition: background-color 0.5s ease;
+}
+
+/* Color Filter Variations on Chamber */
+.color-warm .moonlight-bedroom-chamber {
+  background: radial-gradient(circle at 60% 70%, rgba(255, 178, 64, calc(0.35 * var(--room-brightness, 0.5))) 0%, #172343 85%);
+}
+
+.color-sleepy .moonlight-bedroom-chamber {
+  background: radial-gradient(circle at 60% 70%, rgba(140, 168, 245, calc(0.4 * var(--room-brightness, 0.5))) 0%, #111B35 85%);
+}
+
+.color-starlight .moonlight-bedroom-chamber {
+  background: radial-gradient(circle at 60% 70%, rgba(255, 250, 224, calc(0.45 * var(--room-brightness, 0.5))) 0%, #0F172E 85%);
+}
+
+/* Ceiling & Wall Star Projection */
+.star-projection-layer {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  right: 20px;
+  height: 180px;
+  pointer-events: none;
+  opacity: calc(0.3 + 0.6 * var(--room-brightness, 0.5));
+  transition: opacity 0.4s ease;
+}
+
+.proj-star {
+  position: absolute;
+  color: #FFFDF9;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.ps-1 { top: 15%; left: 18%; font-size: 1.3rem; }
+.ps-2 { top: 25%; left: 55%; font-size: 1.6rem; color: #FFE885; }
+.ps-3 { top: 10%; right: 25%; font-size: 1.1rem; }
+.ps-4 { top: 50%; left: 35%; font-size: 1.2rem; }
+.ps-5 { top: 40%; right: 15%; font-size: 1.5rem; color: #FFE885; }
+
+.pattern-twinkle .proj-star {
+  animation: projTwinkle 2.5s ease-in-out infinite alternate;
+}
+
+.ps-2 { animation-delay: 0.8s; }
+.ps-4 { animation-delay: 1.6s; }
+
+@keyframes projTwinkle {
+  0% { transform: scale(0.8); opacity: 0.4; }
+  100% { transform: scale(1.25); opacity: 1; }
+}
+
+.proj-constellation-lines {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  width: 280px;
+  height: 120px;
+  opacity: 0.7;
+}
+
+/* Arched Nursery Window */
+.chamber-window {
+  position: absolute;
+  top: 25px;
+  left: 35px;
+  width: 90px;
+  height: 120px;
+  background: #0E162B;
+  border: 3px solid #D4A843;
+  border-radius: 45px 45px 0 0;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.6);
+}
+
+.window-moon {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow: -4px 4px 0 0 #F5D88C;
+}
+
+.window-stars {
+  position: absolute;
+  top: 22px;
+  right: 18px;
+  color: #FFF;
+  font-size: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Shelf with Pip's Little Tools */
+.chamber-shelf {
+  position: absolute;
+  top: 90px;
+  right: 40px;
+  width: 110px;
+  height: 6px;
+  background: #8C5835;
+  border-radius: 2px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding-bottom: 2px;
+}
+
+.shelf-tool {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* Friendly Ghost on Cozy Bed */
+.chamber-ghost-bed {
+  position: absolute;
+  bottom: 30px;
+  left: 55px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4;
+}
+
+.bed-mattress {
+  width: 140px;
+  height: 65px;
+  background: #5A4A78;
+  border: 2px solid #3F3356;
+  border-radius: 12px 12px 6px 6px;
+  position: relative;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bed-pillow {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  width: 32px;
+  height: 22px;
+  background: #FFFDF8;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.bed-blanket {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: #A34063;
+  border-radius: 0 0 6px 6px;
+  border-top: 2px solid #5C4033;
+}
+
+.chamber-ghost {
+  position: relative;
+  z-index: 5;
+  transform: translateY(-8px);
+}
+
+.ghost-svg {
+  width: 68px;
+  height: 68px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.ghost-zzz-particles {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: #F5D88C;
+}
+
+.zzz-1, .zzz-2, .zzz-3 {
+  display: inline-block;
+  animation: zzzFloat 2s ease-in-out infinite;
+}
+
+.zzz-2 { animation-delay: 0.6s; font-size: 0.85rem; }
+.zzz-3 { animation-delay: 1.2s; font-size: 1.1rem; }
+
+@keyframes zzzFloat {
+  0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translate(10px, -18px) scale(1.2); opacity: 0; }
+}
+
+.ghost-speech-bubble {
+  background: #FFFDF9;
+  border: 1.5px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  padding: 4px 14px;
+  font-family: 'Comic Sans MS', cursive, var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-cocoa);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-top: 8px;
+  max-width: 220px;
+  text-align: center;
+}
+
+/* Bedside Wooden Table with Official Lantern */
+.chamber-bedside-table {
+  position: absolute;
+  bottom: 25px;
+  right: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.table-top {
+  width: 170px;
+  height: 14px;
+  background: #C49A6C;
+  border: 2px solid #5C4033;
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.table-legs {
+  width: 130px;
+  height: 38px;
+  border-left: 8px solid #8C5835;
+  border-right: 8px solid #8C5835;
+}
+
+.chamber-lantern-wrap {
+  position: relative;
+  width: 160px;
+  height: 155px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-8px);
+}
+
+.chamber-lantern-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35));
+}
+
+.chamber-lantern-halo {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(20px);
+  z-index: -1;
+  transition: all 0.3s ease;
+}
+
+.color-warm .chamber-lantern-halo {
+  background: radial-gradient(circle, rgba(255, 178, 64, 0.85) 0%, rgba(245, 216, 140, 0.35) 60%, transparent 80%);
+}
+
+.color-sleepy .chamber-lantern-halo {
+  background: radial-gradient(circle, rgba(140, 168, 245, 0.85) 0%, rgba(200, 216, 255, 0.35) 60%, transparent 80%);
+}
+
+.color-starlight .chamber-lantern-halo {
+  background: radial-gradient(circle, rgba(255, 250, 224, 0.95) 0%, rgba(184, 226, 248, 0.45) 55%, transparent 75%);
+}
+
+/* Reward Badge */
+.pip-lab-reward-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #FFFDF8;
+  border: 2px solid #D4A843;
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  animation: rewardPop 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  z-index: 10;
+}
+
+@keyframes rewardPop {
+  0% { transform: scale(0.8) translateY(-10px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.pip-lab-reward-badge .reward-icon {
+  font-size: 1.4rem;
+  color: #D4A843;
+}
+
+.pip-lab-reward-badge .reward-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.pip-lab-reward-badge .reward-text strong {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  color: var(--color-berry-deep);
+}
+
+.pip-lab-reward-badge .reward-text span {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-cocoa);
+}
+
+/* --------------------------------------------------------- */
+/* RIGHT COLUMN: WORKBENCH CONTROLS                          */
+/* --------------------------------------------------------- */
+.moonlight-control-desk {
+  background: #FAF1E2;
+  padding: 1.5rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+}
+
+.desk-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.desk-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--color-berry);
+}
+
+.desk-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-cocoa);
+  margin: 0;
+}
+
+.desk-desc {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--color-cocoa-soft);
+  margin: 0;
+}
+
+.desk-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-group-label {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--color-cocoa);
+}
+
+.mood-buttons-trio,
+.pattern-buttons-trio {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.desk-pill-btn,
+.pattern-btn {
+  background: #FFFDF9;
+  border: 1.5px solid var(--color-stitch);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-cocoa);
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  min-height: 38px;
+}
+
+.desk-pill-btn:hover,
+.pattern-btn:hover {
+  background: #FFF;
+  border-color: var(--color-cocoa);
+}
+
+.desk-pill-btn.is-active,
+.pattern-btn.is-active {
+  background: var(--color-paper-light);
+  border-color: var(--color-berry);
+  box-shadow: 0 0 0 1.5px var(--color-berry);
+  color: var(--color-berry-deep);
+}
+
+/* Slider */
+.slider-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-value-display {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--color-berry);
+}
+
+.bedside-range-slider {
+  width: 100%;
+  accent-color: var(--color-berry);
+  cursor: pointer;
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-cocoa-soft);
+}
+
+/* Action Button */
+.desk-test-action-wrap {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.test-nightlight-btn {
+  width: 100%;
+  background: var(--color-berry);
+  color: #FFFDF9;
+  border: 2px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  padding: 10px 16px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-retro-sm);
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.test-nightlight-btn:hover:not(:disabled) {
+  background: var(--color-berry-deep);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-retro-md);
+}
+
+.test-nightlight-btn:disabled {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.test-hint {
+  font-family: 'Comic Sans MS', cursive, var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-cocoa-soft);
+  text-align: center;
+  margin: 6px 0 0;
+}
+
+@media (max-width: 820px) {
+  .moonlight-lab-workspace {
+    grid-template-columns: 1fr;
+  }
+  .moonlight-bedroom-chamber {
+    height: 380px;
+    border-right: none;
+    border-bottom: 2px solid var(--color-stitch);
+  }
+}

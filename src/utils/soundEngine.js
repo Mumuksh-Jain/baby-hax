@@ -648,3 +648,48 @@ export function playDeliveryArrivedSound() {
   }, 110);
 }
 
+/**
+ * 10. Ghost Soft Snore / Settling Chime
+ */
+export function playGhostSnoreSound() {
+  if (!soundEnabled) return;
+  playTone({ freq: 329.63, pitchEnd: 293.66, type: 'sine', duration: 0.45, gain: 0.2 });
+  setTimeout(() => {
+    playTone({ freq: 440.0, type: 'triangle', duration: 0.3, gain: 0.15 });
+  }, 200);
+}
+
+/**
+ * 11. Stamp Earned Sound — Golden celebratory fanfare
+ */
+export function playStampEarnedSound() {
+  if (!soundEnabled) return;
+  const arpeggio = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+  arpeggio.forEach((freq, idx) => {
+    setTimeout(() => {
+      playTone({ freq, type: 'sine', duration: 0.25, gain: 0.26 });
+    }, idx * 75);
+  });
+}
+
+/**
+ * 12. Bedtime Tuck Sound — Gentle bedtime chord swell
+ */
+export function playBedtimeTuckSound() {
+  if (!soundEnabled) return;
+  [392.0, 493.88, 587.33, 783.99].forEach((freq) => {
+    playTone({ freq, type: 'sine', duration: 1.5, gain: 0.16 });
+  });
+}
+
+/**
+ * 13. Dreamspace Star Twinkle Sound
+ */
+export function playStarTwinkleSound() {
+  if (!soundEnabled) return;
+  const sparkles = [1046.5, 1318.51, 1567.98];
+  const chosen = sparkles[Math.floor(Math.random() * sparkles.length)];
+  playTone({ freq: chosen, type: 'sine', duration: 0.15, gain: 0.2 });
+}
+
+
