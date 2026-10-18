@@ -63,40 +63,42 @@ export default function HeroSection({
 
           {/* Primary Interaction Action Area */}
           <div className="hero-action-area">
-            <button
-              type="button"
-              className={`psst-button ${isPanicking ? 'is-active' : ''}`}
-              onClick={onPsst}
-              aria-label="Psst, Pip? Click to whisper to Pip"
-              disabled={isPerforming}
-            >
-              <span className="btn-sparkle" aria-hidden="true">✨</span>
-              <span className="btn-text">Psst, Pip?</span>
-              <span className="btn-tag" aria-hidden="true">(whisper)</span>
-            </button>
+            <div className="hero-buttons-row">
+              <button
+                type="button"
+                className={`psst-button ${isPanicking ? 'is-active' : ''}`}
+                onClick={onPsst}
+                aria-label="Psst, Pip? Click to whisper to Pip"
+                disabled={isPerforming}
+              >
+                <span className="btn-sparkle" aria-hidden="true">✨</span>
+                <span className="btn-text">Psst, Pip?</span>
+                <span className="btn-tag" aria-hidden="true">(whisper)</span>
+              </button>
 
-            {/* PASS 02: Discoverable Link to Invention Workshop */}
-            <a
-              href="#invention-workshop"
-              className="hero-inventions-link"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('invention-workshop')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              aria-label="Scroll down to Pip's Little Invention Workshop"
-            >
-              <span className="inventions-link-icon" aria-hidden="true">🧸</span>
-              <span>See My Inventions</span>
-              <span className="inventions-link-badge" aria-hidden="true">003</span>
-              <span className="inventions-link-arrow" aria-hidden="true">↓</span>
-            </a>
+              {/* PASS 02: Discoverable Link to Invention Workshop */}
+              <a
+                href="#invention-workshop"
+                className="hero-inventions-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('invention-workshop')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                aria-label="Scroll down to Pip's Little Invention Workshop"
+              >
+                <span className="inventions-link-icon" aria-hidden="true">🧸</span>
+                <span className="inventions-link-text">See My Inventions</span>
+                <span className="inventions-link-badge" aria-hidden="true">003</span>
+                <span className="inventions-link-arrow" aria-hidden="true">↓</span>
+              </a>
+            </div>
 
             <span className="action-hint" aria-hidden="true">
               {isPerforming
                 ? '♫ Vocal Lullaby is singing!'
                 : isPanicking
                 ? '← Pip heard you!'
-                : 'tap to check on Pip'}
+                : '← tap to check on Pip'}
             </span>
           </div>
 
