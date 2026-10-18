@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import RetroBrowserFrame from './components/RetroBrowserFrame';
 import HeroSection from './components/HeroSection';
+import InventionWorkshop from './components/InventionWorkshop';
 import MagicalStarTheater from './components/MagicalStarTheater';
 import RetroAchievementPopup from './components/RetroAchievementPopup';
 import {
@@ -140,6 +141,7 @@ export default function App() {
   // PASS 01C.4: Fullscreen Cinematic Theater & Retro Popup
   const [isTheaterOpen, setIsTheaterOpen] = useState(false);
   const [isAchievementOpen, setIsAchievementOpen] = useState(false);
+  const [hasUnlockedTheater, setHasUnlockedTheater] = useState(false);
 
   // pipMotionState: 'idle' | 'surprised' | 'curious' | 'listening' | 'celebrating'
   const [pipMotionState, setPipMotionState] = useState('idle');
@@ -430,11 +432,44 @@ export default function App() {
     setCustomReaction(null);
 
     // Trigger the early-web retro achievement popup inside the restored bedroom!
+    setHasUnlockedTheater(true);
     setIsAchievementOpen(true);
     setSrAnnouncement(
       'Achievement Unlocked! You turned three ordinary stars into Pip’s very first concert.'
     );
   }, [clearOrchestraTimers]);
+
+  /**
+   * PASS 02: Safe Replay & Attention Highlight Handlers for Invention Workshop
+   */
+  const handleHighlightBedroomStars = useCallback(() => {
+    const stageElem = document.querySelector('.pip-stage-container');
+    if (stageElem) {
+      stageElem.scrollIntoView({ behavior: 'smooth' });
+      const env = stageElem.querySelector('.dream-environment');
+      if (env) {
+        env.classList.remove('stars-attention-pulse');
+        void env.offsetWidth; // trigger reflow
+        env.classList.add('stars-attention-pulse');
+        setTimeout(() => {
+          env.classList.remove('stars-attention-pulse');
+        }, 3600);
+      }
+    }
+  }, []);
+
+  const handlePlayWorkshopStars = useCallback(() => {
+    if (hasUnlockedTheater) {
+      clearOrchestraTimers();
+      setCollectedStars([1, 2, 3]);
+      setOrchestraState('performing');
+      setPipMotionState('listening');
+      setIsTheaterOpen(true);
+      setSrAnnouncement('Replaying Pip’s Magical Star Theater from Invention Workshop.');
+    } else {
+      handleHighlightBedroomStars();
+    }
+  }, [hasUnlockedTheater, clearOrchestraTimers, handleHighlightBedroomStars]);
 
   /**
    * Pass 01C.1 & 01C.2: Star Orchestra Collection & Emotional Progression
@@ -510,6 +545,7 @@ export default function App() {
         playStarSound(2);
 
         // Immediate handoff to full-screen cinematic theater
+        setHasUnlockedTheater(true);
         setIsTheaterOpen(true);
         setSrAnnouncement('Three stars collected! Entering Pip’s Magical Star Theater.');
       }
@@ -589,6 +625,14 @@ export default function App() {
           activeSoundingStar={activeSoundingStar}
           pipMotionState={pipMotionState}
           onSkipLullaby={handleSkipLullaby}
+        />
+
+        {/* PASS 02: Pip's Little Invention Workshop Portfolio Showcase */}
+        <InventionWorkshop
+          theaterUnlocked={hasUnlockedTheater}
+          onPlayStars={handlePlayWorkshopStars}
+          onHighlightBedroomStars={handleHighlightBedroomStars}
+          soundEnabled={soundOn}
         />
       </RetroBrowserFrame>
 

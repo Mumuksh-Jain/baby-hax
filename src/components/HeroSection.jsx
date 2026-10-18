@@ -75,6 +75,22 @@ export default function HeroSection({
               <span className="btn-tag" aria-hidden="true">(whisper)</span>
             </button>
 
+            {/* PASS 02: Discoverable Link to Invention Workshop */}
+            <a
+              href="#invention-workshop"
+              className="hero-inventions-link"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('invention-workshop')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              aria-label="Scroll down to Pip's Little Invention Workshop"
+            >
+              <span className="inventions-link-icon" aria-hidden="true">🧸</span>
+              <span>See My Inventions</span>
+              <span className="inventions-link-badge" aria-hidden="true">003</span>
+              <span className="inventions-link-arrow" aria-hidden="true">↓</span>
+            </a>
+
             <span className="action-hint" aria-hidden="true">
               {isPerforming
                 ? '♫ Vocal Lullaby is singing!'

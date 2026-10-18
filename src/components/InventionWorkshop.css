@@ -1,0 +1,1214 @@
+/* ========================================================= */
+/* PIP'S LITTLE INVENTION WORKSHOP (PASS 02)                */
+/* Portfolio showcase of Junior Dream Engineer inventions    */
+/* ========================================================= */
+
+.invention-workshop {
+  width: 100%;
+  position: relative;
+  background-color: var(--color-paper-light);
+  border-top: 3px dashed var(--color-stitch);
+  padding: 3.5rem 2rem 4rem;
+  margin-top: 2rem;
+  box-shadow: inset 0 6px 16px rgba(92, 64, 51, 0.04);
+}
+
+/* Storybook Paper Washi Tape Accents */
+.workshop-paper-accent {
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.washi-tape-strip {
+  width: 80px;
+  height: 24px;
+  background: rgba(245, 220, 229, 0.85);
+  border-left: 2px dashed rgba(163, 64, 99, 0.35);
+  border-right: 2px dashed rgba(163, 64, 99, 0.35);
+  box-shadow: 0 2px 4px rgba(92, 64, 51, 0.12);
+  transform: rotate(-2deg);
+}
+
+.washi-tape-strip.tape-right {
+  transform: rotate(3deg);
+  background: rgba(245, 216, 140, 0.8);
+}
+
+/* Workshop Header Area */
+.workshop-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 3rem;
+  position: relative;
+}
+
+.workshop-archive-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background-color: var(--color-blush-tint);
+  border: 1.5px solid var(--color-berry);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-retro-sm);
+  margin-bottom: 1.25rem;
+}
+
+.badge-pin {
+  font-size: 1rem;
+}
+
+.badge-text {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-berry-deep);
+}
+
+.workshop-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--color-berry);
+  margin-bottom: 0.85rem;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.workshop-subheading {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--color-cocoa);
+  max-width: 620px;
+  margin: 0 auto 1.5rem;
+}
+
+/* Pip's Desk Sticky Note */
+.workshop-desk-note {
+  position: relative;
+  background-color: #FFF9D2;
+  border: 1.5px solid #D4A843;
+  padding: 12px 24px;
+  border-radius: var(--radius-xs);
+  box-shadow: 2px 4px 10px rgba(92, 64, 51, 0.08);
+  transform: rotate(-1deg);
+  max-width: 580px;
+  margin-top: 0.5rem;
+}
+
+.note-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 54px;
+  height: 16px;
+  background: rgba(220, 200, 160, 0.6);
+  border: 1px dashed rgba(92, 64, 51, 0.25);
+}
+
+.note-text {
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, var(--font-body);
+  font-size: 0.92rem;
+  color: var(--color-cocoa);
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.note-author {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-berry);
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* ========================================================= */
+/* EXHIBITS GRID (DESKTOP / TABLET / MOBILE)                */
+/* ========================================================= */
+
+.workshop-exhibits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+
+/* Individual Exhibit Station Container */
+.exhibit-station {
+  background: #FFFDF9;
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.4rem;
+  box-shadow: var(--shadow-retro-md);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.exhibit-station:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-retro-lg);
+}
+
+/* Station Top Meta Bar */
+.station-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.station-number-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  background-color: var(--color-faded-blush);
+  color: var(--color-berry-deep);
+  border: 1px solid var(--color-berry);
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.station-category {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-cocoa-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: right;
+}
+
+.station-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-berry);
+  margin-bottom: 0.45rem;
+  line-height: 1.25;
+}
+
+.station-desc {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--color-cocoa);
+  margin-bottom: 1.2rem;
+  min-height: 48px;
+}
+
+/* ========================================================= */
+/* PREVIEW FRAMES (SHARED & STATION-SPECIFIC)                */
+/* ========================================================= */
+
+.exhibit-preview-frame {
+  background-color: #F8F0E5;
+  border: 2px solid var(--color-stitch);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+/* ========================================================= */
+/* STATION 001: THE STAR ORCHESTRA SPECIFICS                */
+/* ========================================================= */
+
+.station-star-orchestra {
+  border-color: #5C4033;
+}
+
+.musicbox-preview-frame {
+  background: radial-gradient(circle at 50% 35%, #FFFDF5 0%, #F5ECD9 100%);
+}
+
+.musicbox-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.musicbox-key-wrap {
+  position: absolute;
+  top: -8px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.musicbox-wind-key {
+  animation: key-spin 6s linear infinite;
+  transform-origin: center;
+  filter: drop-shadow(0 2px 2px rgba(92, 64, 51, 0.25));
+}
+
+@keyframes key-spin {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.key-wind-hint {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-cocoa-soft);
+  text-transform: uppercase;
+}
+
+.musicbox-artwork-wrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.musicbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: var(--radius-sm);
+  filter: drop-shadow(0 6px 12px rgba(92, 64, 51, 0.18));
+  transition: transform var(--transition-normal);
+}
+
+.musicbox-stage:hover .musicbox-image {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+/* Floating Music Particles */
+.music-notes-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.float-note {
+  position: absolute;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-berry);
+  opacity: 0.75;
+  animation: noteFloat 3.2s ease-in-out infinite alternate;
+}
+
+.note-1 { top: 10%; left: 8%; animation-delay: 0s; color: #D4A843; }
+.note-2 { top: 20%; right: 10%; animation-delay: 0.8s; color: #A34063; font-size: 1.3rem; }
+.note-3 { bottom: 15%; left: 14%; animation-delay: 1.6s; color: #FFA62B; font-size: 0.95rem; }
+.note-4 { bottom: 25%; right: 12%; animation-delay: 2.2s; color: #7D2D49; }
+
+@keyframes noteFloat {
+  0% { transform: translateY(0) scale(0.95); opacity: 0.6; }
+  100% { transform: translateY(-10px) scale(1.15) rotate(8deg); opacity: 0.95; }
+}
+
+.musicbox-track-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-paper-light);
+  border: 1px solid var(--color-stitch);
+  border-radius: var(--radius-pill);
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-cocoa);
+  max-width: 95%;
+}
+
+.musicbox-playing-waves {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+
+.musicbox-playing-waves span {
+  width: 2px;
+  background-color: var(--color-berry);
+  border-radius: 1px;
+  animation: wavePulse 1s ease-in-out infinite alternate;
+}
+
+.musicbox-playing-waves span:nth-child(1) { height: 4px; animation-delay: 0.1s; }
+.musicbox-playing-waves span:nth-child(2) { height: 8px; animation-delay: 0.3s; }
+.musicbox-playing-waves span:nth-child(3) { height: 10px; animation-delay: 0.5s; }
+.musicbox-playing-waves span:nth-child(4) { height: 6px; animation-delay: 0.2s; }
+
+@keyframes wavePulse {
+  0% { transform: scaleY(0.4); }
+  100% { transform: scaleY(1.2); }
+}
+
+.station-status-banner {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: var(--color-gold-glow);
+  border: 1px solid #D4A843;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-cocoa);
+  text-align: center;
+  animation: bannerFadeIn 0.3s ease;
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================================= */
+/* STATION 002: THE MOONLIGHT LAB SPECIFICS                  */
+/* ========================================================= */
+
+.station-moonlight-lab {
+  border-color: #5C4033;
+}
+
+.lantern-preview-frame {
+  position: relative;
+  transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Dynamic Lighting Moods for Lantern */
+.lantern-preview-frame.mood-warm {
+  background: radial-gradient(circle at 50% 45%, #FFF0D4 0%, #F5DEB3 55%, #E6C898 100%);
+  box-shadow: inset 0 0 32px rgba(255, 166, 43, 0.28);
+}
+
+.lantern-preview-frame.mood-sleepy {
+  background: radial-gradient(circle at 50% 45%, #EBF1FF 0%, #D8E3FF 55%, #B7C7F2 100%);
+  box-shadow: inset 0 0 32px rgba(140, 168, 245, 0.35);
+}
+
+.lantern-preview-frame.mood-starlight {
+  background: radial-gradient(circle at 50% 45%, #FCFFF8 0%, #E6FAF8 55%, #C2ECEB 100%);
+  box-shadow: inset 0 0 32px rgba(125, 249, 255, 0.35);
+}
+
+/* Ambient Halo around Lantern */
+.lantern-ambient-halo {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(16px);
+  transition: all 0.5s ease;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+}
+
+.mood-warm .lantern-ambient-halo {
+  background: radial-gradient(circle, rgba(255, 178, 64, 0.6) 0%, rgba(245, 216, 140, 0.25) 60%, transparent 80%);
+}
+
+.mood-sleepy .lantern-ambient-halo {
+  background: radial-gradient(circle, rgba(140, 168, 245, 0.65) 0%, rgba(200, 216, 255, 0.25) 60%, transparent 80%);
+}
+
+.mood-starlight .lantern-ambient-halo {
+  background: radial-gradient(circle, rgba(255, 244, 209, 0.7) 0%, rgba(125, 249, 255, 0.35) 60%, transparent 80%);
+}
+
+.lantern-display-stage {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.lantern-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: var(--radius-sm);
+  transition: filter 0.4s ease, transform 0.3s ease;
+}
+
+.mood-warm .lantern-image {
+  filter: drop-shadow(0 0 16px rgba(255, 178, 64, 0.7)) drop-shadow(0 6px 12px rgba(92, 64, 51, 0.2));
+}
+
+.mood-sleepy .lantern-image {
+  filter: drop-shadow(0 0 18px rgba(140, 168, 245, 0.8)) drop-shadow(0 6px 12px rgba(37, 36, 61, 0.25));
+}
+
+.mood-starlight .lantern-image {
+  filter: drop-shadow(0 0 20px rgba(125, 249, 255, 0.85)) drop-shadow(0 6px 12px rgba(37, 36, 61, 0.2));
+}
+
+/* Drifting Sparkles */
+.lantern-dust-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sleep-sparkle {
+  position: absolute;
+  font-size: 0.9rem;
+  color: var(--color-gold-deep);
+  opacity: 0.6;
+  animation: sparkleTwinkle 2.4s ease-in-out infinite alternate;
+}
+
+.sp-1 { top: 12%; left: 16%; animation-delay: 0s; }
+.sp-2 { top: 22%; right: 18%; animation-delay: 0.7s; }
+.sp-3 { bottom: 25%; left: 20%; animation-delay: 1.4s; }
+.sp-4 { bottom: 18%; right: 22%; animation-delay: 1.9s; }
+
+@keyframes sparkleTwinkle {
+  0% { transform: scale(0.7) rotate(0deg); opacity: 0.3; }
+  100% { transform: scale(1.2) rotate(45deg); opacity: 0.9; }
+}
+
+/* Pip's Live Reaction Speech Bubble */
+.lantern-pip-speech {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-paper-light);
+  border: 1.5px solid var(--color-cocoa);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(92, 64, 51, 0.08);
+  max-width: 95%;
+  z-index: 3;
+}
+
+.speech-avatar {
+  font-size: 1.1rem;
+  background: var(--color-faded-blush);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.speech-bubble-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.speech-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--color-berry);
+  text-transform: uppercase;
+}
+
+.speech-text {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-night-ink);
+  line-height: 1.3;
+}
+
+/* Mood Controls Group */
+.mood-selector-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.mood-button-group {
+  display: flex;
+  gap: 6px;
+  background: var(--color-paper-light);
+  border: 1.5px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  box-shadow: var(--shadow-retro-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.mood-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-cocoa);
+  background: transparent;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 38px;
+}
+
+.mood-toggle-btn:hover {
+  background-color: var(--color-blush-tint);
+  color: var(--color-berry);
+}
+
+.mood-toggle-btn.is-active {
+  background-color: var(--color-berry);
+  color: var(--color-paper-light);
+  border-color: var(--color-cocoa);
+  box-shadow: 0 1px 3px rgba(92, 64, 51, 0.2);
+}
+
+.mood-icon {
+  font-size: 0.95rem;
+}
+
+/* ========================================================= */
+/* STATION 003: THE DREAM EXPRESS SPECIFICS                  */
+/* ========================================================= */
+
+.station-dream-express {
+  border-color: #5C4033;
+}
+
+.map-preview-frame {
+  padding: 0;
+  background-color: #EBF3FA;
+  border-color: #5C4033;
+}
+
+.nursery-map-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 500 / 240;
+  min-height: 200px;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(245, 216, 140, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 85% 25%, rgba(140, 168, 245, 0.3) 0%, transparent 45%),
+    #F3EFE6;
+  border-bottom: 2px solid var(--color-stitch);
+  overflow: hidden;
+}
+
+.map-compass {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--color-cocoa-soft);
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.delivery-routes-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.flight-route-track {
+  stroke: #D4A843;
+  stroke-width: 2.2;
+  stroke-dasharray: 5 4;
+  opacity: 0.55;
+  transition: all 0.3s ease;
+}
+
+.flight-route-track.route-active {
+  stroke: var(--color-berry);
+  stroke-width: 3.5;
+  stroke-dasharray: 6 3;
+  opacity: 1;
+  animation: routeDash 1.2s linear infinite;
+  filter: url(#routeGlow);
+}
+
+@keyframes routeDash {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+/* Map Landmark Pins */
+.map-landmark-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--color-paper-light);
+  border: 1.8px solid var(--color-cocoa);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(92, 64, 51, 0.18);
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.map-landmark-pin:hover {
+  transform: translate(-50%, -55%) scale(1.08);
+  border-color: var(--color-berry);
+}
+
+.map-landmark-pin.is-selected {
+  border-color: var(--color-berry);
+  background-color: var(--color-blush-tint);
+  box-shadow: 0 0 10px rgba(163, 64, 99, 0.4);
+}
+
+.landmark-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.landmark-icon {
+  font-size: 1.1rem;
+}
+
+.landmark-name {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-night-ink);
+  white-space: nowrap;
+}
+
+/* Animated Traveling Envelope */
+.traveling-envelope {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  transition: transform 0.05s linear;
+}
+
+.envelope-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  filter: drop-shadow(0 3px 6px rgba(92, 64, 51, 0.3));
+}
+
+.envelope-wing {
+  position: absolute;
+  font-size: 0.75rem;
+  color: #FFF;
+  font-weight: bold;
+}
+
+.left-wing {
+  left: -8px;
+  top: -2px;
+  animation: flapLeft 0.25s infinite alternate;
+}
+
+.right-wing {
+  right: -8px;
+  top: -2px;
+  animation: flapRight 0.25s infinite alternate;
+}
+
+@keyframes flapLeft {
+  0% { transform: rotate(-15deg); }
+  100% { transform: rotate(20deg); }
+}
+
+@keyframes flapRight {
+  0% { transform: rotate(15deg); }
+  100% { transform: rotate(-20deg); }
+}
+
+.flight-stardust-trail {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 4px;
+  background: radial-gradient(circle, #F5D88C 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.arrival-sparkle-burst {
+  position: absolute;
+  inset: -8px;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+  animation: burstFade 1s forwards ease-out;
+}
+
+.arrival-sparkle-burst span {
+  color: var(--color-berry);
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+@keyframes burstFade {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Delivery Confirmation Toast */
+.delivery-confirmation-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: var(--color-gold-glow);
+  border-top: 1.5px solid #D4A843;
+  padding: 8px 14px;
+  width: 100%;
+}
+
+.confirm-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: #4CAF50;
+  color: #FFF;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.confirm-body strong {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-cocoa);
+  line-height: 1.35;
+}
+
+.confirm-sub {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-cocoa-soft);
+}
+
+/* Destination Selector Buttons */
+.delivery-controls-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+}
+
+.delivery-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-cocoa-soft);
+  text-transform: uppercase;
+}
+
+.destination-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dest-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background-color: var(--color-paper-light);
+  border: 1.5px solid var(--color-cocoa);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-cocoa);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 38px;
+}
+
+.dest-action-btn:hover:not(:disabled) {
+  background-color: var(--color-blush-tint);
+  border-color: var(--color-berry);
+  color: var(--color-berry);
+}
+
+.dest-action-btn.is-selected {
+  background-color: var(--color-berry);
+  color: var(--color-paper-light);
+  border-color: var(--color-cocoa);
+}
+
+.dest-action-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* ========================================================= */
+/* BUTTONS & FOOTERS (ALL STATIONS)                          */
+/* ========================================================= */
+
+.station-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.station-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background-color: var(--color-berry);
+  color: var(--color-paper-light);
+  border: 2px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-retro-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.station-action-btn:hover {
+  background-color: var(--color-berry-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-retro-md);
+}
+
+.station-action-btn:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-retro-active);
+}
+
+.station-state-pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-cocoa-soft);
+  background-color: var(--color-blush-tint);
+  border: 1px solid var(--color-stitch);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+}
+
+/* Station Footer: Pip's Sticky Note & Rubber Stamps */
+.station-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 1rem;
+  border-top: 1.5px dashed var(--color-stitch);
+}
+
+.station-sticky-note {
+  position: relative;
+  background-color: #FFFDF0;
+  border: 1px solid #E6D2B5;
+  border-radius: var(--radius-xs);
+  padding: 8px 12px 8px 24px;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-cocoa);
+  line-height: 1.35;
+  box-shadow: 1px 2px 4px rgba(92, 64, 51, 0.05);
+}
+
+.sticky-pin {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 0.75rem;
+  color: var(--color-berry);
+}
+
+.station-stamp {
+  align-self: flex-end;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border: 1.5px dashed;
+  border-radius: var(--radius-xs);
+  transform: rotate(-3deg);
+  opacity: 0.85;
+}
+
+.stamp-pass {
+  color: #2E7D32;
+  border-color: #2E7D32;
+  background-color: rgba(46, 125, 50, 0.06);
+}
+
+.stamp-ghost-safe {
+  color: #1565C0;
+  border-color: #1565C0;
+  background-color: rgba(21, 101, 192, 0.06);
+}
+
+.stamp-airmail {
+  color: var(--color-berry);
+  border-color: var(--color-berry);
+  background-color: rgba(163, 64, 99, 0.06);
+  transform: rotate(2deg);
+}
+
+/* ========================================================= */
+/* HERO DISCOVERY LINK (NAV TO WORKSHOP)                     */
+/* ========================================================= */
+
+.hero-inventions-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background-color: var(--color-paper-light);
+  color: var(--color-cocoa);
+  border: 2px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: var(--shadow-retro-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.hero-inventions-link:hover {
+  background-color: var(--color-blush-tint);
+  color: var(--color-berry);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-retro-md);
+}
+
+.hero-inventions-link:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-retro-active);
+}
+
+.inventions-link-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background-color: var(--color-gold-glow);
+  color: var(--color-cocoa);
+  border: 1px solid #D4A843;
+  border-radius: var(--radius-pill);
+  padding: 1px 6px;
+}
+
+.inventions-link-arrow {
+  font-weight: 800;
+  transition: transform var(--transition-fast);
+}
+
+.hero-inventions-link:hover .inventions-link-arrow {
+  transform: translateY(3px);
+}
+
+/* Star attention pulse animation on bedroom stars when guided from workshop */
+@keyframes starAttentionPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(245, 216, 140, 0)); }
+  50% { transform: scale(1.22); filter: drop-shadow(0 0 16px rgba(245, 216, 140, 0.9)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(245, 216, 140, 0)); }
+}
+
+.stars-attention-pulse .paper-star {
+  animation: starAttentionPulse 0.9s ease infinite !important;
+}
+
+/* ========================================================= */
+/* RESPONSIVE DESIGN (TABLET & MOBILE)                       */
+/* ========================================================= */
+
+@media (max-width: 960px) {
+  .workshop-exhibits-grid {
+    grid-template-columns: 1fr;
+    max-width: 640px;
+    gap: 2rem;
+  }
+
+  .invention-workshop {
+    padding: 2.5rem 1.25rem 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .invention-workshop {
+    padding: 2rem 1rem 2.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .workshop-heading {
+    font-size: 1.5rem;
+  }
+
+  .workshop-subheading {
+    font-size: 0.95rem;
+  }
+
+  .workshop-desk-note {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+
+  .exhibit-station {
+    padding: 1.25rem 1rem;
+  }
+
+  .station-meta-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .station-category {
+    font-size: 0.68rem;
+  }
+
+  .station-title {
+    font-size: 1.2rem;
+  }
+
+  .station-desc {
+    font-size: 0.86rem;
+    min-height: auto;
+  }
+
+  .mood-button-group {
+    flex-direction: column;
+    width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .mood-toggle-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .destination-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .dest-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .station-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Tiny Mobile Viewport (320px) Protection */
+@media (max-width: 340px) {
+  .invention-workshop {
+    padding: 1.5rem 0.6rem 2rem;
+  }
+
+  .workshop-archive-badge {
+    padding: 4px 10px;
+  }
+
+  .badge-text {
+    font-size: 0.68rem;
+  }
+
+  .exhibit-station {
+    padding: 1rem 0.75rem;
+  }
+
+  .station-number-chip {
+    font-size: 0.65rem;
+  }
+
+  .station-category {
+    font-size: 0.68rem;
+  }
+}
+
+/* Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .musicbox-wind-key {
+    animation: none !important;
+  }
+
+  .float-note,
+  .sleep-sparkle,
+  .musicbox-playing-waves span,
+  .flight-route-track.route-active,
+  .left-wing,
+  .right-wing {
+    animation: none !important;
+  }
+
+  .exhibit-station:hover,
+  .station-action-btn:hover {
+    transform: none !important;
+  }
+}

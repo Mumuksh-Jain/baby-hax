@@ -607,3 +607,44 @@ export function playPanicSound() {
     }, i * 65);
   });
 }
+
+/**
+ * PASS 02: Workshop Sound Effects
+ * 7. Moonlight Lab Switch — Soft crystalline chime corresponding to mood
+ */
+export function playLanternSwitchSound(mood = 'warm') {
+  if (!soundEnabled) return;
+  const moodPitches = {
+    warm: [523.25, 659.25],      // Warm C5 -> E5 major third
+    sleepy: [440.0, 554.37],     // Gentle A4 -> C#5 dreamy interval
+    starlight: [880.0, 1174.66], // Crystalline A5 -> D6 sparkle
+  };
+  const notes = moodPitches[mood] || moodPitches.warm;
+  playTone({ freq: notes[0], type: 'sine', duration: 0.22, gain: 0.28 });
+  setTimeout(() => {
+    playTone({ freq: notes[1], type: 'sine', duration: 0.26, gain: 0.22 });
+  }, 90);
+}
+
+/**
+ * 8. Dream Express Dispatch — Soft air-whoosh and tiny postal whistle
+ */
+export function playDeliveryDispatchSound() {
+  if (!soundEnabled) return;
+  playTone({ freq: 659.25, pitchEnd: 987.77, type: 'sine', duration: 0.18, gain: 0.25 });
+  setTimeout(() => {
+    playTone({ freq: 1318.51, type: 'triangle', duration: 0.12, gain: 0.2 });
+  }, 120);
+}
+
+/**
+ * 9. Dream Express Arrival — Cheerful little two-note delivery chime
+ */
+export function playDeliveryArrivedSound() {
+  if (!soundEnabled) return;
+  playTone({ freq: 783.99, type: 'sine', duration: 0.2, gain: 0.3 }); // G5
+  setTimeout(() => {
+    playTone({ freq: 1046.5, type: 'sine', duration: 0.35, gain: 0.35 }); // C6
+  }, 110);
+}
+
