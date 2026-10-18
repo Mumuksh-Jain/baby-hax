@@ -5,7 +5,8 @@ import './HeroSection.css';
 
 /**
  * HeroSection Component
- * Implements Pass 01B: The live, interactive hero experience for Pip.
+ * Implements Pass 01C: The live, interactive hero experience for Pip
+ * featuring Pip's Tiny Star Orchestra.
  */
 export default function HeroSection({
   isPanicking,
@@ -17,7 +18,12 @@ export default function HeroSection({
   isNightlight,
   onToggleMoon,
   onStarClick,
+  collectedStars = [],
+  orchestraState = 'idle',
+  activeSoundingStar = null,
 }) {
+  const isPerforming = orchestraState === 'performing';
+
   return (
     <section className="hero-section" aria-labelledby="hero-main-title">
       <div className="hero-grid">
@@ -47,6 +53,8 @@ export default function HeroSection({
               isPanicking={isPanicking}
               currentReaction={currentReaction}
               isNightlight={isNightlight}
+              orchestraState={orchestraState}
+              collectedCount={collectedStars.length}
             />
           </div>
 
@@ -57,6 +65,7 @@ export default function HeroSection({
               className={`psst-button ${isPanicking ? 'is-active' : ''}`}
               onClick={onPsst}
               aria-label="Psst, Pip? Click to whisper to Pip"
+              disabled={isPerforming}
             >
               <span className="btn-sparkle" aria-hidden="true">✨</span>
               <span className="btn-text">Psst, Pip?</span>
@@ -64,7 +73,11 @@ export default function HeroSection({
             </button>
 
             <span className="action-hint" aria-hidden="true">
-              {isPanicking ? '← Pip heard you!' : 'tap to check on Pip'}
+              {isPerforming
+                ? '♫ Star Orchestra is playing!'
+                : isPanicking
+                ? '← Pip heard you!'
+                : 'tap to check on Pip'}
             </span>
           </div>
 
@@ -88,6 +101,9 @@ export default function HeroSection({
             isNightlight={isNightlight}
             onToggleMoon={onToggleMoon}
             onStarClick={onStarClick}
+            collectedStars={collectedStars}
+            orchestraState={orchestraState}
+            activeSoundingStar={activeSoundingStar}
           />
         </div>
       </div>

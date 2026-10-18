@@ -90,6 +90,33 @@
   background-color: #FFD45A;
 }
 
+/* Orchestra Mode Styling */
+.is-orchestra-mode .bedside-sign-body {
+  background-color: #FFFDF5;
+  border-color: var(--color-gold-deep);
+  box-shadow: 0 4px 0 var(--color-gold-deep), 0 0 16px rgba(245, 216, 140, 0.6);
+  animation: sign-orchestra-pulse 1.6s ease-in-out infinite alternate;
+}
+
+.is-orchestra-mode .sign-status-text {
+  color: #5C4033;
+  font-weight: 800;
+}
+
+.is-orchestra-mode .glow-core {
+  background-color: #FFA62B;
+}
+
+.is-orchestra-mode .glow-ring {
+  background-color: #FFD45A;
+  animation: pulse-ring 1.2s infinite ease-out;
+}
+
+@keyframes sign-orchestra-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
 @keyframes sign-shiver {
   0% { transform: rotate(-0.8deg) translateY(0); }
   100% { transform: rotate(0.8deg) translateY(-1px); }
@@ -182,6 +209,16 @@
 .sign-icon .panic-sweat {
   font-size: 1.1rem;
   animation: sweat-bob 0.5s ease-in-out infinite alternate;
+}
+
+.sign-icon .orchestra-note-icon {
+  font-size: 1.15rem;
+  animation: note-bob 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes note-bob {
+  0% { transform: translateY(0) rotate(-6deg); }
+  100% { transform: translateY(-3px) rotate(6deg); }
 }
 
 @keyframes sweat-bob {

@@ -6,7 +6,7 @@ import './PipStage.css';
  * PipStage Component
  * Renders the storybook scrapbook frame for Pip with:
  * - Interactive moon toggle (Nightlight mode)
- * - Playful interactive stars with particle bursts
+ * - Pip's Tiny Star Orchestra: collecting, orbiting, performing Twinkle Twinkle, and returning
  * - Interactive Pip portrait cycling through personality reactions
  * - Harmonious cream composition & floating bedtime decorations
  */
@@ -19,6 +19,9 @@ export default function PipStage({
   isNightlight,
   onToggleMoon,
   onStarClick,
+  collectedStars = [],
+  orchestraState = 'idle',
+  activeSoundingStar = null,
 }) {
   // Local state for star burst particles
   const [starParticles, setStarParticles] = useState([]);
@@ -26,14 +29,25 @@ export default function PipStage({
 
   const handleStarInteraction = (starId, e) => {
     e.stopPropagation();
+    if (
+      orchestraState === 'performing' ||
+      orchestraState === 'reacting' ||
+      orchestraState === 'returning'
+    ) {
+      return;
+    }
+    if (collectedStars.includes(starId)) {
+      return;
+    }
+
     setActiveStarId(starId);
 
-    // Call sound & parent handler
+    // Call parent handler (adds to collectedStars and triggers notes/orchestra)
     if (onStarClick) {
       onStarClick(starId);
     }
 
-    // Spawn 3 tiny playful sparkle particles
+    // Spawn 3 tiny playful sparkle particles at the star's origin
     const newParticles = [
       { id: `${starId}-${Date.now()}-1`, symbol: '✦', dx: -18, dy: -24, color: '#F5D88C' },
       { id: `${starId}-${Date.now()}-2`, symbol: '✧', dx: 22, dy: -16, color: '#F5DCE5' },
@@ -54,9 +68,14 @@ export default function PipStage({
     return found ? found.particles : [];
   };
 
+  const isPerforming = orchestraState === 'performing';
+  const isReturning = orchestraState === 'returning';
+
   return (
-    <div className={`pip-stage-container ${isNightlight ? 'nightlight-active' : ''}`}>
-      {/* Dream Atmosphere (Interactive Moon & Stars) */}
+    <div
+      className={`pip-stage-container ${isNightlight ? 'nightlight-active' : ''} orchestra-${orchestraState}`}
+    >
+      {/* Dream Atmosphere (Interactive Moon & Home Stars) */}
       <div className="dream-environment">
         {/* Interactive Smiling Crescent Moon */}
         <button
@@ -99,7 +118,6 @@ export default function PipStage({
 
             {/* Little Sleepy Smile & Eye */}
             {isNightlight ? (
-              // Sleepy closed eye with peaceful expression
               <path
                 d="M26 27C27.5 29 29.5 29 31 27"
                 fill="none"
@@ -108,7 +126,6 @@ export default function PipStage({
                 strokeLinecap="round"
               />
             ) : (
-              // Waking little eye
               <path
                 d="M27 28C27 30 29 31 31 31"
                 fill="none"
@@ -126,20 +143,30 @@ export default function PipStage({
           </span>
         </button>
 
-        {/* Interactive Star 1 (Gold, Top Left) */}
+        {/* --- STAR 1 (Gold, Top Left) --- */}
         <div className="star-wrapper star-1-wrap">
-          <button
-            type="button"
-            className={`paper-star star-1 ${activeStarId === 1 ? 'star-popping' : ''}`}
-            onClick={(e) => handleStarInteraction(1, e)}
-            aria-label="Tickle top-left golden star"
-            title="Tickle star"
-          >
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="#F5D88C" stroke="#5C4033" strokeWidth="1.5">
-              <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-            </svg>
-          </button>
-          {/* Particles */}
+          {collectedStars.includes(1) && !isReturning ? (
+            /* Ghost slot preserves layout seamlessly */
+            <div className="star-ghost-slot" title="Star #1 is playing in Pip's orchestra!">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#D4A843" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.45">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={`paper-star pip-star-btn star-1 star-discovery ${activeStarId === 1 ? 'star-popping' : ''} ${isReturning ? 'star-landing' : ''}`}
+              onClick={(e) => handleStarInteraction(1, e)}
+              aria-label="Collect top-left golden star for Pip's Tiny Star Orchestra"
+              title="Click to recruit Star #1 for Pip's orchestra!"
+            >
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="#F5D88C" stroke="#5C4033" strokeWidth="1.5">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </button>
+          )}
+
+          {/* Sparkles on click */}
           {currentParticlesForStar(1).map((p) => (
             <span
               key={p.id}
@@ -156,19 +183,28 @@ export default function PipStage({
           ))}
         </div>
 
-        {/* Interactive Star 2 (Blush, Middle Right) */}
+        {/* --- STAR 2 (Blush, Middle Right) --- */}
         <div className="star-wrapper star-2-wrap">
-          <button
-            type="button"
-            className={`paper-star star-2 ${activeStarId === 2 ? 'star-popping' : ''}`}
-            onClick={(e) => handleStarInteraction(2, e)}
-            aria-label="Tickle right blush star"
-            title="Tickle star"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="#F5DCE5" stroke="#5C4033" strokeWidth="1.5">
-              <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-            </svg>
-          </button>
+          {collectedStars.includes(2) && !isReturning ? (
+            <div className="star-ghost-slot" title="Star #2 is playing in Pip's orchestra!">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A34063" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.45">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={`paper-star pip-star-btn star-2 star-discovery ${activeStarId === 2 ? 'star-popping' : ''} ${isReturning ? 'star-landing' : ''}`}
+              onClick={(e) => handleStarInteraction(2, e)}
+              aria-label="Collect right blush star for Pip's Tiny Star Orchestra"
+              title="Click to recruit Star #2 for Pip's orchestra!"
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="#F5DCE5" stroke="#5C4033" strokeWidth="1.5">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </button>
+          )}
+
           {currentParticlesForStar(2).map((p) => (
             <span
               key={p.id}
@@ -185,19 +221,28 @@ export default function PipStage({
           ))}
         </div>
 
-        {/* Interactive Star 3 (Gold/Lavender, Bottom Left) */}
+        {/* --- STAR 3 (Gold/Lavender, Bottom Left) --- */}
         <div className="star-wrapper star-3-wrap">
-          <button
-            type="button"
-            className={`paper-star star-3 ${activeStarId === 3 ? 'star-popping' : ''}`}
-            onClick={(e) => handleStarInteraction(3, e)}
-            aria-label="Tickle bottom golden star"
-            title="Tickle star"
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="#F5D88C" stroke="#5C4033" strokeWidth="1.5">
-              <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-            </svg>
-          </button>
+          {collectedStars.includes(3) && !isReturning ? (
+            <div className="star-ghost-slot" title="Star #3 is playing in Pip's orchestra!">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#D4A843" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.45">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={`paper-star pip-star-btn star-3 star-discovery ${activeStarId === 3 ? 'star-popping' : ''} ${isReturning ? 'star-landing' : ''}`}
+              onClick={(e) => handleStarInteraction(3, e)}
+              aria-label="Collect bottom golden star for Pip's Tiny Star Orchestra"
+              title="Click to recruit Star #3 for Pip's orchestra!"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="#F5D88C" stroke="#5C4033" strokeWidth="1.5">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </button>
+          )}
+
           {currentParticlesForStar(3).map((p) => (
             <span
               key={p.id}
@@ -215,10 +260,10 @@ export default function PipStage({
         </div>
       </div>
 
-      {/* Main Pip Polaroid Frame (Interactive Trigger for Pip Personality) */}
+      {/* Main Pip Polaroid Frame */}
       <div
         className={`pip-frame ${isPanicking ? 'is-reacting' : ''} ${
-          currentReaction?.animationClass || ''
+          isPerforming ? 'anim-orchestra-sway' : currentReaction?.animationClass || ''
         }`}
       >
         {/* Animated Dialogue Bubble */}
@@ -239,6 +284,70 @@ export default function PipStage({
         <div className="stitched-corner corner-bl" aria-hidden="true"></div>
         <div className="stitched-corner corner-br" aria-hidden="true"></div>
 
+        {/* --- ORCHESTRA 3D ELLIPTICAL ORBIT SYSTEM ANCHORED OVER PIP --- */}
+        {collectedStars.length > 0 && (
+          <div
+            className={`pip-orbit-system ${isPerforming ? 'is-performing' : ''} ${
+              isReturning ? 'is-returning' : ''
+            }`}
+            aria-hidden="true"
+          >
+            {/* Star 1 in Orbit */}
+            {collectedStars.includes(1) && (
+              <div
+                className={`orbiting-star-carrier carrier-star-1 ${
+                  isPerforming ? 'orbiting' : 'traveling-in'
+                } ${activeSoundingStar === 1 ? 'is-sounding-chime' : ''} ${
+                  isReturning ? 'traveling-out-1' : ''
+                }`}
+              >
+                <div className="orbiting-star-visual star-gold">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="#F5D88C" stroke="#5C4033" strokeWidth="1.5">
+                    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+                  </svg>
+                  <span className="stardust-trail trail-gold"></span>
+                </div>
+              </div>
+            )}
+
+            {/* Star 2 in Orbit */}
+            {collectedStars.includes(2) && (
+              <div
+                className={`orbiting-star-carrier carrier-star-2 ${
+                  isPerforming ? 'orbiting' : 'traveling-in'
+                } ${activeSoundingStar === 2 ? 'is-sounding-chime' : ''} ${
+                  isReturning ? 'traveling-out-2' : ''
+                }`}
+              >
+                <div className="orbiting-star-visual star-blush">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="#F5DCE5" stroke="#5C4033" strokeWidth="1.5">
+                    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+                  </svg>
+                  <span className="stardust-trail trail-blush"></span>
+                </div>
+              </div>
+            )}
+
+            {/* Star 3 in Orbit */}
+            {collectedStars.includes(3) && (
+              <div
+                className={`orbiting-star-carrier carrier-star-3 ${
+                  isPerforming ? 'orbiting' : 'traveling-in'
+                } ${activeSoundingStar === 3 ? 'is-sounding-chime' : ''} ${
+                  isReturning ? 'traveling-out-3' : ''
+                }`}
+              >
+                <div className="orbiting-star-visual star-lavender">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="#F5D88C" stroke="#7A5B49" strokeWidth="1.5">
+                    <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+                  </svg>
+                  <span className="stardust-trail trail-lavender"></span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Polaroid Inner Screen with Accessible Poke Button */}
         <button
           type="button"
@@ -246,6 +355,7 @@ export default function PipStage({
           onClick={onPokePip}
           aria-label="Poke Pip gently. Cycles through Pip's funny bedtime thoughts."
           title="Click or tap to check on Pip!"
+          disabled={isPerforming}
         >
           <img
             src="/assets/pip/pip_avatar_cloud.png"
@@ -279,13 +389,13 @@ export default function PipStage({
               {currentReaction.overlay === 'zzz' && (
                 <div className="overlay-badge zzz-badge">
                   <span className="badge-icon">💤</span>
-                  <span className="badge-text">yawn!</span>
+                  <span className="badge-text">faaahhh~</span>
                 </div>
               )}
               {currentReaction.overlay === 'stars' && (
                 <div className="overlay-badge stars-badge">
                   <span className="badge-icon">✨</span>
-                  <span className="badge-text">pull req</span>
+                  <span className="badge-text">orchestra!</span>
                 </div>
               )}
             </div>
@@ -293,19 +403,21 @@ export default function PipStage({
 
           {/* Interactive touch hint overlay for first time visitors */}
           <span className="pip-poke-hint" aria-hidden="true">
-            (poke Pip)
+            {isPerforming ? '♫ Twinkle, Twinkle ♫' : '(poke Pip)'}
           </span>
         </button>
 
         {/* Handwritten Storybook Caption */}
         <div className="pip-frame-caption">
           <span className="caption-text">
-            {isNightlight
+            {isPerforming
+              ? 'Fig. 1.2 — Pip’s Tiny Star Orchestra (playing Twinkle Twinkle)'
+              : isNightlight
               ? 'Fig. 1.1 — Pip (bathed in cozy bedside nightlight)'
               : 'Fig. 1.0 — Pip (attempting bedtime code deployment)'}
           </span>
           <span className="caption-sparkle" aria-hidden="true">
-            {isNightlight ? '🌙' : '✨'}
+            {isPerforming ? '🎶' : isNightlight ? '🌙' : '✨'}
           </span>
         </div>
       </div>

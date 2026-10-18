@@ -4,10 +4,27 @@ import './BedsideStatusSign.css';
 /**
  * BedsideStatusSign Component
  * Renders the storybook bedside status indicator sign.
- * Dynamically reflects Pip's reactions, nightlight mode, and default awake status.
+ * Dynamically reflects Pip's reactions, nightlight mode, orchestra state, and default awake status.
  */
-export default function BedsideStatusSign({ isPanicking, currentReaction, isNightlight }) {
+export default function BedsideStatusSign({
+  isPanicking,
+  currentReaction,
+  isNightlight,
+  orchestraState = 'idle',
+  collectedCount = 0,
+}) {
+  const isOrchestraActive = orchestraState !== 'idle';
+
   const getStatusText = () => {
+    if (orchestraState === 'performing') {
+      return 'BEDTIME ORCHESTRA: PLAYING TWINKLE TWINKLE ♫';
+    }
+    if (orchestraState === 'collecting') {
+      return `BEDTIME ORCHESTRA: ${collectedCount} OF 3 STARS GATHERED`;
+    }
+    if (orchestraState === 'returning') {
+      return 'STARS RETURNING TO BEDTIME SLOTS ✨';
+    }
     if (isPanicking) {
       return currentReaction?.status || 'PIP IS PANICKING (politely)';
     }
@@ -18,6 +35,12 @@ export default function BedsideStatusSign({ isPanicking, currentReaction, isNigh
   };
 
   const getStatusIcon = () => {
+    if (orchestraState === 'performing') {
+      return <span className="orchestra-note-icon" title="tiny star orchestra">🎶</span>;
+    }
+    if (orchestraState === 'collecting' || orchestraState === 'returning') {
+      return <span className="orchestra-note-icon" title="tiny star orchestra">✨</span>;
+    }
     if (isPanicking) {
       return <span className="panic-sweat" title="polite panic">💦</span>;
     }
@@ -36,7 +59,7 @@ export default function BedsideStatusSign({ isPanicking, currentReaction, isNigh
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" fill="#F5D88C" stroke="#D4A843" />
+        <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z" fill="#F5D88C" stroke="#D4A843" />
       </svg>
     );
   };
@@ -45,7 +68,7 @@ export default function BedsideStatusSign({ isPanicking, currentReaction, isNigh
     <div
       className={`bedside-sign ${isPanicking ? 'is-panicking' : ''} ${
         isNightlight && !isPanicking ? 'is-nightlight-mode' : ''
-      }`}
+      } ${isOrchestraActive ? 'is-orchestra-mode' : ''}`}
       role="status"
       aria-live="polite"
     >

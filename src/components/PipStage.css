@@ -74,35 +74,52 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Interactive Stars */
+/* --- HOME STARS & INVITATION STATES --- */
 .star-wrapper {
   position: absolute;
   pointer-events: auto;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .star-1-wrap { top: 12%; left: -14px; }
 .star-2-wrap { top: 44%; right: -16px; }
 .star-3-wrap { bottom: 24%; left: -20px; }
 
+/* Discovery invitation on hover & focus */
 .paper-star {
   background: none;
   border: none;
-  padding: 6px;
+  padding: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: transform var(--transition-bounce);
+  transition: transform var(--transition-bounce), filter var(--transition-fast);
+  animation: star-idle-breath 4s ease-in-out infinite alternate;
+}
+
+.star-1 { animation-delay: 0s; }
+.star-2 { animation-delay: 1.2s; }
+.star-3 { animation-delay: 2.4s; }
+
+@keyframes star-idle-breath {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.08) rotate(4deg); }
 }
 
 .paper-star:hover {
-  transform: scale(1.3) rotate(25deg);
+  transform: scale(1.3) rotate(22deg);
+  filter: drop-shadow(0 0 10px rgba(245, 216, 140, 0.9));
 }
 
 .paper-star:focus-visible {
-  outline: 2px solid var(--color-berry);
-  outline-offset: 2px;
+  outline: 3px solid var(--color-gold-deep);
+  outline-offset: 3px;
 }
 
 .star-popping {
@@ -113,6 +130,30 @@
   0% { transform: scale(1) rotate(0deg); }
   50% { transform: scale(1.5) rotate(180deg); }
   100% { transform: scale(1.1) rotate(360deg); }
+}
+
+/* Ghost Slot retains layout footprint */
+.star-ghost-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: ghost-fade-in 0.4s ease-out forwards;
+}
+
+@keyframes ghost-fade-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 0.6; transform: scale(1); }
+}
+
+.star-landing {
+  animation: star-land-in 0.8s var(--ease-bounce) forwards;
+}
+
+@keyframes star-land-in {
+  0% { transform: scale(0.4) rotate(-180deg); opacity: 0; }
+  70% { transform: scale(1.25) rotate(15deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 /* Star Sparkle Particles */
@@ -138,6 +179,176 @@
   }
 }
 
+/* --- PIP'S TINY STAR ORCHESTRA: 3D ELLIPTICAL ORBIT SYSTEM --- */
+.pip-orbit-system {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 24;
+  --orbit-rx: 135px;
+  --orbit-ry: 48px;
+  --orbit-tilt: -11deg;
+}
+
+.orbiting-star-carrier {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  margin-left: -16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+}
+
+/* Smooth Entrance Travel from Home Coordinates to Orbit */
+.carrier-star-1.traveling-in {
+  animation: fly-in-star-1 0.75s var(--ease-bounce) forwards;
+}
+
+.carrier-star-2.traveling-in {
+  animation: fly-in-star-2 0.75s var(--ease-bounce) forwards;
+}
+
+.carrier-star-3.traveling-in {
+  animation: fly-in-star-3 0.75s var(--ease-bounce) forwards;
+}
+
+@keyframes fly-in-star-1 {
+  0% { transform: translate(-140px, -90px) scale(0.6) rotate(-45deg); opacity: 0; }
+  100% { transform: rotate(var(--orbit-tilt)) translate(var(--orbit-rx), 0px) rotate(calc(-1 * var(--orbit-tilt))) scale(1.1); opacity: 1; }
+}
+
+@keyframes fly-in-star-2 {
+  0% { transform: translate(145px, 20px) scale(0.6) rotate(45deg); opacity: 0; }
+  100% { transform: rotate(var(--orbit-tilt)) translate(calc(-0.5 * var(--orbit-rx)), calc(0.86 * var(--orbit-ry))) rotate(calc(-1 * var(--orbit-tilt))) scale(1.05); opacity: 1; }
+}
+
+@keyframes fly-in-star-3 {
+  0% { transform: translate(-130px, 90px) scale(0.6) rotate(-30deg); opacity: 0; }
+  100% { transform: rotate(var(--orbit-tilt)) translate(calc(-0.5 * var(--orbit-rx)), calc(-0.86 * var(--orbit-ry))) rotate(calc(-1 * var(--orbit-tilt))) scale(0.95); opacity: 1; }
+}
+
+/* Return Flight to Bedside Spots */
+.carrier-star-1.traveling-out-1 {
+  animation: fly-out-star-1 0.9s var(--ease-bounce) forwards;
+}
+
+.carrier-star-2.traveling-out-2 {
+  animation: fly-out-star-2 0.9s var(--ease-bounce) forwards;
+}
+
+.carrier-star-3.traveling-out-3 {
+  animation: fly-out-star-3 0.9s var(--ease-bounce) forwards;
+}
+
+@keyframes fly-out-star-1 {
+  0% { transform: scale(1.1); opacity: 1; }
+  100% { transform: translate(-140px, -90px) scale(0.8) rotate(-45deg); opacity: 0; }
+}
+
+@keyframes fly-out-star-2 {
+  0% { transform: scale(1.05); opacity: 1; }
+  100% { transform: translate(145px, 20px) scale(0.8) rotate(45deg); opacity: 0; }
+}
+
+@keyframes fly-out-star-3 {
+  0% { transform: scale(0.95); opacity: 1; }
+  100% { transform: translate(-130px, 90px) scale(0.8) rotate(-30deg); opacity: 0; }
+}
+
+/* 3D Tilted Elliptical Orbit during Performance */
+.carrier-star-1.orbiting {
+  animation: orbit-star-3d 6.5s linear infinite;
+  animation-delay: 0s;
+}
+
+.carrier-star-2.orbiting {
+  animation: orbit-star-3d 6.5s linear infinite;
+  animation-delay: -2.16s;
+}
+
+.carrier-star-3.orbiting {
+  animation: orbit-star-3d 6.5s linear infinite;
+  animation-delay: -4.33s;
+}
+
+@keyframes orbit-star-3d {
+  0% {
+    transform: rotate(var(--orbit-tilt)) translate(var(--orbit-rx), 0px) rotate(calc(-1 * var(--orbit-tilt))) scale(1.15);
+    z-index: 28;
+    filter: drop-shadow(0 0 10px rgba(245, 216, 140, 0.95));
+  }
+  25% {
+    transform: rotate(var(--orbit-tilt)) translate(0px, calc(-1 * var(--orbit-ry))) rotate(calc(-1 * var(--orbit-tilt))) scale(0.88);
+    z-index: 8; /* Passes behind Pip's nightcap */
+    filter: drop-shadow(0 0 4px rgba(245, 216, 140, 0.45));
+  }
+  50% {
+    transform: rotate(var(--orbit-tilt)) translate(calc(-1 * var(--orbit-rx)), 0px) rotate(calc(-1 * var(--orbit-tilt))) scale(0.82);
+    z-index: 8;
+    filter: drop-shadow(0 0 4px rgba(245, 216, 140, 0.45));
+  }
+  75% {
+    transform: rotate(var(--orbit-tilt)) translate(0px, var(--orbit-ry)) rotate(calc(-1 * var(--orbit-tilt))) scale(1.08);
+    z-index: 28; /* Passes in front of Pip's cloud */
+    filter: drop-shadow(0 0 10px rgba(245, 216, 140, 0.95));
+  }
+  100% {
+    transform: rotate(var(--orbit-tilt)) translate(var(--orbit-rx), 0px) rotate(calc(-1 * var(--orbit-tilt))) scale(1.15);
+    z-index: 28;
+    filter: drop-shadow(0 0 10px rgba(245, 216, 140, 0.95));
+  }
+}
+
+/* Stardust Glow Trail */
+.stardust-trail {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.trail-gold { background: radial-gradient(circle, #F5D88C 20%, transparent 70%); }
+.trail-blush { background: radial-gradient(circle, #F5DCE5 20%, transparent 70%); }
+.trail-lavender { background: radial-gradient(circle, #DDD0E6 20%, transparent 70%); }
+
+/* In-Sync Musical Note Chime Pulse */
+.is-sounding-chime .orbiting-star-visual {
+  animation: chime-pulse 0.4s var(--ease-bounce) forwards;
+}
+
+@keyframes chime-pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 6px #F5D88C); }
+  50% { transform: scale(1.45) rotate(15deg); filter: drop-shadow(0 0 16px #FFF4D1) drop-shadow(0 0 8px #FFA62B); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 8px #F5D88C); }
+}
+
+/* Pip Sways Along Happily to the Orchestra */
+.anim-orchestra-sway {
+  animation: pip-lullaby-sway 2.7s ease-in-out infinite alternate;
+}
+
+@keyframes pip-lullaby-sway {
+  0% { transform: rotate(1deg) translateY(0); }
+  50% { transform: rotate(-1.5deg) translateY(-5px); }
+  100% { transform: rotate(1deg) translateY(0); }
+}
+
 /* Main Pip Polaroid Frame */
 .pip-frame {
   position: relative;
@@ -159,25 +370,11 @@
 }
 
 /* Pip Reaction Animations */
-.anim-wiggle {
-  animation: pip-wiggle 0.65s var(--ease-bounce) forwards;
-}
-
-.anim-hop {
-  animation: pip-hop 0.55s var(--ease-bounce) forwards;
-}
-
-.anim-squash {
-  animation: pip-squash 0.6s var(--ease-bounce) forwards;
-}
-
-.anim-drift {
-  animation: pip-drift 0.7s ease-in-out forwards;
-}
-
-.anim-tilt {
-  animation: pip-tilt 0.65s var(--ease-bounce) forwards;
-}
+.anim-wiggle { animation: pip-wiggle 0.65s var(--ease-bounce) forwards; }
+.anim-hop { animation: pip-hop 0.55s var(--ease-bounce) forwards; }
+.anim-squash { animation: pip-squash 0.6s var(--ease-bounce) forwards; }
+.anim-drift { animation: pip-drift 0.7s ease-in-out forwards; }
+.anim-tilt { animation: pip-tilt 0.65s var(--ease-bounce) forwards; }
 
 @keyframes pip-wiggle {
   0% { transform: rotate(1deg) scale(1); }
@@ -290,7 +487,7 @@
   transition: transform var(--transition-fast);
 }
 
-.pip-poke-btn:hover {
+.pip-poke-btn:hover:not(:disabled) {
   transform: scale(1.015);
 }
 
@@ -460,6 +657,14 @@
   transform: translateY(-50%);
 }
 
+/* Responsive Orbit Radius Adjustments */
+@media (max-width: 768px) {
+  .pip-orbit-system {
+    --orbit-rx: 120px;
+    --orbit-ry: 42px;
+  }
+}
+
 @media (max-width: 480px) {
   .pip-stage-container {
     padding: 1rem 0.5rem;
@@ -476,4 +681,37 @@
     top: -8px;
     right: -4px;
   }
+  .pip-orbit-system {
+    --orbit-rx: 96px;
+    --orbit-ry: 34px;
+  }
+}
+
+@media (max-width: 340px) {
+  .pip-orbit-system {
+    --orbit-rx: 82px;
+    --orbit-ry: 28px;
+  }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .carrier-star-1.orbiting,
+  .carrier-star-2.orbiting,
+  .carrier-star-3.orbiting,
+  .carrier-star-1.traveling-in,
+  .carrier-star-2.traveling-in,
+  .carrier-star-3.traveling-in,
+  .carrier-star-1.traveling-out-1,
+  .carrier-star-2.traveling-out-2,
+  .carrier-star-3.traveling-out-3 {
+    animation: none !important;
+  }
+
+  .carrier-star-1 { transform: translate(-80px, -30px) !important; opacity: 1 !important; }
+  .carrier-star-2 { transform: translate(80px, -20px) !important; opacity: 1 !important; }
+  .carrier-star-3 { transform: translate(0px, 40px) !important; opacity: 1 !important; }
+
+  .paper-star { animation: none !important; }
+  .anim-orchestra-sway { animation: none !important; }
 }
