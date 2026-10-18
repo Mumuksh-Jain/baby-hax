@@ -69,7 +69,7 @@ export default function BedsideStatusSign({
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M12 3a6 6 0 0 0 9 9 9 0 1 1-9-9Z" fill="#F5D88C" stroke="#D4A843" />
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" fill="#F5D88C" stroke="#D4A843" />
       </svg>
     );
   };

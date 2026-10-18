@@ -13,7 +13,6 @@ import {
   playMoonSound,
   playTabSound,
   playPanicSound,
-  playVocalLullaby,
   stopAllOrchestraAudio,
   playFaahSound,
 } from './utils/soundEngine';
@@ -506,24 +505,16 @@ export default function App() {
           dialogueTimerRef.current = null;
         }, 3600);
       } else if (nextCollected.length === 3) {
-        // --- 3. THIRD STAR COLLECTED: BEGIN THEATER EXPERIENCE ---
+        // --- 3. THIRD STAR COLLECTED: PASS 01C.4A THEATER TAKEOVER ---
+        // Theater becomes the single controller for its opening and musical performance.
+        clearOrchestraTimers();
         setOrchestraState('performing');
         setPipMotionState('listening');
         playStarSound(2);
 
-        setCustomReaction(STAR_COLLECTION_REACTIONS.performing);
-        setIsPanicking(true);
-        setShowDialogue(true);
-        setSrAnnouncement(STAR_COLLECTION_REACTIONS.performing.srText);
-
-        dialogueTimerRef.current = setTimeout(() => {
-          setShowDialogue(false);
-          setIsPanicking(false);
-          dialogueTimerRef.current = null;
-        }, 4000);
-
-        // Open Pip's Magical Star Theater!
+        // Immediate handoff to full-screen cinematic theater
         setIsTheaterOpen(true);
+        setSrAnnouncement('Three stars collected! Entering Pip’s Magical Star Theater.');
       }
     },
     [
@@ -531,6 +522,7 @@ export default function App() {
       orchestraState,
       clearPipMotionTimer,
       clearDialogueTimer,
+      clearOrchestraTimers,
     ]
   );
 
