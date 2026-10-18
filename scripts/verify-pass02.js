@@ -106,7 +106,7 @@ async function runPass02Verification() {
       x: 0,
       y: Math.max(0, workshopBoundingBox.y - 40),
       width: 1280,
-      height: Math.min(1800, workshopBoundingBox.height + 80),
+      height: Math.min(2600, workshopBoundingBox.height + 80),
     },
   });
 
@@ -235,9 +235,15 @@ async function runPass02Verification() {
   const confirm3 = await page.evaluate(() => document.querySelector('.confirm-body strong')?.textContent.trim());
   console.log(`   ✓ Moonbeam Tower delivery confirmed: "${confirm3}"`);
 
+  const freshS3Box = await page.evaluate(() => {
+    const el = document.querySelector('.station-dream-express');
+    const rect = el.getBoundingClientRect();
+    return { x: rect.left, y: rect.top + window.scrollY, width: rect.width, height: rect.height };
+  });
+
   await page.screenshot({
     path: path.join(SCREENSHOT_DIR, 'station3_dream_express_delivered.png'),
-    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+    clip: { x: freshS3Box.x - 10, y: freshS3Box.y - 10, width: freshS3Box.width + 20, height: freshS3Box.height + 20 },
   });
 
   // --- TEST STAR THEATER REPLAY INTEGRATION ---
