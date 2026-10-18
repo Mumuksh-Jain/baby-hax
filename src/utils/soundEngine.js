@@ -66,32 +66,9 @@ export async function preloadFaahAudio() {
 }
 
 /**
- * Helper to trim the first N seconds from an AudioBuffer
- */
-function trimAudioBufferStart(ctx, originalBuffer, secondsToTrim = 5.0) {
-  const sampleRate = originalBuffer.sampleRate;
-  const trimSamples = Math.min(Math.floor(secondsToTrim * sampleRate), originalBuffer.length);
-  const newLength = originalBuffer.length - trimSamples;
-  if (newLength <= 0) return originalBuffer;
-
-  const trimmedBuffer = ctx.createBuffer(
-    originalBuffer.numberOfChannels,
-    newLength,
-    sampleRate
-  );
-
-  for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
-    const origData = originalBuffer.getChannelData(channel);
-    const trimmedData = trimmedBuffer.getChannelData(channel);
-    trimmedData.set(origData.subarray(trimSamples));
-  }
-
-  return trimmedBuffer;
-}
-
-/**
- * Preload and decode the uploaded twinkle_vocal.mp3 file
- * Trims the first 5.0 seconds of acoustic intro so vocal singing starts immediately
+ * Preload and decode the shortened twinkle_vocal_short.mp3 file
+ * Audio is pre-trimmed with FFmpeg to a natural musical phrase (~17.45s)
+ * with transparent fade-in and smooth 0.5s bedtime fade-out.
  */
 export async function preloadTwinkleVocalAudio() {
   if (twinkleVocalBuffer || isLoadingVocal) return twinkleVocalBuffer;
@@ -99,15 +76,13 @@ export async function preloadTwinkleVocalAudio() {
   try {
     const ctx = getAudioContext();
     if (!ctx) return null;
-    const res = await fetch('/assets/audio/twinkle_vocal.mp3');
+    const res = await fetch('/assets/audio/twinkle_vocal_short.mp3');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const arrayBuffer = await res.arrayBuffer();
-    const rawBuffer = await ctx.decodeAudioData(arrayBuffer);
-    // Trim first 10 seconds of acoustic intro (trimmed 5 more seconds)
-    twinkleVocalBuffer = trimAudioBufferStart(ctx, rawBuffer, 10.0);
+    twinkleVocalBuffer = await ctx.decodeAudioData(arrayBuffer);
     return twinkleVocalBuffer;
   } catch (err) {
-    console.warn('Could not decode /assets/audio/twinkle_vocal.mp3, will use synthesized fallback:', err);
+    console.warn('Could not decode /assets/audio/twinkle_vocal_short.mp3, will use synthesized fallback:', err);
     return null;
   } finally {
     isLoadingVocal = false;

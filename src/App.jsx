@@ -496,15 +496,17 @@ export default function App() {
           triggerFinale();
         };
 
-        // Play the recorded vocal lullaby (twinkle_vocal.mp3)
-        playVocalLullaby({ onEnded: onPlaybackEnd }).then(({ duration, isVocal }) => {
-          // If sound is muted or disabled, run visual performance for a graceful 15s duration
-          if (!soundOn) {
-            const silentDurationTimer = setTimeout(() => {
-              onPlaybackEnd();
-            }, 15000);
-            orchestraTimersRef.current.push(silentDurationTimer);
-          }
+        // Play the recorded vocal lullaby (twinkle_vocal_short.mp3)
+        playVocalLullaby({ onEnded: onPlaybackEnd }).then(({ duration }) => {
+          // Master performance end timer:
+          // Synchronizes visual performance to the exact shortened audio duration (~17.45s).
+          // If sound is muted during playback or was disabled from the start,
+          // this ensures the visual sequence completes at the matching natural musical time.
+          const visualDurationMs = Math.round((duration && duration > 0 ? duration : 17.45) * 1000);
+          const masterPerformanceTimer = setTimeout(() => {
+            onPlaybackEnd();
+          }, visualDurationMs);
+          orchestraTimersRef.current.push(masterPerformanceTimer);
         });
       }
     },
