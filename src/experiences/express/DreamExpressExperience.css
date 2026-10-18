@@ -13,7 +13,8 @@
 /* Railway Stage Viewport */
 .express-stage-viewport {
   position: relative;
-  background: linear-gradient(180deg, #070B19 0%, #0F1A34 60%, #172554 100%);
+  background: #0B1124 url('/assets/production-art/backgrounds/dream_express_world.png') no-repeat center center;
+  background-size: cover;
   border-radius: 20px;
   border: 3px solid #2A3B66;
   box-shadow: inset 0 4px 30px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.25);

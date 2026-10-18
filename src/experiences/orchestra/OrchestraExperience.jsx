@@ -106,41 +106,53 @@ export default function OrchestraExperience({
                 {/* Star 1 */}
                 <button
                   type="button"
-                  className={`podium-star star-node-1 ${conductionStep >= 1 ? 'is-tuned' : ''}`}
+                  className={`podium-star star-node-1 star-conduction-btn star-1 ${conductionStep >= 1 ? 'is-tuned' : ''}`}
                   onClick={() => handleStarClick(1)}
                   disabled={conductionStep >= 1}
                   aria-label="Star 1: Tap to wake soprano bell"
                 >
-                  <span className="star-graphic">★</span>
+                  <img
+                    src="/assets/production-art/sprites/orchestra_star_1.png"
+                    alt="Soprano Star"
+                    className="star-sprite-img"
+                  />
                   <span className="star-note-chip">{conductionStep >= 1 ? 'Tuned ♫' : 'Wake Me 1'}</span>
                 </button>
 
                 {/* Star 2 */}
                 <button
                   type="button"
-                  className={`podium-star star-node-2 ${conductionStep >= 2 ? 'is-tuned' : ''} ${
+                  className={`podium-star star-node-2 star-conduction-btn star-2 ${conductionStep >= 2 ? 'is-tuned' : ''} ${
                     conductionStep < 1 ? 'is-waiting' : ''
                   }`}
                   onClick={() => handleStarClick(2)}
                   disabled={conductionStep !== 1}
                   aria-label="Star 2: Tap to wake alto chime"
                 >
-                  <span className="star-graphic">★</span>
+                  <img
+                    src="/assets/production-art/sprites/orchestra_star_2.png"
+                    alt="Alto Star"
+                    className="star-sprite-img"
+                  />
                   <span className="star-note-chip">{conductionStep >= 2 ? 'Tuned ♫' : 'Wake Me 2'}</span>
                 </button>
 
                 {/* Star 3 */}
                 <button
                   type="button"
-                  className={`podium-star star-node-3 ${conductionStep >= 3 ? 'is-tuned' : ''} ${
+                  className={`podium-star star-node-3 star-conduction-btn star-3 ${conductionStep >= 3 ? 'is-tuned' : ''} ${
                     conductionStep < 2 ? 'is-waiting' : ''
                   }`}
                   onClick={() => handleStarClick(3)}
                   disabled={conductionStep !== 2}
                   aria-label="Star 3: Tap to assemble full choir"
                 >
-                  <span className="star-graphic">★</span>
-                  <span className="star-note-chip">Wake Me 3</span>
+                  <img
+                    src="/assets/production-art/sprites/orchestra_star_3.png"
+                    alt="Choir Star"
+                    className="star-sprite-img"
+                  />
+                  <span className="star-note-chip">{conductionStep >= 3 ? 'Tuned ♫' : 'Wake Me 3'}</span>
                 </button>
               </div>
 

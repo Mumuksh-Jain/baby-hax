@@ -284,46 +284,7 @@ export default function DreamExpressExperience({
               </radialGradient>
             </defs>
 
-            {/* Layer 1: Sky */}
-            <rect width="1200" height="520" fill="url(#expSkyGrad)" />
-
-            {/* Layer 2: Celestial Moon & Stars */}
-            <g transform="translate(100, 75)">
-              <path d="M 0 -24 A 28 28 0 0 0 24 16 A 24 24 0 0 1 -2 0 A 24 24 0 0 1 0 -24 Z" fill="#FFF3C4" />
-            </g>
-            <g fill="#F5D88C" opacity="0.75">
-              <circle cx="180" cy="55" r="2" />
-              <circle cx="270" cy="35" r="1.5" />
-              <circle cx="340" cy="85" r="2.5" />
-              <circle cx="480" cy="40" r="1.5" />
-              <circle cx="560" cy="70" r="2" />
-              <circle cx="680" cy="30" r="2" />
-              <circle cx="860" cy="45" r="2.5" />
-              <circle cx="1020" cy="40" r="2" />
-            </g>
-
-            {/* Layer 3: Distant Paper Hills */}
-            <path
-              d="M 0 520 L 0 380 Q 220 290 460 340 Q 740 280 1020 330 Q 1120 350 1200 370 L 1200 520 Z"
-              fill="#26375E"
-              opacity="0.6"
-            />
-            <path
-              d="M 0 520 L 0 410 Q 280 340 580 380 Q 860 330 1200 400 L 1200 520 Z"
-              fill="#3A5380"
-              opacity="0.7"
-            />
-
-            {/* Layer 4: Wooden Trestle Piers */}
-            <g stroke="#7A5638" strokeWidth="2.5" opacity="0.5">
-              <line x1="210" y1="420" x2="210" y2="470" />
-              <line x1="260" y1="360" x2="260" y2="470" />
-              <line x1="310" y1="300" x2="310" y2="470" />
-              <line x1="380" y1="425" x2="380" y2="480" />
-              <line x1="590" y1="420" x2="590" y2="480" />
-              <line x1="680" y1="315" x2="680" y2="480" />
-              <line x1="840" y1="300" x2="840" y2="480" />
-            </g>
+            {/* Sky & Landscape rendered via dream_express_world.png base plate */}
 
             {/* Railway Track Paths */}
             {/* Route 1: Depot -> Cloud Cottage */}
@@ -365,147 +326,80 @@ export default function DreamExpressExperience({
               <path ref={(el) => (pathRefs.current['moonbeam-tower'] = el)} d="M 130 420 C 350 420, 680 270, 985 320" fill="none" stroke="transparent" />
             </g>
 
-            {/* Landmarks */}
-            {/* Depot at (130, 420) */}
+            {/* Landmarks (Waypoints & Arrival Effects matching dream_express_world.png) */}
+            {/* Depot Tag (130, 420) */}
             <g transform="translate(130, 420)">
-              <rect x="-85" y="0" width="115" height="14" rx="2" fill="#5C4033" stroke="#422C20" strokeWidth="2" />
-              <rect x="-70" y="-32" width="45" height="14" rx="2" fill="#FFFDF8" stroke="#5C4033" strokeWidth="1" />
-              <text x="-48" y="-22" textAnchor="middle" fill="#5C4033" fontSize="7" fontWeight="bold" fontFamily="monospace">
-                DEPOT 003
+              <rect x="-65" y="-30" width="130" height="22" rx="11" fill="rgba(15, 23, 42, 0.85)" stroke="#F5D88C" strokeWidth="1.5" />
+              <text x="0" y="-15" textAnchor="middle" fill="#F5D88C" fontSize="9" fontWeight="bold" fontFamily="monospace">
+                ★ DEPOT NO. 003
               </text>
             </g>
 
-            {/* Cloud Cottage (410, 190) */}
-            <g className={`exp-landmark ${deliveredDest === 'cloud-cottage' ? 'is-delivered' : ''}`} transform="translate(410, 190)">
-              <ellipse cx="0" cy="35" rx="110" ry="32" fill="#CBDDF2" />
-              <circle cx="-55" cy="20" r="38" fill="#E8F1FC" />
-              <circle cx="55" cy="20" r="38" fill="#E8F1FC" />
-              <circle cx="0" cy="10" r="48" fill="#FFFDF8" />
-              <rect x="-40" y="-35" width="80" height="52" rx="4" fill="#FFFDF9" stroke="#5C4033" strokeWidth="2.5" />
-              <polygon points="-52,-32 0,-75 52,-32" fill="#8C3B56" stroke="#5C4033" strokeWidth="2.5" />
-              <rect x="-24" y="-20" width="22" height="24" rx="3" fill={deliveredDest === 'cloud-cottage' ? '#FFF59D' : '#FFE885'} stroke="#5C4033" strokeWidth="1.5" />
-              <g transform="translate(0, -96)">
-                <rect x="-65" y="-14" width="130" height="24" rx="12" fill="#FFFDF8" stroke="#5C4033" strokeWidth="1.8" />
-                <text x="0" y="3" textAnchor="middle" fill="#5C4033" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
-                  ☁️ Cloud Cottage
-                </text>
-              </g>
+            {/* Cloud Cottage Station (410, 170) */}
+            <g className={`exp-landmark ${deliveredDest === 'cloud-cottage' ? 'is-delivered' : ''}`} transform="translate(410, 170)">
+              <rect x="-65" y="-12" width="130" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
+              <text x="0" y="4" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
+                ☁️ Cloud Cottage {deliveredDest === 'cloud-cottage' && '✓'}
+              </text>
+              {deliveredDest === 'cloud-cottage' && (
+                <circle cx="0" cy="0" r="36" fill="none" stroke="#F5D88C" strokeWidth="2.5" className="arrival-halo" />
+              )}
             </g>
 
-            {/* Sleepy Ghost House (760, 360) */}
-            <g className={`exp-landmark ${deliveredDest === 'ghost-house' ? 'is-delivered' : ''}`} transform="translate(760, 360)">
-              <rect x="-45" y="-38" width="90" height="74" rx="4" fill="#3A324D" stroke="#251E38" strokeWidth="2.5" />
-              <polygon points="-58,-35 0,-95 58,-35" fill="#6C597E" stroke="#251E38" strokeWidth="2.5" />
-              <circle cx="0" cy="-58" r="16" fill="#251E38" stroke="#FFE58F" strokeWidth="2" />
-
-              {/* Ghost with waving arm */}
-              <g className={`exp-ghost ${deliveredDest === 'ghost-house' ? 'is-waving' : ''}`} transform="translate(0, -56)">
-                <path d="M -9 6 C -9 -8, 9 -8, 9 6 C 6 12, 3 9, 0 12 C -3 9, -6 12, -9 6 Z" fill="#FFFDF8" stroke="#5C4033" strokeWidth="1.2" />
-                <circle cx="-3" cy="1" r="1.2" fill="#5C4033" />
-                <circle cx="3" cy="1" r="1.2" fill="#5C4033" />
-                <path className="exp-ghost-arm" d="M 6 3 Q 12 0 14 -6" fill="none" stroke="#FFFDF8" strokeWidth="2.5" strokeLinecap="round" />
-              </g>
-
-              <g transform="translate(0, -114)">
-                <rect x="-75" y="-14" width="150" height="24" rx="12" fill="#FFFDF8" stroke="#5C4033" strokeWidth="1.8" />
-                <text x="0" y="3" textAnchor="middle" fill="#5C4033" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
-                  👻 Sleepy Ghost House
-                </text>
-              </g>
+            {/* Sleepy Ghost House Station (760, 340) */}
+            <g className={`exp-landmark ${deliveredDest === 'ghost-house' ? 'is-delivered' : ''}`} transform="translate(760, 340)">
+              <rect x="-75" y="-12" width="150" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
+              <text x="0" y="4" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
+                👻 Sleepy Ghost House {deliveredDest === 'ghost-house' && '✓'}
+              </text>
+              {deliveredDest === 'ghost-house' && (
+                <circle cx="0" cy="0" r="36" fill="none" stroke="#70D6FF" strokeWidth="2.5" className="arrival-halo" />
+              )}
             </g>
 
-            {/* Moonbeam Tower (1050, 240) */}
-            <g className={`exp-landmark ${deliveredDest === 'moonbeam-tower' ? 'is-delivered' : ''}`} transform="translate(1050, 240)">
-              <polygon points="-35,0 -22,-110 22,-110 35,0" fill="#E8DEC8" stroke="#5C4033" strokeWidth="2.5" />
-              <rect x="-28" y="-114" width="56" height="8" rx="2" fill="#D4A843" stroke="#5C4033" strokeWidth="1.5" />
-              <rect x="-18" y="-136" width="36" height="22" rx="3" fill="#FFFDF8" stroke="#5C4033" strokeWidth="2" />
-
-              {/* Rotating Anime Searchlight Beam */}
-              <g className={`exp-beam-rotor ${getLighthouseMode()}`} transform="translate(0, -125)">
+            {/* Moonbeam Tower Station & Rotating Searchlight (1050, 160) */}
+            <g className={`exp-landmark ${deliveredDest === 'moonbeam-tower' ? 'is-delivered' : ''}`} transform="translate(1050, 160)">
+              {/* Rotating Searchlight Beam from Lighthouse Lantern Room */}
+              <g className={`exp-beam-rotor ${getLighthouseMode()}`} transform="translate(-5, -55)">
                 <polygon points="0,0 -480,-140 -480,140" fill="url(#expLighthouseBeamGrad)" />
                 <circle cx="0" cy="0" r="16" fill="url(#expBeaconGlow)" />
                 <circle cx="0" cy="0" r="6" fill="#FFFFFF" />
               </g>
 
-              <g transform="translate(0, -196)">
-                <rect x="-75" y="-14" width="150" height="24" rx="12" fill="#FFFDF8" stroke="#5C4033" strokeWidth="1.8" />
-                <text x="0" y="3" textAnchor="middle" fill="#5C4033" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
-                  🏰 Moonbeam Tower
-                </text>
-              </g>
+              <rect x="-75" y="-12" width="150" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
+              <text x="0" y="4" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
+                🏰 Moonbeam Tower {deliveredDest === 'moonbeam-tower' && '✓'}
+              </text>
+              {deliveredDest === 'moonbeam-tower' && (
+                <circle cx="0" cy="0" r="36" fill="none" stroke="#FFD166" strokeWidth="2.5" className="arrival-halo" />
+              )}
             </g>
 
-            {/* Foreground Cloud Framing */}
-            <path d="M 0 520 L 0 475 Q 320 435 600 460 Q 900 435 1200 470 L 1200 520 Z" fill="#FAF4EC" opacity="0.9" />
-
-            {/* Articulated Train No. 003 */}
-            {/* Postal Carriage */}
+            {/* Locomotive Mailcar No. 003 — Mounted Transparent Raster Sprite */}
             <g
-              className="exp-carriage-group"
-              transform={`translate(${trainPos.carriage.x}, ${trainPos.carriage.y}) rotate(${trainPos.carriage.angle})`}
-            >
-              <line x1="26" y1="-4" x2="42" y2="-4" stroke="#5C4033" strokeWidth="4" />
-              <rect x="-36" y="-8" width="72" height="14" rx="2" fill="#422C20" stroke="#2B1E17" strokeWidth="1.5" />
-              <rect x="-34" y="-36" width="68" height="28" rx="4" fill="#A34063" stroke="#5C4033" strokeWidth="2" />
-              <rect x="-36" y="-42" width="72" height="8" rx="3" fill="#FFFDF9" stroke="#5C4033" strokeWidth="1.5" />
-              <rect x="-24" y="-28" width="22" height="14" rx="2" fill="#FFE885" stroke="#5C4033" strokeWidth="1.2" />
-              <rect x="-20" y="-24" width="14" height="8" rx="1" fill="#D4A843" />
-              {/* Carriage Wheels (Spin only while moving) */}
-              <g className={`exp-wheels ${isTraveling ? 'is-spinning' : ''}`}>
-                <circle cx="-20" cy="6" r="9" fill="#2B1E17" stroke="#D4A843" strokeWidth="2" />
-                <line x1="-20" y1="-3" x2="-20" y2="15" stroke="#D4A843" strokeWidth="1.2" />
-                <circle cx="16" cy="6" r="9" fill="#2B1E17" stroke="#D4A843" strokeWidth="2" />
-                <line x1="16" y1="-3" x2="16" y2="15" stroke="#D4A843" strokeWidth="1.2" />
-              </g>
-            </g>
-
-            {/* Locomotive */}
-            <g
-              className="exp-loco-group"
+              className="exp-train-group"
               transform={`translate(${trainPos.loco.x}, ${trainPos.loco.y}) rotate(${trainPos.loco.angle})`}
             >
-              <polygon points="70,-22 220,-50 220,6" fill="url(#expHeadlampGrad)" opacity={isTraveling ? 0.9 : 0.45} />
-              <rect x="-46" y="-8" width="108" height="16" rx="3" fill="#422C20" stroke="#2B1E17" strokeWidth="1.5" />
-              <polygon points="62,8 78,8 62,-6" fill="#D4A843" stroke="#5C4033" strokeWidth="1.5" />
-              <rect x="-12" y="-38" width="70" height="32" rx="6" fill="#A34063" stroke="#5C4033" strokeWidth="2" />
-              <line x1="8" y1="-38" x2="8" y2="-6" stroke="#F5D88C" strokeWidth="2.5" />
-              <line x1="32" y1="-38" x2="32" y2="-6" stroke="#F5D88C" strokeWidth="2.5" />
-              <rect x="50" y="-38" width="14" height="32" rx="4" fill="#2B1E17" stroke="#5C4033" strokeWidth="1.5" />
-              <circle cx="57" cy="-22" r="5" fill="#D4A843" stroke="#5C4033" strokeWidth="1" />
-              <rect x="42" y="-56" width="12" height="18" rx="2" fill="#2B1E17" stroke="#5C4033" strokeWidth="1.5" />
-              <rect x="-44" y="-50" width="36" height="44" rx="4" fill="#FFFDF9" stroke="#5C4033" strokeWidth="2" />
-              <rect x="-38" y="-44" width="24" height="20" rx="3" fill="#FFE885" stroke="#5C4033" strokeWidth="1.2" />
-              <rect x="58" y="-30" width="14" height="14" rx="2" fill="#D4A843" stroke="#5C4033" strokeWidth="1.5" />
-              <circle cx="70" cy="-23" r="5" fill="#FFF" />
+              {/* Headlamp beam */}
+              <polygon points="46,-12 180,-35 180,10" fill="url(#expHeadlampGrad)" opacity={isTraveling ? 0.9 : 0.4} />
 
-              {/* Locomotive Wheels (Spin ONLY during travel) */}
-              <g className={`exp-wheels ${isTraveling ? 'is-spinning' : ''}`}>
-                <circle cx="-25" cy="8" r="14" fill="#2B1E17" stroke="#D4A843" strokeWidth="2.5" />
-                <line x1="-25" y1="-6" x2="-25" y2="22" stroke="#D4A843" strokeWidth="1.5" />
-                <circle cx="8" cy="8" r="14" fill="#2B1E17" stroke="#D4A843" strokeWidth="2.5" />
-                <line x1="8" y1="-6" x2="8" y2="22" stroke="#D4A843" strokeWidth="1.5" />
-                <circle cx="45" cy="11" r="9" fill="#2B1E17" stroke="#D4A843" strokeWidth="2" />
-                <line x1="45" y1="2" x2="45" y2="20" stroke="#D4A843" strokeWidth="1.2" />
-              </g>
-
-              {/* Connecting Rod */}
-              <line
-                x1="-25"
-                y1="8"
-                x2="8"
-                y2="8"
-                className={`exp-rod ${isTraveling ? 'is-piston' : ''}`}
-                stroke="#FAF1E2"
-                strokeWidth="3.5"
-                strokeLinecap="round"
+              {/* Raster Cutout: Locomotive & Mailcar (Flipped horizontally so locomotive leads) */}
+              <image
+                href="/assets/production-art/sprites/locomotive_mailcar.png"
+                width="110"
+                height="38"
+                x="-55"
+                y="-24"
+                transform="scale(-1, 1)"
+                style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' }}
               />
 
-              {/* Chimney Steam Puffs */}
+              {/* Chimney Steam Puffs during flight */}
               {isTraveling && (
                 <g className="exp-steam-puffs" aria-hidden="true">
-                  <circle className="exp-puff ep1" cx="48" cy="-68" r="5" fill="#FFFFFF" opacity="0.9" />
-                  <circle className="exp-puff ep2" cx="42" cy="-80" r="8" fill="#FFFDF8" opacity="0.75" />
-                  <circle className="exp-puff ep3" cx="34" cy="-96" r="12" fill="#F0F4FC" opacity="0.55" />
+                  <circle className="exp-puff ep1" cx="35" cy="-28" r="5" fill="#FFFFFF" opacity="0.9" />
+                  <circle className="exp-puff ep2" cx="28" cy="-38" r="7" fill="#FFFDF8" opacity="0.75" />
+                  <circle className="exp-puff ep3" cx="18" cy="-48" r="10" fill="#F0F4FC" opacity="0.55" />
                 </g>
               )}
             </g>

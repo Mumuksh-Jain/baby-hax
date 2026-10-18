@@ -195,9 +195,6 @@ export default function MoonlightExperience({
 
           {/* Wooden Bedside Table with Official Lantern Artwork */}
           <div className="chamber-bedside-table" aria-hidden="true">
-            <div className="table-top"></div>
-            <div className="table-legs"></div>
-
             {/* Official Lantern sitting physically on table */}
             <div className="chamber-lantern-wrap">
               <img
@@ -214,6 +211,8 @@ export default function MoonlightExperience({
                 }}
               ></div>
             </div>
+            <div className="table-top"></div>
+            <div className="table-legs"></div>
           </div>
 
           {/* Delighted Pip reaction when comfortable/asleep */}

@@ -1,0 +1,91 @@
+{
+  "kit_version": "1.0",
+  "source": "Model-generated 1536\u00d71024 concept art board; cropped as real images. Backgrounds upscaled 3x from approx. 470\u2013520\u00d7343 original panels; no invented resolution claims.",
+  "license_note": "Generated illustration assets: credit AI-generated art as applicable. Official assets remain original haX.baby-supplied assets. Do not assume third-party vocal audio is cleared.",
+  "backgrounds": {
+    "star_theater.png": {
+      "baked_in": "static star/curtain/moon/props. Do not place a duplicate stage curtain, but overlay official Pip and dynamically moving stars.",
+      "preferred_cover": "background-size:cover; preserve subject area"
+    },
+    "moonlight_room.png": {
+      "baked_in": "Lantern and ghost are painted in image. Treat as visual reference or use ONLY with a carefully aligned replacement/occlusion approach; NOT a truly empty stage.",
+      "lighting_variants": [
+        "moonlight_room_warm_lighting_reference.png",
+        "moonlight_room_moon_lighting_reference.png",
+        "moonlight_room_starlight_lighting_reference.png"
+      ]
+    },
+    "dream_express_world.png": {
+      "baked_in": "Cloud cottage, ghost house and lighthouse are built into the environment; locomotive is not baked in. Overlay animated locomotive separately and enhance beacon/arrival via light effects. Landmark sprites are optional focus closeups."
+    }
+  },
+  "sprites": {
+    "locomotive_mailcar": {
+      "file": "sprites/locomotive_mailcar.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "cloud_cottage": {
+      "file": "sprites/cloud_cottage.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "sleepy_ghost_house": {
+      "file": "sprites/sleepy_ghost_house.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "moonbeam_tower": {
+      "file": "sprites/moonbeam_tower.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "orchestra_star_1": {
+      "file": "sprites/orchestra_star_1.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "orchestra_star_2": {
+      "file": "sprites/orchestra_star_2.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "orchestra_star_3": {
+      "file": "sprites/orchestra_star_3.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "moonlight_ghost_awake": {
+      "file": "sprites/moonlight_ghost_awake.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "moonlight_ghost_curious": {
+      "file": "sprites/moonlight_ghost_curious.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "moonlight_ghost_comfortable": {
+      "file": "sprites/moonlight_ghost_comfortable.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "moonlight_ghost_asleep": {
+      "file": "sprites/moonlight_ghost_asleep.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    },
+    "dreamspace_paper_clouds": {
+      "file": "sprites/dreamspace_paper_clouds.png",
+      "type": "transparent raster cutout from contact sheet",
+      "note": "Automatic alpha extraction; review edge halos and color against target background. These are not rigged sprites."
+    }
+  },
+  "official_assets": [
+    "pip_avatar_cloud.png",
+    "pip_portrait.png",
+    "pip_lullaby_box.png",
+    "pip_dream_lantern.png"
+  ],
+  "important_limitation": "This is a layered-ready partial artwork kit, NOT a fully decoupled layered scene. Background plates contain some baked props. PNG sprites do not provide skeletal rigs, spinning wheels, or clean ghost pose morphing. Rebuild or obtain clean artwork for those specific interactions if quality is insufficient."
+}

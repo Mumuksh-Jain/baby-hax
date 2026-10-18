@@ -8,6 +8,27 @@
   overflow: hidden;
 }
 
+/* Production Cut-Paper Clouds Frame */
+.dreamspace-paper-clouds-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+  opacity: 0.85;
+}
+
+.dreamspace-paper-clouds-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45));
+}
+
 /* Ambient Paper Clouds */
 .dreamspace-cloud {
   position: absolute;
@@ -303,3 +324,17 @@
   .star-pos-top-right { right: 4px; top: 12%; }
   .star-pos-bottom-right { right: 4px; top: 88%; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .dreamspace-cloud,
+  .constellation-beam,
+  .dreamspace-star-btn,
+  .constellation-star.is-illuminated .star-glyph,
+  .ambient-chime .star-glyph,
+  .sparkle-particle,
+  .sparkle-tag {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+

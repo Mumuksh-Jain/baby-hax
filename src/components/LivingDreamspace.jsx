@@ -36,6 +36,15 @@ export default function LivingDreamspace({ stamps = {}, soundEnabled = false }) 
 
   return (
     <div className="living-dreamspace-root" aria-hidden="false">
+      {/* Production Art Cut-Paper Clouds Frame (Decorative, zero pointer events) */}
+      <div className="dreamspace-paper-clouds-frame" aria-hidden="true">
+        <img
+          src="/assets/production-art/sprites/dreamspace_paper_clouds.png"
+          alt=""
+          className="dreamspace-paper-clouds-img"
+        />
+      </div>
+
       {/* Ambient Drifting Clouds (Decorative, zero pointer events) */}
       <div className="dreamspace-cloud cloud-top-left" aria-hidden="true" />
       <div className="dreamspace-cloud cloud-top-right" aria-hidden="true" />
