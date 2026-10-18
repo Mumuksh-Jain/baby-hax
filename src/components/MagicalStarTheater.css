@@ -1,0 +1,746 @@
+/**
+ * Pip's Magical Star Theater — Fullscreen Cinematic Styles
+ * PASS 01C.4: Storybook animated midnight sky experience
+ * Palette:
+ * - Midnight navy: #111527
+ * - Deep indigo:   #25243D
+ * - Soft gold:     #F5D88C
+ * - Warm cream:    #FFF8F1
+ * - Berry pink:    #A34063
+ * - Subtle lavender: #B8A9DD
+ */
+
+/* =========================================================
+   1. Fullscreen Theater Backdrop & Overlay
+   ========================================================= */
+.magical-star-theater {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #25243D 0%, #17172B 55%, #111527 100%);
+  color: #FFF8F1;
+  font-family: var(--font-body, 'Fredoka', 'Quicksand', -apple-system, sans-serif);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1), visibility 1.5s;
+  pointer-events: none;
+  user-select: none;
+}
+
+.magical-star-theater.theater-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.magical-star-theater.phase-exiting {
+  opacity: 0;
+  transition: opacity 1.2s ease-out;
+}
+
+/* =========================================================
+   2. Theater Navigation Top Bar
+   ========================================================= */
+.theater-top-bar {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  z-index: 30;
+  box-sizing: border-box;
+}
+
+.theater-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(37, 36, 61, 0.75);
+  border: 1.5px solid rgba(245, 216, 140, 0.35);
+  color: #FFF8F1;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.theater-nav-btn:hover,
+.theater-nav-btn:focus-visible {
+  background: rgba(163, 64, 99, 0.85);
+  border-color: #F5D88C;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(163, 64, 99, 0.4);
+  outline: none;
+}
+
+.theater-nav-btn:active {
+  transform: translateY(1px);
+}
+
+.esc-pill {
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255, 248, 241, 0.15);
+  border: 1px solid rgba(255, 248, 241, 0.25);
+  color: #F5D88C;
+  font-family: monospace;
+}
+
+.theater-title-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: #F5D88C;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  text-shadow: 0 0 12px rgba(245, 216, 140, 0.5);
+}
+
+.theater-title-badge .theater-sparkle {
+  color: #FFF8F1;
+  animation: starPulseGlow 2s ease-in-out infinite alternate;
+}
+
+/* =========================================================
+   3. Distant Midnight Sky Layer (Twinkling Stars & Nebula)
+   ========================================================= */
+.theater-sky-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.sky-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #FFF8F1;
+  opacity: 0.6;
+  box-shadow: 0 0 6px rgba(255, 248, 241, 0.8), 0 0 12px rgba(245, 216, 140, 0.5);
+  animation: skyStarTwinkle var(--twinkle-dur, 3s) ease-in-out infinite alternate;
+}
+
+@keyframes skyStarTwinkle {
+  0% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.9);
+  }
+}
+
+/* Ambient Moon in Theater */
+.theater-moon {
+  position: absolute;
+  top: 10%;
+  right: 12%;
+  width: 74px;
+  height: 74px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 16px rgba(245, 216, 140, 0.65));
+  transition: transform 3s ease, filter 2s ease;
+  animation: moonFloat 8s ease-in-out infinite alternate;
+}
+
+.theater-moon.moon-smiling {
+  filter: drop-shadow(0 0 24px rgba(255, 212, 90, 0.9));
+  transform: scale(1.08) rotate(4deg);
+}
+
+@keyframes moonFloat {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-8px) rotate(3deg); }
+}
+
+/* Drifting illustrated clouds in Scene 4B */
+.drifting-clouds-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.drifting-clouds-layer.clouds-visible {
+  opacity: 0.65;
+}
+
+.storybook-cloud {
+  position: absolute;
+  fill: #B8A9DD;
+  opacity: 0.35;
+  filter: blur(1px);
+}
+
+.cloud-drift-1 {
+  top: 18%;
+  left: -20%;
+  width: 320px;
+  animation: cloudDriftSlow 38s linear infinite;
+}
+
+.cloud-drift-2 {
+  top: 55%;
+  right: -25%;
+  width: 380px;
+  animation: cloudDriftReverse 44s linear infinite;
+}
+
+@keyframes cloudDriftSlow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(130vw); }
+}
+
+@keyframes cloudDriftReverse {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-130vw); }
+}
+
+/* =========================================================
+   4. Center Stage & Pip Cloud Dream Vignette
+   ========================================================= */
+.theater-stage-center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  max-width: 800px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Pip's Dream Cloud Vignette:
+   Preserves official artwork perfectly without harsh cutout edges
+   by seating Pip inside an organic, glowing cloud-dream island */
+.pip-dream-island {
+  position: relative;
+  width: 310px;
+  height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Glowing cloud-shaped mask and aura */
+.cloud-island-aura {
+  position: absolute;
+  inset: -24px -28px -18px -28px;
+  border-radius: 54% 46% 48% 52% / 46% 48% 52% 54%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 248, 241, 0.95) 0%, rgba(245, 216, 140, 0.8) 55%, rgba(184, 169, 221, 0.3) 78%, transparent 92%);
+  box-shadow: 0 0 35px rgba(245, 216, 140, 0.5), 0 0 70px rgba(184, 169, 221, 0.25);
+  animation: auraBreathe 6s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+@keyframes auraBreathe {
+  0% {
+    transform: scale(0.96) rotate(-1deg);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.03) rotate(1.5deg);
+    opacity: 1;
+  }
+}
+
+.cloud-island-mask {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 52% 48% 50% 50% / 48% 50% 50% 52%;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(255, 248, 241, 0.9), 0 10px 30px rgba(17, 21, 39, 0.6);
+  border: 3px solid #FFF8F1;
+  background: #FFF8F1;
+  z-index: 2;
+}
+
+.pip-official-character {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+}
+
+/* Character Puppet Motion States in Theater */
+.pip-dream-island.pip-tilt-left {
+  transform: rotate(-6deg) translateY(-8px);
+}
+
+.pip-dream-island.pip-tilt-right {
+  transform: rotate(6deg) translateY(-8px);
+}
+
+.pip-dream-island.pip-looking-up {
+  transform: translateY(-14px) scale(1.02);
+}
+
+.pip-dream-island.pip-sway-song {
+  animation: pipSongSway 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes pipSongSway {
+  0% { transform: rotate(-3.5deg) translateY(-6px); }
+  50% { transform: rotate(0deg) translateY(-10px); }
+  100% { transform: rotate(3.5deg) translateY(-6px); }
+}
+
+.pip-dream-island.pip-drowsy {
+  animation: pipDrowsyNod 5s ease-in-out infinite;
+}
+
+@keyframes pipDrowsyNod {
+  0%, 100% { transform: rotate(0deg) translateY(-4px); }
+  50% { transform: rotate(-4deg) translateY(4px); }
+  75% { transform: rotate(2deg) translateY(2px); }
+}
+
+.pip-dream-island.pip-celebrate-jump {
+  animation: pipGrandHop 1.1s cubic-bezier(0.2, 0.8, 0.2, 1.2) infinite alternate;
+}
+
+@keyframes pipGrandHop {
+  0% {
+    transform: translateY(0px) scale(1.02, 0.96);
+  }
+  40% {
+    transform: translateY(-34px) scale(0.96, 1.06) rotate(-3deg);
+  }
+  60% {
+    transform: translateY(-34px) scale(0.96, 1.06) rotate(3deg);
+  }
+  100% {
+    transform: translateY(-4px) scale(1.04, 0.96);
+  }
+}
+
+/* =========================================================
+   5. Theater Dialogue Bubble
+   ========================================================= */
+.theater-dialogue-wrap {
+  position: relative;
+  z-index: 35;
+  pointer-events: none;
+  margin-bottom: 14px;
+  animation: dialogueFloatIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes dialogueFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.theater-dialogue-box {
+  background: #FFF8F1;
+  color: #25243D;
+  border: 2px solid #5C4033;
+  border-radius: 16px;
+  padding: 10px 18px;
+  box-shadow: 0 8px 24px rgba(17, 21, 39, 0.4), 0 2px 6px rgba(163, 64, 99, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 320px;
+}
+
+.theater-dialogue-tag {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #A34063;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.theater-dialogue-quote {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #25243D;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  line-height: 1.3;
+}
+
+.theater-dialogue-tail {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #5C4033;
+  margin-top: -1px;
+}
+
+/* =========================================================
+   6. Choreographed Star Orchestra Layer (SVG Motion + Nodes)
+   ========================================================= */
+.theater-constellation-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.constellation-line {
+  stroke: #F5D88C;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(245, 216, 140, 0.8));
+  opacity: 0;
+  transition: opacity 1.2s ease, stroke-dashoffset 2s ease;
+}
+
+.constellation-line.lines-visible {
+  opacity: 0.85;
+}
+
+.constellation-trail {
+  stroke: url(#goldenTrailGrad);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0;
+  filter: drop-shadow(0 0 10px rgba(245, 216, 140, 0.9));
+  transition: opacity 0.8s ease;
+}
+
+.constellation-trail.trail-active {
+  opacity: 0.9;
+}
+
+.constellation-trail.trail-fading {
+  opacity: 0;
+  transition: opacity 2.5s ease-out;
+}
+
+/* Individual Choreographed Theater Stars */
+.theater-star-node {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  margin-top: -22px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 0 12px rgba(245, 216, 140, 0.9));
+}
+
+.theater-star-node:focus-visible {
+  outline: 2px dashed #FFF8F1;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+.theater-star-node svg {
+  width: 36px;
+  height: 36px;
+  transition: transform 0.3s ease;
+}
+
+.theater-star-node:hover svg {
+  transform: scale(1.22) rotate(15deg);
+}
+
+.theater-star-node.star-pulsing svg {
+  animation: activeStarPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes activeStarPulse {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 8px rgba(245, 216, 140, 0.7));
+  }
+  100% {
+    transform: scale(1.3) rotate(20deg);
+    filter: drop-shadow(0 0 20px rgba(255, 248, 241, 1));
+  }
+}
+
+/* Floating musical notes during Scene 4C */
+.theater-notes-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 18;
+}
+
+.theater-float-note {
+  position: absolute;
+  color: #F5D88C;
+  font-size: 1.5rem;
+  font-weight: 700;
+  filter: drop-shadow(0 0 8px rgba(245, 216, 140, 0.8));
+  animation: floatNoteRise 4.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  opacity: 0;
+}
+
+@keyframes floatNoteRise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.7) rotate(-10deg);
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--note-dx, 20px), -90px) scale(1.15) rotate(15deg);
+  }
+}
+
+/* Tap Sparkle Particles when user taps a star in theater */
+.theater-tap-particle {
+  position: absolute;
+  pointer-events: none;
+  font-size: 1.1rem;
+  color: #FFF8F1;
+  text-shadow: 0 0 8px #F5D88C;
+  animation: burstParticle 0.85s ease-out forwards;
+}
+
+@keyframes burstParticle {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--p-dx, 20px), var(--p-dy, -20px)) scale(0.2);
+  }
+}
+
+/* =========================================================
+   7. Scene 4D: Distant Nursery Silhouette
+   ========================================================= */
+.theater-horizon-silhouette {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 110px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 2s ease, transform 2s ease;
+}
+
+.theater-horizon-silhouette.silhouette-visible {
+  opacity: 0.75;
+  transform: translateY(0);
+}
+
+.nursery-roofline-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.roof-window-light {
+  fill: #F5D88C;
+  transition: fill 3s ease, opacity 3s ease;
+}
+
+.roof-window-light.light-dimmed {
+  fill: #5C4033;
+  opacity: 0.35;
+}
+
+/* =========================================================
+   8. Scene 5: Celebratory Starburst Fireworks
+   ========================================================= */
+.theater-celebration-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.celebration-ray {
+  position: absolute;
+  width: 4px;
+  height: 80px;
+  background: linear-gradient(to top, transparent, #F5D88C, #FFF8F1);
+  border-radius: 2px;
+  opacity: 0;
+  animation: rayShoot 1.5s ease-out infinite;
+}
+
+@keyframes rayShoot {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--ray-rot, 0deg)) translateY(0px) scaleY(0.2);
+  }
+  40% {
+    opacity: 1;
+    transform: rotate(var(--ray-rot, 0deg)) translateY(-90px) scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--ray-rot, 0deg)) translateY(-150px) scaleY(0.4);
+  }
+}
+
+/* =========================================================
+   9. Theater Bottom Timeline Indicator
+   ========================================================= */
+.theater-bottom-status {
+  width: 100%;
+  max-width: 600px;
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 30;
+  box-sizing: border-box;
+}
+
+.theater-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 248, 241, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 216, 140, 0.2);
+}
+
+.theater-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #A34063, #F5D88C);
+  border-radius: 6px;
+  transition: width 0.3s linear;
+}
+
+.theater-status-caption {
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  color: #F5D88C;
+  font-weight: 500;
+  text-shadow: 0 0 8px rgba(245, 216, 140, 0.4);
+}
+
+/* =========================================================
+   10. Accessibility & Responsive Adjustments
+   ========================================================= */
+@media (max-width: 768px) {
+  .theater-top-bar {
+    padding: 10px 14px;
+  }
+  
+  .theater-title-badge {
+    display: none; /* Conserve space on small viewports */
+  }
+
+  .pip-dream-island {
+    width: 230px;
+    height: 270px;
+  }
+
+  .theater-moon {
+    top: 5%;
+    right: 5%;
+    width: 50px;
+    height: 50px;
+  }
+
+  .theater-dialogue-box {
+    padding: 7px 12px;
+    max-width: 240px;
+  }
+
+  .theater-dialogue-quote {
+    font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .pip-dream-island {
+    width: 195px;
+    height: 230px;
+  }
+
+  .theater-top-bar {
+    padding: 8px 10px;
+  }
+
+  .theater-nav-btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .theater-dialogue-box {
+    padding: 6px 10px;
+    max-width: 210px;
+  }
+
+  .theater-dialogue-quote {
+    font-size: 0.82rem;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .magical-star-theater,
+  .pip-dream-island,
+  .cloud-island-aura,
+  .theater-star-node,
+  .theater-moon,
+  .sky-star,
+  .celebration-ray,
+  .theater-float-note {
+    animation: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+  .constellation-trail {
+    display: none;
+  }
+}

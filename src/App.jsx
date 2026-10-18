@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import RetroBrowserFrame from './components/RetroBrowserFrame';
 import HeroSection from './components/HeroSection';
+import MagicalStarTheater from './components/MagicalStarTheater';
+import RetroAchievementPopup from './components/RetroAchievementPopup';
 import {
   setSoundEnabled as updateSoundEngine,
   isSoundEnabled,
@@ -130,11 +132,15 @@ export default function App() {
   const [showDialogue, setShowDialogue] = useState(false);
   const [reactionIndex, setReactionIndex] = useState(0);
 
-  // Pass 01C.1 & 01C.2: Star Orchestra & Pip Motion States
+  // Pass 01C.1 & 01C.2 & 01C.4: Star Orchestra & Magical Star Theater
   // orchestraState: 'idle' | 'collecting' | 'performing' | 'celebrating' | 'returning'
   const [collectedStars, setCollectedStars] = useState([]);
   const [orchestraState, setOrchestraState] = useState('idle');
   const [activeSoundingStar, setActiveSoundingStar] = useState(null);
+
+  // PASS 01C.4: Fullscreen Cinematic Theater & Retro Popup
+  const [isTheaterOpen, setIsTheaterOpen] = useState(false);
+  const [isAchievementOpen, setIsAchievementOpen] = useState(false);
 
   // pipMotionState: 'idle' | 'surprised' | 'curious' | 'listening' | 'celebrating'
   const [pipMotionState, setPipMotionState] = useState('idle');
@@ -225,6 +231,8 @@ export default function App() {
       if (tabId !== 'bedroom') {
         stopAllOrchestraAudio();
         clearOrchestraTimers();
+        setIsTheaterOpen(false);
+        setIsAchievementOpen(false);
         setCollectedStars([]);
         setOrchestraState('idle');
         setPipMotionState('idle');
@@ -397,6 +405,42 @@ export default function App() {
   }, [orchestraState, triggerFinale]);
 
   /**
+   * PASS 01C.4: Fullscreen Magical Star Theater Handlers
+   */
+  const handleCloseTheater = useCallback(() => {
+    setIsTheaterOpen(false);
+    stopAllOrchestraAudio();
+    clearOrchestraTimers();
+    setCollectedStars([]);
+    setOrchestraState('idle');
+    setPipMotionState('idle');
+    setActiveSoundingStar(null);
+    setShowDialogue(false);
+    setIsPanicking(false);
+    setCustomReaction(null);
+    setSrAnnouncement('Exited Magical Star Theater and returned to bedroom.');
+  }, [clearOrchestraTimers]);
+
+  const handleTheaterComplete = useCallback(() => {
+    setIsTheaterOpen(false);
+    stopAllOrchestraAudio();
+    clearOrchestraTimers();
+    setCollectedStars([]);
+    setOrchestraState('idle');
+    setPipMotionState('idle');
+    setActiveSoundingStar(null);
+    setShowDialogue(false);
+    setIsPanicking(false);
+    setCustomReaction(null);
+
+    // Trigger the early-web retro achievement popup inside the restored bedroom!
+    setIsAchievementOpen(true);
+    setSrAnnouncement(
+      'Achievement Unlocked! You turned three ordinary stars into Pip’s very first concert.'
+    );
+  }, [clearOrchestraTimers]);
+
+  /**
    * Pass 01C.1 & 01C.2: Star Orchestra Collection & Emotional Progression
    */
   const handleStarClick = useCallback(
@@ -462,9 +506,9 @@ export default function App() {
           dialogueTimerRef.current = null;
         }, 3600);
       } else if (nextCollected.length === 3) {
-        // --- 3. THIRD STAR COLLECTED: BEGIN VOCAL LULLABY PERFORMANCE ---
+        // --- 3. THIRD STAR COLLECTED: BEGIN THEATER EXPERIENCE ---
         setOrchestraState('performing');
-        setPipMotionState('listening'); // Remains in 'listening' motion throughout song!
+        setPipMotionState('listening');
         playStarSound(2);
 
         setCustomReaction(STAR_COLLECTION_REACTIONS.performing);
@@ -478,43 +522,13 @@ export default function App() {
           dialogueTimerRef.current = null;
         }, 4000);
 
-        // Start rhythmic star glow pulsing interval
-        let noteCounter = 0;
-        starPulseIntervalRef.current = setInterval(() => {
-          noteCounter = (noteCounter % 3) + 1;
-          setActiveSoundingStar(noteCounter);
-          const pulseOffTimer = setTimeout(() => {
-            setActiveSoundingStar(null);
-          }, 450);
-          orchestraTimersRef.current.push(pulseOffTimer);
-        }, 1800);
-
-        let ended = false;
-        const onPlaybackEnd = () => {
-          if (ended) return;
-          ended = true;
-          triggerFinale();
-        };
-
-        // Play the recorded vocal lullaby (twinkle_vocal_short.mp3)
-        playVocalLullaby({ onEnded: onPlaybackEnd }).then(({ duration }) => {
-          // Master performance end timer:
-          // Synchronizes visual performance to the exact shortened audio duration (~17.45s).
-          // If sound is muted during playback or was disabled from the start,
-          // this ensures the visual sequence completes at the matching natural musical time.
-          const visualDurationMs = Math.round((duration && duration > 0 ? duration : 17.45) * 1000);
-          const masterPerformanceTimer = setTimeout(() => {
-            onPlaybackEnd();
-          }, visualDurationMs);
-          orchestraTimersRef.current.push(masterPerformanceTimer);
-        });
+        // Open Pip's Magical Star Theater!
+        setIsTheaterOpen(true);
       }
     },
     [
       collectedStars,
       orchestraState,
-      soundOn,
-      triggerFinale,
       clearPipMotionTimer,
       clearDialogueTimer,
     ]
@@ -539,7 +553,11 @@ export default function App() {
       : PIP_REACTIONS[reactionIndex];
 
   return (
-    <div className={`app-shell ${isNightlight ? 'shell-nightlight' : ''}`}>
+    <div
+      className={`app-shell ${isNightlight ? 'shell-nightlight' : ''} ${
+        isTheaterOpen ? 'theater-overlay-active' : ''
+      }`}
+    >
       {/* Skip to Main Content Link */}
       <a href="#main-content" className="skip-link">
         Skip to bedtime website
@@ -584,6 +602,21 @@ export default function App() {
           onSkipLullaby={handleSkipLullaby}
         />
       </RetroBrowserFrame>
+
+      {/* PASS 01C.4: Fullscreen Cinematic Star Theater */}
+      <MagicalStarTheater
+        isOpen={isTheaterOpen}
+        soundEnabled={soundOn}
+        onToggleSound={handleToggleSound}
+        onCloseTheater={handleCloseTheater}
+        onTheaterComplete={handleTheaterComplete}
+      />
+
+      {/* PASS 01C.4: Retro Achievement Unlocked Popup */}
+      <RetroAchievementPopup
+        isOpen={isAchievementOpen}
+        onClose={() => setIsAchievementOpen(false)}
+      />
     </div>
   );
 }

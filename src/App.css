@@ -15,6 +15,24 @@
   background-color: #F8F0E5;
 }
 
+/* PASS 01C.4: Gentle cinematic dimming when Star Theater opens */
+.app-shell.theater-overlay-active {
+  background-color: #111527;
+  transition: background-color 1.5s ease;
+}
+
+.app-shell.theater-overlay-active .retro-browser-container {
+  opacity: 0.12;
+  filter: blur(2px);
+  transform: scale(0.98);
+  transition: opacity 1.5s ease, filter 1.5s ease, transform 1.5s ease;
+  pointer-events: none;
+}
+
+.retro-browser-container {
+  transition: opacity 1.2s ease, filter 1.2s ease, transform 1.2s ease;
+}
+
 .shell-nightlight .ambient-star {
   color: #FFA62B;
   opacity: 0.7;

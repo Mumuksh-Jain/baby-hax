@@ -1,0 +1,184 @@
+/**
+ * Retro Achievement Popup Styles
+ * Matches media_1792293594708_c7260a52.png pixel-perfectly:
+ * "Pip's First Website.exe"
+ * "Achievement Unlocked!"
+ * "You turned three ordinary stars into Pip's very first concert."
+ * "Certified Star Conductor ★"
+ */
+
+.retro-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(17, 21, 39, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: popupBackdropFade 0.35s ease forwards;
+}
+
+@keyframes popupBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.retro-achievement-window {
+  width: 100%;
+  max-width: 580px;
+  background: #FFF8F1;
+  border: 1.5px solid #25243D;
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(37, 36, 61, 0.28), 0 4px 12px rgba(163, 64, 99, 0.15);
+  color: #25243D;
+  font-family: var(--font-body, 'Fredoka', 'Quicksand', sans-serif);
+  overflow: hidden;
+  animation: popupWindowPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popupWindowPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Window Header Bar */
+.popup-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1.5px solid #F5DCE5;
+  background: #FFF8F1;
+}
+
+.popup-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.popup-star-icon {
+  font-size: 1.15rem;
+  color: #A34063;
+  line-height: 1;
+}
+
+.popup-title-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #25243D;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  letter-spacing: 0.01em;
+}
+
+.popup-close-x {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #5C4033;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.popup-close-x:hover,
+.popup-close-x:focus-visible {
+  color: #A34063;
+  background: #F5DCE5;
+  outline: none;
+}
+
+/* Window Body Content */
+.popup-body-content {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.popup-achievement-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.popup-popper-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.popup-achievement-title {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #25243D;
+  letter-spacing: -0.01em;
+}
+
+.popup-achievement-desc {
+  margin: 0;
+  font-size: 0.98rem;
+  color: #5C4033;
+  line-height: 1.45;
+  padding-left: 2px;
+}
+
+/* Big Berry Action Button */
+.popup-conductor-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: #A34063;
+  color: #FFFFFF;
+  border: 1.5px solid #8C2F52;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(163, 64, 99, 0.35);
+  transition: all 0.2s ease;
+  min-height: 46px;
+}
+
+.popup-conductor-btn:hover,
+.popup-conductor-btn:focus-visible {
+  background: #8C2F52;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(163, 64, 99, 0.45);
+  outline: none;
+}
+
+.popup-conductor-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(163, 64, 99, 0.3);
+}
+
+@media (max-width: 480px) {
+  .retro-achievement-window {
+    border-radius: 10px;
+  }
+  .popup-header-bar {
+    padding: 10px 14px;
+  }
+  .popup-body-content {
+    padding: 16px 16px 18px;
+  }
+  .popup-conductor-btn {
+    font-size: 0.94rem;
+    padding: 10px 16px;
+  }
+}
