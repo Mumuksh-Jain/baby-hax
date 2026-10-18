@@ -1,6 +1,6 @@
 /**
  * Sound Engine for Pip's Bedtime Website
- * Uses Web Audio API to synthesize gentle, nostalgic toy sounds.
+ * Uses Web Audio API to synthesize gentle, nostalgic toy sounds and vocal sighs.
  * Zero external audio files, zero network requests, zero clipping.
  * Default is MUTED / Sound OFF until user opts in.
  */
@@ -85,18 +85,132 @@ function playTone({ freq, type = 'sine', duration = 0.25, gain = 0.5, detune = 0
 }
 
 /**
- * 1. Psst, Pip? — Soft whispery chime
+ * Generate a white noise buffer for breathy/wind/fricative synthesis
  */
-export function playPsstSound() {
-  if (!soundEnabled) return;
-  playTone({ freq: 880, type: 'sine', duration: 0.18, gain: 0.4 });
-  setTimeout(() => {
-    playTone({ freq: 1174.66, type: 'sine', duration: 0.3, gain: 0.45 });
-  }, 90);
+function createNoiseBuffer(ctx, duration = 1.0) {
+  const bufferSize = ctx.sampleRate * duration;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const output = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    output[i] = Math.random() * 2 - 1;
+  }
+  return buffer;
 }
 
 /**
- * 2. Poke Pip — Soft cartoon toy pop & varying reaction tones
+ * "FAAAHHH" Sleepy Vocal Bedtime Sigh
+ * Synthesizes a gentle, breathy baby/storybook vocal sigh:
+ * 1. Initial breathy fricative ("f...") via soft high-passed noise.
+ * 2. Warm resonant vowel ("...aaahhh...") using acoustic vocal formant filters (F1: 750Hz, F2: 1220Hz, F3: 2600Hz)
+ *    over a gentle descending glissando fundamental tone with soft breath shimmer.
+ */
+export function playFaahSound(pitchMultiplier = 1.0) {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx || !masterGain) return;
+
+  const now = ctx.currentTime;
+  const duration = 0.95;
+
+  // 1. Initial soft "f..." breath puff (fricative noise)
+  const noiseSource = ctx.createBufferSource();
+  noiseSource.buffer = createNoiseBuffer(ctx, duration);
+
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'bandpass';
+  noiseFilter.frequency.setValueAtTime(3200, now);
+  noiseFilter.Q.setValueAtTime(1.8, now);
+
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.0001, now);
+  // Soft gentle "f" swell
+  noiseGain.gain.linearRampToValueAtTime(0.25, now + 0.08);
+  noiseGain.gain.exponentialRampToValueAtTime(0.04, now + 0.35);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+  noiseSource.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(masterGain);
+
+  noiseSource.start(now);
+  noiseSource.stop(now + duration);
+
+  // 2. Warm Vowel "...aaahhh" Formant Synthesis
+  const fundamental = ctx.createOscillator();
+  fundamental.type = 'triangle'; // Rich warm harmonics
+
+  const baseFreq = 310 * pitchMultiplier; // Friendly, cozy baby vocal range (~D#4)
+  fundamental.frequency.setValueAtTime(baseFreq, now);
+  // Gentle downward sigh glide as Pip exhales
+  fundamental.frequency.exponentialRampToValueAtTime(baseFreq * 0.78, now + duration);
+
+  // Formant 1: ~750 Hz (Vowel /ɑː/ throat resonance)
+  const f1 = ctx.createBiquadFilter();
+  f1.type = 'bandpass';
+  f1.frequency.setValueAtTime(760, now);
+  f1.Q.setValueAtTime(4.5, now);
+
+  // Formant 2: ~1220 Hz (Vowel /ɑː/ oral cavity resonance)
+  const f2 = ctx.createBiquadFilter();
+  f2.type = 'bandpass';
+  f2.frequency.setValueAtTime(1240, now);
+  f2.Q.setValueAtTime(5.0, now);
+
+  // Formant 3: ~2600 Hz (Airy brightness)
+  const f3 = ctx.createBiquadFilter();
+  f3.type = 'bandpass';
+  f3.frequency.setValueAtTime(2600, now);
+  f3.Q.setValueAtTime(4.0, now);
+
+  const vowelGain = ctx.createGain();
+  vowelGain.gain.setValueAtTime(0.0001, now);
+  // Crossfade smoothly from "f" into warm "aaah"
+  vowelGain.gain.linearRampToValueAtTime(0.42, now + 0.16);
+  vowelGain.gain.exponentialRampToValueAtTime(0.28, now + 0.55);
+  vowelGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+  fundamental.connect(f1);
+  fundamental.connect(f2);
+  fundamental.connect(f3);
+
+  f1.connect(vowelGain);
+  f2.connect(vowelGain);
+  f3.connect(vowelGain);
+
+  vowelGain.connect(masterGain);
+
+  fundamental.start(now + 0.04);
+  fundamental.stop(now + duration);
+
+  // Clean up
+  fundamental.onended = () => {
+    fundamental.disconnect();
+    f1.disconnect();
+    f2.disconnect();
+    f3.disconnect();
+    vowelGain.disconnect();
+    noiseSource.disconnect();
+    noiseFilter.disconnect();
+    noiseGain.disconnect();
+  };
+}
+
+/**
+ * 1. Psst, Pip? — Soft whispery chime followed by gentle sleepy "faaahhh"
+ */
+export function playPsstSound() {
+  if (!soundEnabled) return;
+  playTone({ freq: 880, type: 'sine', duration: 0.16, gain: 0.35 });
+  setTimeout(() => {
+    playTone({ freq: 1174.66, type: 'sine', duration: 0.22, gain: 0.38 });
+  }, 80);
+  setTimeout(() => {
+    playFaahSound(1.05); // Pip sighs "faaahhh~"
+  }, 220);
+}
+
+/**
+ * 2. Poke Pip — Soft cartoon toy pop accompanied by vocal "faaahhh" sigh
  */
 export function playPipPokeSound(variant = 0) {
   if (!soundEnabled) return;
@@ -104,14 +218,19 @@ export function playPipPokeSound(variant = 0) {
   if (!ctx || !masterGain) return;
 
   const pitches = [
-    { start: 350, end: 720, dur: 0.16 }, // Curious squeak up
-    { start: 680, end: 280, dur: 0.22 }, // Clumsy slide down
-    { start: 440, end: 554, dur: 0.18 }, // Playful double pop
-    { start: 523.25, end: 783.99, dur: 0.25 }, // Little surprise chirp
+    { start: 350, end: 720, dur: 0.14, faahPitch: 1.0 }, // Curious squeak up
+    { start: 680, end: 280, dur: 0.18, faahPitch: 0.88 }, // Clumsy slide down
+    { start: 440, end: 554, dur: 0.16, faahPitch: 1.12 }, // Playful double pop
+    { start: 523.25, end: 783.99, dur: 0.22, faahPitch: 0.95 }, // Little surprise chirp
   ];
   const p = pitches[variant % pitches.length];
 
-  playTone({ freq: p.start, pitchEnd: p.end, type: 'triangle', duration: p.dur, gain: 0.45 });
+  playTone({ freq: p.start, pitchEnd: p.end, type: 'triangle', duration: p.dur, gain: 0.38 });
+
+  // Play Pip's delightful "faaahhh" vocal breath on poke
+  setTimeout(() => {
+    playFaahSound(p.faahPitch);
+  }, 100);
 }
 
 /**
@@ -128,7 +247,7 @@ export function playStarSound(index = 0) {
 }
 
 /**
- * 4. Moon Toggle — Cozy bedtime chord swell
+ * 4. Moon Toggle — Cozy bedtime chord swell accompanied by nightfall "faaahhh"
  */
 export function playMoonSound(isNightlight) {
   if (!soundEnabled) return;
@@ -138,9 +257,16 @@ export function playMoonSound(isNightlight) {
 
   baseFreqs.forEach((freq, idx) => {
     setTimeout(() => {
-      playTone({ freq, type: 'sine', duration: 0.5, gain: 0.35 });
-    }, idx * 70);
+      playTone({ freq, type: 'sine', duration: 0.5, gain: 0.32 });
+    }, idx * 60);
   });
+
+  if (isNightlight) {
+    // Gentle sleepy "faaaahhh" sigh as nursery lights dim
+    setTimeout(() => {
+      playFaahSound(0.92);
+    }, 280);
+  }
 }
 
 /**
@@ -161,7 +287,7 @@ export function playPanicSound() {
   if (!soundEnabled) return;
   [580, 640, 520, 680, 560].forEach((freq, i) => {
     setTimeout(() => {
-      playTone({ freq, type: 'triangle', duration: 0.09, gain: 0.3 });
+      playTone({ freq, type: 'triangle', duration: 0.09, gain: 0.28 });
     }, i * 65);
   });
 }

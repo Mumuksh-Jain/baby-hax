@@ -46,12 +46,12 @@ export const PIP_REACTIONS = [
   },
   {
     id: 'contagious-yawn',
-    quote: '“Yawwwn... wait! Don’t look at me, yawns are contagious across HTTP!”',
+    quote: '“Yawwwn... *faaahhh*... wait! Don’t look at me, yawns are contagious across HTTP!”',
     whisperTag: '★ Pip yawns dramatically:',
     status: 'PIP IS YAWNING (100% contagious)',
     overlay: 'zzz',
     animationClass: 'anim-drift',
-    srText: 'Pip yawns: Yawwwn... wait! Don’t look at me, yawns are contagious across HTTP! Status: Pip is yawning.',
+    srText: 'Pip yawns faaahhh... wait! Don’t look at me, yawns are contagious across HTTP! Status: Pip is yawning.',
   },
   {
     id: 'moonbeam-pr',
