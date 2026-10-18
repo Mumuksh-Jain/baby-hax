@@ -4,6 +4,7 @@ import HeroSection from './components/HeroSection';
 import InventionWorkshop from './components/InventionWorkshop';
 import MagicalStarTheater from './components/MagicalStarTheater';
 import RetroAchievementPopup from './components/RetroAchievementPopup';
+import PipOriginStory from './components/PipOriginStory';
 import {
   setSoundEnabled as updateSoundEngine,
   isSoundEnabled,
@@ -634,6 +635,9 @@ export default function App() {
           onHighlightBedroomStars={handleHighlightBedroomStars}
           soundEnabled={soundOn}
         />
+
+        {/* PASS 02 MASTER: Pip's Canonical Origin Story Flipbook */}
+        <PipOriginStory />
       </RetroBrowserFrame>
 
       {/* PASS 01C.4: Fullscreen Cinematic Star Theater */}
