@@ -11,7 +11,7 @@ if (!fs.existsSync(SCREENSHOT_DIR)) {
 }
 
 async function runPass02Verification() {
-  console.log('🎬 Launching Edge browser for PASS 02 Verification...\n');
+  console.log('🎬 Launching Edge browser for PASS 02C Verification...\n');
 
   const browser = await puppeteer.launch({
     executablePath: EDGE_PATH,
@@ -112,7 +112,6 @@ async function runPass02Verification() {
 
   // --- TEST STATION 001: STAR ORCHESTRA ---
   console.log('⭐ 6. Testing Station 001 (The Star Orchestra)...');
-  // First, test when theater is NOT unlocked yet
   await page.click('.star-play-btn');
   await new Promise((r) => setTimeout(r, 400));
 
@@ -157,7 +156,6 @@ async function runPass02Verification() {
     btn?.click();
   });
   await new Promise((r) => setTimeout(r, 400));
-
   const sleepyQuote = await page.evaluate(() => document.querySelector('.speech-text')?.textContent.trim());
   console.log(`   ✓ Mood 2 (Sleepy Moon) quote: "${sleepyQuote}"`);
   await page.screenshot({
@@ -174,7 +172,6 @@ async function runPass02Verification() {
     btn?.click();
   });
   await new Promise((r) => setTimeout(r, 400));
-
   const starlightQuote = await page.evaluate(() => document.querySelector('.speech-text')?.textContent.trim());
   console.log(`   ✓ Mood 3 (Little Starlight) quote: "${starlightQuote}"`);
   await page.screenshot({
@@ -182,16 +179,62 @@ async function runPass02Verification() {
     clip: { x: s2Box.x - 10, y: s2Box.y - 10, width: s2Box.width + 20, height: s2Box.height + 20 },
   });
 
-  // --- TEST STATION 003: THE DREAM EXPRESS ---
-  console.log('🚂 8. Testing Station 003 (The Dream Express Delivery)...');
+  // =========================================================
+  // TEST STATION 003: THE LIVING DREAM EXPRESS (PASS 02C)
+  // =========================================================
+  console.log('🚂 8. Testing Station 003 (The Living Dream Express)...');
   const s3Box = await page.evaluate(() => {
     const el = document.querySelector('.station-dream-express');
     const rect = el.getBoundingClientRect();
     return { x: rect.left, y: rect.top + window.scrollY, width: rect.width, height: rect.height };
   });
 
-  // Test Destination 1: Cloud Cottage
-  console.log('   Dispatching dream envelope to Cloud Cottage...');
+  // A. Visual Proof: Train at Midnight Depot BEFORE departure
+  console.log('   Capturing Frame 1: Train parked at Midnight Depot before departure...');
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_train_at_depot.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+  });
+
+  // B. Visual Proof: Capture 3 distinct frames of rotating lighthouse beam at different angles
+  console.log('   Capturing 3 sequential frames of the rotating lighthouse beam at Moonbeam Tower...');
+  const towerBox = await page.evaluate(() => {
+    const map = document.querySelector('.nursery-map-container');
+    const rect = map.getBoundingClientRect();
+    // Lighthouse is at right side of the map (x: 65% to 100%, y: 0% to 60%)
+    return {
+      x: rect.left + rect.width * 0.58,
+      y: rect.top + window.scrollY,
+      width: rect.width * 0.42,
+      height: rect.height * 0.75,
+    };
+  });
+
+  // Sample Angle 1
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_lighthouse_beam_angle1.png'),
+    clip: { x: towerBox.x, y: towerBox.y, width: towerBox.width, height: towerBox.height },
+  });
+  console.log('   ✓ Lighthouse Angle 1 captured');
+
+  // Sample Angle 2 after 1.5 seconds of beam rotation
+  await new Promise((r) => setTimeout(r, 1500));
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_lighthouse_beam_angle2.png'),
+    clip: { x: towerBox.x, y: towerBox.y, width: towerBox.width, height: towerBox.height },
+  });
+  console.log('   ✓ Lighthouse Angle 2 captured');
+
+  // Sample Angle 3 after another 1.8 seconds of beam rotation
+  await new Promise((r) => setTimeout(r, 1800));
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_lighthouse_beam_angle3.png'),
+    clip: { x: towerBox.x, y: towerBox.y, width: towerBox.width, height: towerBox.height },
+  });
+  console.log('   ✓ Lighthouse Angle 3 captured');
+
+  // C. Test Destination 1: Cloud Cottage
+  console.log('   Dispatching Locomotive No. 003 to Cloud Cottage...');
   await page.evaluate(() => {
     const btn = Array.from(document.querySelectorAll('.dest-action-btn')).find((b) =>
       b.textContent.includes('Cloud Cottage')
@@ -199,56 +242,89 @@ async function runPass02Verification() {
     btn?.click();
   });
 
-  // Capture envelope in flight (~800ms)
-  await new Promise((r) => setTimeout(r, 700));
+  // Capture train halfway on path with carriage articulation (~1800ms)
+  await new Promise((r) => setTimeout(r, 1600));
+  console.log('   Capturing Frame 2: Train in-flight halfway to Cloud Cottage (articulated curve)...');
   await page.screenshot({
-    path: path.join(SCREENSHOT_DIR, 'station3_dream_express_inflight.png'),
+    path: path.join(SCREENSHOT_DIR, 'station3_train_cloud_cottage_inflight.png'),
     clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
   });
 
-  // Wait for arrival (~1200ms more)
-  await new Promise((r) => setTimeout(r, 1200));
+  // Wait for arrival (~2400ms more)
+  await new Promise((r) => setTimeout(r, 2600));
+  console.log('   Capturing Frame 3: Train arrived at Cloud Cottage (window bright + parcel + sways)...');
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_train_cloud_cottage_arrived.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+  });
+
   const confirm1 = await page.evaluate(() => document.querySelector('.confirm-body strong')?.textContent.trim());
   console.log(`   ✓ Cloud Cottage delivery confirmed: "${confirm1}"`);
 
-  // Test Destination 2: Sleepy Ghost House
-  console.log('   Dispatching dream envelope to Sleepy Ghost House...');
+  // D. Test Destination 2: Sleepy Ghost House
+  console.log('   Dispatching Locomotive No. 003 to Sleepy Ghost House...');
   await page.evaluate(() => {
     const btn = Array.from(document.querySelectorAll('.dest-action-btn')).find((b) =>
       b.textContent.includes('Sleepy Ghost House')
     );
     btn?.click();
   });
-  await new Promise((r) => setTimeout(r, 1800));
+
+  // Capture in-flight halfway (~2000ms)
+  await new Promise((r) => setTimeout(r, 2000));
+  console.log('   Capturing Frame 4: Train in-flight halfway to Sleepy Ghost House...');
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_train_ghost_house_inflight.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+  });
+
+  // Wait for arrival (~2600ms more)
+  await new Promise((r) => setTimeout(r, 2800));
+  console.log('   Capturing Frame 5: Train arrived at Sleepy Ghost House (waving ghost + sparkles)...');
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_train_ghost_house_arrived.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+  });
+
   const confirm2 = await page.evaluate(() => document.querySelector('.confirm-body strong')?.textContent.trim());
   console.log(`   ✓ Sleepy Ghost House delivery confirmed: "${confirm2}"`);
 
-  // Test Destination 3: Moonbeam Tower
-  console.log('   Dispatching dream envelope to Moonbeam Tower...');
+  // E. Test Destination 3: Moonbeam Tower
+  console.log('   Dispatching Locomotive No. 003 to Moonbeam Tower...');
   await page.evaluate(() => {
     const btn = Array.from(document.querySelectorAll('.dest-action-btn')).find((b) =>
       b.textContent.includes('Moonbeam Tower')
     );
     btn?.click();
   });
-  await new Promise((r) => setTimeout(r, 1800));
+
+  // Capture in-flight halfway (~2200ms)
+  await new Promise((r) => setTimeout(r, 2200));
+  console.log('   Capturing Frame 6: Train in-flight halfway to Moonbeam Tower (beacon tracking mode)...');
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_train_moonbeam_tower_inflight.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+  });
+
+  // Wait for arrival (~3000ms more)
+  await new Promise((r) => setTimeout(r, 3200));
+  console.log('   Capturing Frame 7: Train arrived at Moonbeam Tower (ceremonial flare + confirmation)...');
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_train_moonbeam_tower_arrived.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
+  });
+
   const confirm3 = await page.evaluate(() => document.querySelector('.confirm-body strong')?.textContent.trim());
   console.log(`   ✓ Moonbeam Tower delivery confirmed: "${confirm3}"`);
 
-  const freshS3Box = await page.evaluate(() => {
-    const el = document.querySelector('.station-dream-express');
-    const rect = el.getBoundingClientRect();
-    return { x: rect.left, y: rect.top + window.scrollY, width: rect.width, height: rect.height };
-  });
-
+  // Capture Receipt Panel
   await page.screenshot({
-    path: path.join(SCREENSHOT_DIR, 'station3_dream_express_delivered.png'),
-    clip: { x: freshS3Box.x - 10, y: freshS3Box.y - 10, width: freshS3Box.width + 20, height: freshS3Box.height + 20 },
+    path: path.join(SCREENSHOT_DIR, 'station3_dream_express_receipt.png'),
+    clip: { x: s3Box.x - 10, y: s3Box.y - 10, width: s3Box.width + 20, height: s3Box.height + 20 },
   });
 
   // --- TEST STAR THEATER REPLAY INTEGRATION ---
   console.log('🎭 9. Testing Safe Star Theater Replay Integration...');
-  // Collect 3 stars in bedroom to unlock theater
   await page.evaluate(() => {
     window.scrollTo(0, 0);
   });
@@ -262,12 +338,10 @@ async function runPass02Verification() {
   await page.click('.star-3');
   await new Promise((r) => setTimeout(r, 1000));
 
-  // Theater is now open! Close it safely to return to bedroom
   console.log('   Closing theater to test replay from workshop...');
   await page.keyboard.press('Escape');
   await new Promise((r) => setTimeout(r, 600));
 
-  // Now scroll to workshop and test "Play with my stars ★" replay
   console.log('   Triggering replay from Station 001 "Play with my stars ★"...');
   await page.evaluate(() => {
     document.querySelector('#invention-workshop')?.scrollIntoView({ behavior: 'instant' });
@@ -307,6 +381,16 @@ async function runPass02Verification() {
     fullPage: false,
   });
 
+  // Specifically capture Station 3 on 375px
+  await page.evaluate(() => {
+    document.querySelector('.station-dream-express')?.scrollIntoView({ behavior: 'instant' });
+  });
+  await new Promise((r) => setTimeout(r, 300));
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_mobile_375px.png'),
+    fullPage: false,
+  });
+
   await page.setViewport({ width: 320, height: 700 });
   await page.evaluate(() => {
     document.querySelector('#invention-workshop')?.scrollIntoView({ behavior: 'instant' });
@@ -324,6 +408,16 @@ async function runPass02Verification() {
     fullPage: false,
   });
 
+  // Specifically capture Station 3 on 320px
+  await page.evaluate(() => {
+    document.querySelector('.station-dream-express')?.scrollIntoView({ behavior: 'instant' });
+  });
+  await new Promise((r) => setTimeout(r, 300));
+  await page.screenshot({
+    path: path.join(SCREENSHOT_DIR, 'station3_mobile_320px.png'),
+    fullPage: false,
+  });
+
   // Verify console errors
   console.log('\n🛡️ 11. Console Error Audit:');
   console.log(`   Total Console Errors: ${consoleErrors.length}`);
@@ -335,7 +429,7 @@ async function runPass02Verification() {
   }
 
   await browser.close();
-  console.log('\n🎉 PASS 02 VERIFICATION COMPLETED WITH 100% SUCCESS!');
+  console.log('\n🎉 PASS 02C VERIFICATION COMPLETED WITH 100% SUCCESS!');
 }
 
 runPass02Verification().catch((err) => {

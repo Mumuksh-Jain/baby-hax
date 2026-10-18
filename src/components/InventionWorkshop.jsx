@@ -8,9 +8,9 @@ import {
 import './InventionWorkshop.css';
 
 /**
- * Pip's Little Invention Workshop (Pass 02B - Refined 2-Row Layout)
+ * Pip's Little Invention Workshop (Pass 02C - The Living Dream Express)
  * Row 1: The Star Orchestra (EXP-001) & The Moonlight Lab (EXP-002) side by side
- * Row 2: The Dream Express (EXP-003) full width panoramic nursery world
+ * Row 2: The Dream Express (EXP-003) full width panoramic nursery railway world
  */
 export default function InventionWorkshop({
   theaterUnlocked = false,
@@ -90,7 +90,7 @@ export default function InventionWorkshop({
   };
 
   // -------------------------------------------------------------
-  // STATION 003 HANDLERS: DREAM EXPRESS
+  // STATION 003 HANDLERS: THE LIVING DREAM EXPRESS
   // -------------------------------------------------------------
   const DESTINATIONS = {
     'cloud-cottage': {
@@ -102,6 +102,7 @@ export default function InventionWorkshop({
       deliveryNote: 'Dream delivered! Soft vanilla cloud dreams tucked in safely. No nightmares included.',
       coords: { x: 230, y: 75 },
       pinCoords: { x: 230, y: 22 },
+      routeDuration: 3800,
     },
     'ghost-house': {
       id: 'ghost-house',
@@ -112,6 +113,7 @@ export default function InventionWorkshop({
       deliveryNote: 'Dream delivered! Cozy blanket dreams arrived. Friendly ghost gave 5 stars!',
       coords: { x: 500, y: 175 },
       pinCoords: { x: 500, y: 132 },
+      routeDuration: 4400,
     },
     'moonbeam-tower': {
       id: 'moonbeam-tower',
@@ -122,6 +124,7 @@ export default function InventionWorkshop({
       deliveryNote: 'Dream delivered! Astronomy stargazing dreams landed safely on the spire!',
       coords: { x: 730, y: 80 },
       pinCoords: { x: 730, y: 18 },
+      routeDuration: 5000,
     },
   };
 
@@ -156,14 +159,14 @@ export default function InventionWorkshop({
       return;
     }
 
-    // Smooth delivery flight along SVG path (~1600ms)
+    // Scale duration with route distance (3.8s to 5.0s, satisfying 4-6s choreography)
+    const duration = dest.routeDuration || 4500;
     const startTime = performance.now();
-    const duration = 1600;
 
     const animateFlight = (now) => {
       const elapsed = now - startTime;
       const t = Math.min(1, elapsed / duration);
-      // Ease in-out cubic
+      // Smooth cubic ease in-out
       const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
       setDeliveryProgress(eased);
@@ -172,6 +175,7 @@ export default function InventionWorkshop({
         deliveryAnimRef.current = requestAnimationFrame(animateFlight);
       } else {
         setIsDelivering(false);
+        setDeliveryProgress(1);
         setDeliveredLocation(destId);
         setDeliveryMessage(dest.deliveryNote);
         if (soundEnabled) {
@@ -183,29 +187,91 @@ export default function InventionWorkshop({
     deliveryAnimRef.current = requestAnimationFrame(animateFlight);
   };
 
-  // Compute envelope coords along SVG path based on progress
-  const getEnvelopePos = () => {
-    if (!selectedDestination) return { x: 80, y: 220, angle: 0 };
-    const pathElem = pathRefs.current[selectedDestination];
-    if (!pathElem) return { x: 80, y: 220, angle: 0 };
+  // -------------------------------------------------------------
+  // TRAIN PATH SAMPLING (ARTICULATED LOCOMOTIVE + POSTAL CARRIAGE)
+  // -------------------------------------------------------------
+  const getTrainPositions = () => {
+    // If no destination is selected yet, park the train at Midnight Depot platform
+    if (!selectedDestination && !deliveredLocation) {
+      return {
+        loco: { x: 92, y: 220, angle: 0 },
+        carriage: { x: 64, y: 220, angle: 0 },
+      };
+    }
+
+    const currentDestId = selectedDestination || deliveredLocation;
+    const pathElem = pathRefs.current[currentDestId];
+    if (!pathElem) {
+      return {
+        loco: { x: 92, y: 220, angle: 0 },
+        carriage: { x: 64, y: 220, angle: 0 },
+      };
+    }
 
     try {
       const totalLen = pathElem.getTotalLength();
-      const currentLen = totalLen * Math.min(1, Math.max(0, deliveryProgress));
-      const pt = pathElem.getPointAtLength(currentLen);
+      const progress = isDelivering ? deliveryProgress : (deliveredLocation ? 1 : 0);
+      const locoLen = totalLen * Math.min(1, Math.max(0, progress));
+      const ptLoco = pathElem.getPointAtLength(locoLen);
 
-      // Tangent angle for envelope rotation
-      const nextLen = Math.min(totalLen, currentLen + 2);
-      const nextPt = pathElem.getPointAtLength(nextLen);
-      const angle = (Math.atan2(nextPt.y - pt.y, nextPt.x - pt.x) * 180) / Math.PI;
+      // Tangent angle for locomotive (central differencing for jitter-free curve rotation)
+      const nextLocoLen = Math.min(totalLen, locoLen + 2);
+      const prevLocoLen = Math.max(0, locoLen - 2);
+      const ptLocoNext = pathElem.getPointAtLength(nextLocoLen);
+      const ptLocoPrev = pathElem.getPointAtLength(prevLocoLen);
+      const locoAngle = (Math.atan2(ptLocoNext.y - ptLocoPrev.y, ptLocoNext.x - ptLocoPrev.x) * 180) / Math.PI;
 
-      return { x: pt.x, y: pt.y, angle };
+      // Carriage: distance offset of 28 units along the curved SVG path
+      const CARRIAGE_OFFSET = 28;
+      let ptCar, carAngle;
+
+      if (locoLen >= CARRIAGE_OFFSET) {
+        const carLen = locoLen - CARRIAGE_OFFSET;
+        ptCar = pathElem.getPointAtLength(carLen);
+        const nextCarLen = Math.min(totalLen, carLen + 2);
+        const prevCarLen = Math.max(0, carLen - 2);
+        const ptCarNext = pathElem.getPointAtLength(nextCarLen);
+        const ptCarPrev = pathElem.getPointAtLength(prevCarLen);
+        carAngle = (Math.atan2(ptCarNext.y - ptCarPrev.y, ptCarNext.x - ptCarPrev.x) * 180) / Math.PI;
+      } else {
+        // Locomotive is departing depot: carriage projects smoothly along depot track
+        const startTangent = pathElem.getPointAtLength(2);
+        const pathStart = pathElem.getPointAtLength(0);
+        const initialAngle = (Math.atan2(startTangent.y - pathStart.y, startTangent.x - pathStart.x) * 180) / Math.PI;
+
+        const remainingOffset = CARRIAGE_OFFSET - locoLen;
+        const rad = (initialAngle * Math.PI) / 180;
+        ptCar = {
+          x: pathStart.x - remainingOffset * Math.cos(rad),
+          y: pathStart.y - remainingOffset * Math.sin(rad),
+        };
+        carAngle = initialAngle;
+      }
+
+      return {
+        loco: { x: ptLoco.x, y: ptLoco.y, angle: locoAngle },
+        carriage: { x: ptCar.x, y: ptCar.y, angle: carAngle },
+      };
     } catch {
-      return { x: 80, y: 220, angle: 0 };
+      return {
+        loco: { x: 92, y: 220, angle: 0 },
+        carriage: { x: 64, y: 220, angle: 0 },
+      };
     }
   };
 
-  const envelopePos = getEnvelopePos();
+  const trainPos = getTrainPositions();
+
+  // Lighthouse beacon searchlight state
+  const getBeaconMode = () => {
+    if (deliveredLocation === 'moonbeam-tower') return 'beacon-celebration-mode';
+    if (selectedDestination === 'moonbeam-tower' && isDelivering && deliveryProgress > 0.5) {
+      return 'beacon-tracking-mode';
+    }
+    return 'beacon-idle-sweep';
+  };
+
+  const beaconMode = getBeaconMode();
 
   return (
     <section
@@ -318,31 +384,30 @@ export default function InventionWorkshop({
             )}
           </div>
 
-          {/* Real Working Action Area */}
+          {/* Action Row */}
           <div className="station-actions-row">
             <button
               type="button"
               className="station-action-btn star-play-btn"
               onClick={handlePlayStars}
-              aria-label="Play with my stars. Opens the Star Theater if unlocked, or guides you to collect them."
+              aria-label="Play with my stars or open Star Theater"
             >
               <span className="btn-icon" aria-hidden="true">★</span>
               <span>Play with my stars ★</span>
             </button>
-
             <span className="station-state-pill">
-              {theaterUnlocked ? '✓ Concert Ready (Replay)' : '★ 3 Stars in Bedroom'}
+              {theaterUnlocked ? 'Unlocked · Ready' : '3 Stars in Bedroom'}
             </span>
           </div>
 
-          {/* Pip's Handwritten Note & Stamp */}
+          {/* Pip's Sticky Note & Rubber Stamp */}
           <footer className="station-footer">
-            <div className="station-sticky-note">
-              <span className="sticky-pin" aria-hidden="true">✦</span>
-              <p>“Note: Star #2 still rushes the tempo, but we love him anyway. — Pip”</p>
+            <div className="station-sticky-note note-orchestra">
+              <span className="sticky-pin" aria-hidden="true">📌</span>
+              <p>“Star #2 plays slightly flat when tickled. Must oil the gear springs.”</p>
             </div>
             <div className="station-stamp stamp-pass">
-              <span>PASSED BEDTIME NOISE TEST (BARELY)</span>
+              <span>TESTED: VERY SLEEPY</span>
             </div>
           </footer>
         </article>
@@ -357,7 +422,7 @@ export default function InventionWorkshop({
           {/* Top Archival Tag & Category */}
           <div className="station-meta-bar">
             <span className="station-number-chip">EXP-002</span>
-            <span className="station-category">Nightlight Engineering</span>
+            <span className="station-category">Nocturnal Illumination</span>
           </div>
 
           <h3 id="exp-002-title" className="station-title">
@@ -365,143 +430,123 @@ export default function InventionWorkshop({
           </h3>
 
           <p className="station-desc">
-            “Some little ghosts are scared of the dark. So I borrowed a tiny piece of the moon.”
+            “Dark rooms have monster rumors. So I made mood filters for sleepy midnight glow.”
           </p>
 
-          {/* Interactive Miniature Environment around Lantern */}
-          <div
-            className={`exhibit-preview-frame lantern-preview-frame mood-${lanternMood}`}
-            data-mood={lanternMood}
-          >
-            {/* Dynamic Lighting Glow Aura */}
-            <div className="lantern-ambient-halo" aria-hidden="true"></div>
+          {/* Bedside Lantern Switchboard Frame */}
+          <div className={`exhibit-preview-frame lantern-preview-frame mood-${lanternMood}`}>
+            <div className="lantern-chamber">
+              {/* Cozy Illustrated Lantern Artwork */}
+              <div className="lantern-artwork-wrap">
+                <img
+                  src="/assets/pip/pip_dream_lantern.png"
+                  alt="Pip's handcrafted bedside nightlight lantern glowing softly"
+                  className="lantern-image"
+                  loading="lazy"
+                />
+                {/* Ambient Mood Halo */}
+                <div className={`lantern-glow-halo halo-${lanternMood}`} aria-hidden="true"></div>
+                {/* Floating Sleep Sparkles */}
+                <div className="lantern-sparkles" aria-hidden="true">
+                  <span className="sleep-sparkle sp-1">✦</span>
+                  <span className="sleep-sparkle sp-2">✧</span>
+                  <span className="sleep-sparkle sp-3">★</span>
+                </div>
+              </div>
 
-            {/* Drifting Sleep Dust Accents */}
-            <div className="lantern-dust-container" aria-hidden="true">
-              <span className="sleep-sparkle sp-1">✧</span>
-              <span className="sleep-sparkle sp-2">✦</span>
-              <span className="sleep-sparkle sp-3">⋆</span>
-              <span className="sleep-sparkle sp-4">✧</span>
-            </div>
-
-            {/* Lantern Display Pedestal */}
-            <div className="lantern-display-stage">
-              <div className="lantern-pedestal-glow" aria-hidden="true"></div>
-              <img
-                src="/assets/pip/pip_dream_lantern.png"
-                alt="Pip's glowing dream lantern powered by a borrowed crescent moonbeam"
-                className="lantern-image"
-                loading="lazy"
-              />
-            </div>
-
-            {/* Pip's Live Reaction Speech Bubble */}
-            <div className="lantern-pip-speech" aria-live="polite">
-              <div className="speech-avatar" aria-hidden="true">💀</div>
-              <div className="speech-bubble-body">
-                <span className="speech-tag">Pip observes:</span>
-                <p className="speech-text">{getMoodPipQuote()}</p>
+              {/* Pip's Quote for Current Mood */}
+              <div className="pip-speech-bubble" aria-live="polite">
+                <span className="bubble-pip-avatar" aria-hidden="true">💀</span>
+                <span className="speech-text">{getMoodPipQuote()}</span>
               </div>
             </div>
-          </div>
 
-          {/* Handcrafted Bedside Lighting Control Panel Tray */}
-          <div className="moonlight-switchboard-panel">
-            <div className="switchboard-header">
-              <span className="switchboard-pin" aria-hidden="true">✦</span>
-              <span className="switchboard-title">NIGHTLIGHT MOOD SELECTOR</span>
-              <span className="switchboard-pin" aria-hidden="true">✦</span>
-            </div>
-
-            <div
-              className="mood-switchboard-tray"
-              role="radiogroup"
-              aria-label="Select Lantern Lighting Mood"
-            >
+            {/* Bedside Brass Toggle Buttons */}
+            <div className="mood-switchboard-tray" role="group" aria-label="Nightlight Mood Presets">
               <button
                 type="button"
-                role="radio"
-                aria-checked={lanternMood === 'warm'}
                 className={`mood-toggle-btn ${lanternMood === 'warm' ? 'is-active' : ''}`}
                 onClick={() => handleMoodSelect('warm')}
-                title="Warm & Cozy amber lighting"
+                aria-pressed={lanternMood === 'warm'}
               >
-                <span className="mood-indicator-led led-warm" aria-hidden="true"></span>
                 <span className="mood-icon" aria-hidden="true">🕯️</span>
-                <span className="mood-label">Warm &amp; Cozy</span>
+                <span>Warm & Cozy</span>
               </button>
-
               <button
                 type="button"
-                role="radio"
-                aria-checked={lanternMood === 'sleepy'}
                 className={`mood-toggle-btn ${lanternMood === 'sleepy' ? 'is-active' : ''}`}
                 onClick={() => handleMoodSelect('sleepy')}
-                title="Sleepy Moon cool lavender-blue lighting"
+                aria-pressed={lanternMood === 'sleepy'}
               >
-                <span className="mood-indicator-led led-sleepy" aria-hidden="true"></span>
                 <span className="mood-icon" aria-hidden="true">🌙</span>
-                <span className="mood-label">Sleepy Moon</span>
+                <span>Sleepy Moon</span>
               </button>
-
               <button
                 type="button"
-                role="radio"
-                aria-checked={lanternMood === 'starlight'}
                 className={`mood-toggle-btn ${lanternMood === 'starlight' ? 'is-active' : ''}`}
                 onClick={() => handleMoodSelect('starlight')}
-                title="Little Starlight crystalline shimmer"
+                aria-pressed={lanternMood === 'starlight'}
               >
-                <span className="mood-indicator-led led-starlight" aria-hidden="true"></span>
                 <span className="mood-icon" aria-hidden="true">✨</span>
-                <span className="mood-label">Little Starlight</span>
+                <span>Little Starlight</span>
               </button>
             </div>
           </div>
 
-          {/* Pip's Handwritten Note & Stamp */}
+          {/* Status Row */}
+          <div className="station-actions-row">
+            <span className="current-mode-label">
+              Active Glow: <strong>{lanternMood.toUpperCase()} LUMENS</strong>
+            </span>
+            <span className="station-state-pill pill-calm">Monster Protection: 100%</span>
+          </div>
+
+          {/* Pip's Sticky Note & Rubber Stamp */}
           <footer className="station-footer">
-            <div className="station-sticky-note note-ghost">
-              <span className="sticky-pin" aria-hidden="true">👻</span>
-              <p>“Approved by: 4 out of 5 nursery ghosts. (The 5th was asleep).”</p>
+            <div className="station-sticky-note note-lantern">
+              <span className="sticky-pin" aria-hidden="true">📌</span>
+              <p>“Tested on closet door. Closet monster politely went back to sleep.”</p>
             </div>
             <div className="station-stamp stamp-ghost-safe">
-              <span>100% GHOST-SAFE</span>
+              <span>GHOST-APPROVED · 100% COZY</span>
             </div>
           </footer>
         </article>
 
         {/* ========================================================= */}
-        {/* STATION 003: THE DREAM EXPRESS (Row 2 Full-Width Exhibit) */}
+        {/* STATION 003: THE LIVING DREAM EXPRESS (Row 2 Full Width)  */}
         {/* ========================================================= */}
         <article
-          className="exhibit-station station-dream-express"
+          className="exhibit-station station-dream-express full-width-station"
           aria-labelledby="exp-003-title"
         >
           {/* Top Archival Tag & Category */}
           <div className="station-meta-bar">
-            <div className="express-tag-cluster">
+            <div className="meta-left-group">
               <span className="station-number-chip">EXP-003</span>
-              <span className="express-panoramic-badge">FULL-SCALE PROTOTYPE</span>
+              <span className="station-category">Miniature Railway & Dream Transport</span>
             </div>
-            <span className="station-category">Dream Delivery Engineering</span>
+            <span className="station-archival-callout">
+              No. 003 LOCOMOTIVE · ARTICULATED SKYWAY
+            </span>
           </div>
 
           <h3 id="exp-003-title" className="station-title">
-            The Dream Express
+            The Living Dream Express
           </h3>
 
           <p className="station-desc">
-            “I deliver dreams to tiny houses before anyone notices I borrowed the moon.”
+            “Midnight postal service for sleepy houses. Locomotive No. 003 delivers cozy dreams
+            along magical sky-rails before morning comes.”
           </p>
 
-          {/* Illustrated Paper-Craft Nursery Panoramic Delivery Map */}
+          {/* Full Panoramic Whimsical Nursery Railway Map */}
           <div className="exhibit-preview-frame map-preview-frame">
             <div className="nursery-map-container">
               {/* Compass Rose Accent */}
               <div className="map-compass" aria-hidden="true">
                 <span className="compass-star">✦</span>
-                <span className="compass-lbl">NURSERY SKYWAY · OFFICIAL FLIGHT CHART</span>
+                <span className="compass-lbl">NURSERY SKYWAY · OFFICIAL RAILWAY CHART</span>
               </div>
 
               {/* Full Whimsical Nursery World SVG */}
@@ -511,16 +556,40 @@ export default function InventionWorkshop({
                 aria-hidden="true"
               >
                 <defs>
-                  {/* Glowing Filter for Paths */}
+                  {/* Glowing Filter for Golden Sky-Rails */}
                   <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#F5D88C" floodOpacity="0.7" />
+                    <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#F5D88C" floodOpacity="0.75" />
                   </filter>
-                  {/* Moonbeam Light Ray Gradient */}
-                  <linearGradient id="moonbeamGrad" x1="50%" y1="0%" x2="50%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.65" />
-                    <stop offset="60%" stopColor="#DDE8FA" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#8CA8F5" stopOpacity="0.02" />
+
+                  {/* Headlamp Light Cone Gradient */}
+                  <linearGradient id="headlampBeamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+                    <stop offset="0%" stopColor="#FFFDF9" stopOpacity="0.85" />
+                    <stop offset="35%" stopColor="#FFF59D" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#FFF59D" stopOpacity="0" />
                   </linearGradient>
+
+                  {/* Anime-Inspired Lighthouse Searchlight Gradient */}
+                  <linearGradient id="lighthouseBeamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+                    <stop offset="25%" stopColor="#E0ECFF" stopOpacity="0.6" />
+                    <stop offset="65%" stopColor="#9AB8F5" stopOpacity="0.22" />
+                    <stop offset="100%" stopColor="#8CA8F5" stopOpacity="0" />
+                  </linearGradient>
+
+                  {/* Lighthouse Core Bright Beam */}
+                  <linearGradient id="lighthouseBeamCoreGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                    <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.75" />
+                    <stop offset="70%" stopColor="#C9DCFD" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#C9DCFD" stopOpacity="0" />
+                  </linearGradient>
+
+                  {/* Radial Beacon Core Glow */}
+                  <radialGradient id="beaconCoreGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
+                    <stop offset="50%" stopColor="#FFE082" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#D4A843" stopOpacity="0" />
+                  </radialGradient>
                 </defs>
 
                 {/* --- NURSERY TOPOGRAPHY: Soft Rolling Storybook Hills & Cloud Banks --- */}
@@ -544,36 +613,189 @@ export default function InventionWorkshop({
                   <circle cx="660" cy="25" r="2" />
                 </g>
 
-                {/* --- BASE FLIGHT ROUTES --- */}
+                {/* --- MAGICAL SKY-RAIL ROUTES --- */}
                 {/* Route 1: Depot (80, 220) -> Cloud Cottage (230, 75) */}
-                <path
-                  ref={(el) => (pathRefs.current['cloud-cottage'] = el)}
-                  d="M 80 220 C 110 130, 160 85, 230 75"
-                  fill="none"
-                  className={`flight-route-track ${
-                    selectedDestination === 'cloud-cottage' ? 'route-active' : ''
-                  }`}
-                />
+                <g className={`sky-rail-system ${selectedDestination === 'cloud-cottage' ? 'is-active' : ''}`}>
+                  {/* Base quiet guide */}
+                  <path
+                    d="M 80 220 C 110 130, 160 85, 230 75"
+                    fill="none"
+                    stroke="#D4A843"
+                    strokeWidth="1.5"
+                    strokeDasharray="3 5"
+                    opacity="0.25"
+                  />
+                  {/* Active illuminated sky-rail track */}
+                  {selectedDestination === 'cloud-cottage' && (
+                    <g className="sky-rail-golden-track">
+                      <path
+                        d="M 80 220 C 110 130, 160 85, 230 75"
+                        fill="none"
+                        stroke="#F5D88C"
+                        strokeWidth="6"
+                        opacity="0.35"
+                        filter="url(#routeGlow)"
+                      />
+                      <path
+                        d="M 80 220 C 110 130, 160 85, 230 75"
+                        fill="none"
+                        stroke="#C59B3F"
+                        strokeWidth="6"
+                        strokeDasharray="2 7"
+                        opacity="0.75"
+                      />
+                      <path
+                        d="M 80 220 C 110 130, 160 85, 230 75"
+                        fill="none"
+                        stroke="#FFFDF9"
+                        strokeWidth="2.5"
+                        opacity="0.9"
+                      />
+                      <path
+                        d="M 80 220 C 110 130, 160 85, 230 75"
+                        fill="none"
+                        stroke="#8B264A"
+                        strokeWidth="0.8"
+                        opacity="0.4"
+                      />
+                      <path
+                        d="M 80 220 C 110 130, 160 85, 230 75"
+                        fill="none"
+                        stroke="#FFF"
+                        strokeWidth="2"
+                        strokeDasharray="8 24"
+                        className="sky-rail-sparkle-anim"
+                      />
+                    </g>
+                  )}
+                  {/* Invisible path reference for calculation */}
+                  <path
+                    ref={(el) => (pathRefs.current['cloud-cottage'] = el)}
+                    d="M 80 220 C 110 130, 160 85, 230 75"
+                    fill="none"
+                    stroke="transparent"
+                  />
+                </g>
 
                 {/* Route 2: Depot (80, 220) -> Sleepy Ghost House (500, 175) */}
-                <path
-                  ref={(el) => (pathRefs.current['ghost-house'] = el)}
-                  d="M 80 220 C 200 250, 360 215, 500 175"
-                  fill="none"
-                  className={`flight-route-track ${
-                    selectedDestination === 'ghost-house' ? 'route-active' : ''
-                  }`}
-                />
+                <g className={`sky-rail-system ${selectedDestination === 'ghost-house' ? 'is-active' : ''}`}>
+                  <path
+                    d="M 80 220 C 200 250, 360 215, 500 175"
+                    fill="none"
+                    stroke="#D4A843"
+                    strokeWidth="1.5"
+                    strokeDasharray="3 5"
+                    opacity="0.25"
+                  />
+                  {selectedDestination === 'ghost-house' && (
+                    <g className="sky-rail-golden-track">
+                      <path
+                        d="M 80 220 C 200 250, 360 215, 500 175"
+                        fill="none"
+                        stroke="#F5D88C"
+                        strokeWidth="6"
+                        opacity="0.35"
+                        filter="url(#routeGlow)"
+                      />
+                      <path
+                        d="M 80 220 C 200 250, 360 215, 500 175"
+                        fill="none"
+                        stroke="#C59B3F"
+                        strokeWidth="6"
+                        strokeDasharray="2 7"
+                        opacity="0.75"
+                      />
+                      <path
+                        d="M 80 220 C 200 250, 360 215, 500 175"
+                        fill="none"
+                        stroke="#FFFDF9"
+                        strokeWidth="2.5"
+                        opacity="0.9"
+                      />
+                      <path
+                        d="M 80 220 C 200 250, 360 215, 500 175"
+                        fill="none"
+                        stroke="#8B264A"
+                        strokeWidth="0.8"
+                        opacity="0.4"
+                      />
+                      <path
+                        d="M 80 220 C 200 250, 360 215, 500 175"
+                        fill="none"
+                        stroke="#FFF"
+                        strokeWidth="2"
+                        strokeDasharray="8 24"
+                        className="sky-rail-sparkle-anim"
+                      />
+                    </g>
+                  )}
+                  <path
+                    ref={(el) => (pathRefs.current['ghost-house'] = el)}
+                    d="M 80 220 C 200 250, 360 215, 500 175"
+                    fill="none"
+                    stroke="transparent"
+                  />
+                </g>
 
                 {/* Route 3: Depot (80, 220) -> Moonbeam Tower (730, 80) */}
-                <path
-                  ref={(el) => (pathRefs.current['moonbeam-tower'] = el)}
-                  d="M 80 220 C 260 130, 500 65, 730 80"
-                  fill="none"
-                  className={`flight-route-track ${
-                    selectedDestination === 'moonbeam-tower' ? 'route-active' : ''
-                  }`}
-                />
+                <g className={`sky-rail-system ${selectedDestination === 'moonbeam-tower' ? 'is-active' : ''}`}>
+                  <path
+                    d="M 80 220 C 260 130, 500 65, 730 80"
+                    fill="none"
+                    stroke="#D4A843"
+                    strokeWidth="1.5"
+                    strokeDasharray="3 5"
+                    opacity="0.25"
+                  />
+                  {selectedDestination === 'moonbeam-tower' && (
+                    <g className="sky-rail-golden-track">
+                      <path
+                        d="M 80 220 C 260 130, 500 65, 730 80"
+                        fill="none"
+                        stroke="#F5D88C"
+                        strokeWidth="6"
+                        opacity="0.35"
+                        filter="url(#routeGlow)"
+                      />
+                      <path
+                        d="M 80 220 C 260 130, 500 65, 730 80"
+                        fill="none"
+                        stroke="#C59B3F"
+                        strokeWidth="6"
+                        strokeDasharray="2 7"
+                        opacity="0.75"
+                      />
+                      <path
+                        d="M 80 220 C 260 130, 500 65, 730 80"
+                        fill="none"
+                        stroke="#FFFDF9"
+                        strokeWidth="2.5"
+                        opacity="0.9"
+                      />
+                      <path
+                        d="M 80 220 C 260 130, 500 65, 730 80"
+                        fill="none"
+                        stroke="#8B264A"
+                        strokeWidth="0.8"
+                        opacity="0.4"
+                      />
+                      <path
+                        d="M 80 220 C 260 130, 500 65, 730 80"
+                        fill="none"
+                        stroke="#FFF"
+                        strokeWidth="2"
+                        strokeDasharray="8 24"
+                        className="sky-rail-sparkle-anim"
+                      />
+                    </g>
+                  )}
+                  <path
+                    ref={(el) => (pathRefs.current['moonbeam-tower'] = el)}
+                    d="M 80 220 C 260 130, 500 65, 730 80"
+                    fill="none"
+                    stroke="transparent"
+                  />
+                </g>
 
                 {/* --- DESTINATION 1: CLOUD COTTAGE ILLUSTRATION --- */}
                 <g className="map-illustration cloud-cottage-art" transform="translate(230, 75)">
@@ -582,6 +804,7 @@ export default function InventionWorkshop({
                   <ellipse cx="20" cy="24" rx="28" ry="14" fill="#FFFFFF" opacity="0.95" />
                   <ellipse cx="0" cy="26" rx="42" ry="15" fill="#EAF3FD" />
                   <ellipse cx="0" cy="18" rx="34" ry="12" fill="#FFFFFF" />
+
                   {/* Cottage House Body */}
                   <rect x="-18" y="-6" width="36" height="26" rx="2" fill="#FFF9F0" stroke="#5C4033" strokeWidth="1.8" />
                   {/* Gable Roof */}
@@ -589,11 +812,55 @@ export default function InventionWorkshop({
                   {/* Chimney */}
                   <rect x="8" y="-22" width="7" height="12" fill="#A34063" stroke="#5C4033" strokeWidth="1.5" />
                   {/* Smoke Wisp */}
-                  <path d="M 12 -23 Q 16 -32 10 -40 Q 18 -48 13 -56" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" opacity="0.8" className="cottage-smoke-anim" />
-                  {/* Glowing Window */}
-                  <rect x="-10" y="2" width="10" height="11" rx="1.5" fill="#FFD54F" stroke="#5C4033" strokeWidth="1.2" />
+                  <path
+                    d="M 12 -23 Q 16 -32 10 -40 Q 18 -48 13 -56"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    opacity="0.8"
+                    className="cottage-smoke-anim"
+                  />
+
+                  {/* Swaying Star Flag on Roof */}
+                  <g transform="translate(0, -24)" className={deliveredLocation === 'cloud-cottage' ? 'swaying-star-flag' : ''}>
+                    <line x1="0" y1="0" x2="0" y2="-9" stroke="#5C4033" strokeWidth="1.2" />
+                    <path d="M 0 -9 L 7 -6.5 L 0 -4 Z" fill="#F5D88C" stroke="#D4A843" strokeWidth="0.5" />
+                  </g>
+
+                  {/* Warm Cozy Window (Brightens upon arrival) */}
+                  <rect
+                    x="-10"
+                    y="2"
+                    width="10"
+                    height="11"
+                    rx="1.5"
+                    fill={deliveredLocation === 'cloud-cottage' ? '#FFF59D' : '#FFD54F'}
+                    stroke="#5C4033"
+                    strokeWidth="1.2"
+                    className={deliveredLocation === 'cloud-cottage' ? 'window-glow-bright' : ''}
+                  />
+
                   {/* Door */}
                   <rect x="4" y="6" width="9" height="14" rx="1" fill="#8C5835" stroke="#5C4033" strokeWidth="1.2" />
+
+                  {/* Delivered Dream Mail Parcel on Porch */}
+                  {deliveredLocation === 'cloud-cottage' && (
+                    <g className="delivered-parcel is-visible" transform="translate(8, 16)">
+                      <rect x="-3" y="-2" width="6" height="4.5" rx="0.6" fill="#FFFDF9" stroke="#8B264A" strokeWidth="0.7" />
+                      <path d="M -3 -2 L 0 0.5 L 3 -2" fill="none" stroke="#8B264A" strokeWidth="0.7" />
+                    </g>
+                  )}
+
+                  {/* Celebratory Cloud Puffs upon Arrival */}
+                  {deliveredLocation === 'cloud-cottage' && (
+                    <g className="cloud-arrival-burst" fill="#FFF" opacity="0.85">
+                      <circle cx="-32" cy="18" r="5" />
+                      <circle cx="32" cy="18" r="5" />
+                      <circle cx="-15" cy="-28" r="2.5" fill="#F5D88C" />
+                      <circle cx="15" cy="-28" r="2.5" fill="#F5D88C" />
+                    </g>
+                  )}
                 </g>
 
                 {/* --- DESTINATION 2: SLEEPY GHOST HOUSE ILLUSTRATION --- */}
@@ -608,47 +875,134 @@ export default function InventionWorkshop({
                   <rect x="12" y="-30" width="8" height="16" fill="#3D3550" stroke="#251E33" strokeWidth="1.5" />
                   <path d="M 10 -30 Q 16 -40 26 -34" fill="#E67A95" stroke="#5C4033" strokeWidth="1.5" />
                   <circle cx="26" cy="-34" r="2.5" fill="#F5D88C" />
-                  {/* Attic Arch Window with Friendly Ghost */}
-                  <path d="M -10 -4 A 10 10 0 0 1 10 -4 L 10 10 L -10 10 Z" fill="#FFE082" stroke="#372F48" strokeWidth="1.5" />
-                  {/* Friendly Ghost Peeking Out */}
-                  <g transform="translate(0, 3)" className="ghost-peeking-anim">
-                    <path d="M -6 6 C -6 -2, 6 -2, 6 6 C 4 5, 2 7, 0 5 C -2 7, -4 5, -6 6 Z" fill="#FFFFFF" stroke="#372F48" strokeWidth="1" />
+
+                  {/* Attic Arch Window (Glows warm upon arrival) */}
+                  <path
+                    d="M -10 -4 A 10 10 0 0 1 10 -4 L 10 10 L -10 10 Z"
+                    fill={deliveredLocation === 'ghost-house' ? '#FFF9C4' : '#FFE082'}
+                    stroke="#372F48"
+                    strokeWidth="1.5"
+                    className={deliveredLocation === 'ghost-house' ? 'window-glow-bright' : ''}
+                  />
+
+                  {/* Friendly Attic Ghost (Peeking in idle, waving happily upon delivery) */}
+                  <g
+                    transform="translate(0, 3)"
+                    className={`ghost-peeking-anim ${
+                      deliveredLocation === 'ghost-house' ? 'ghost-celebrating' : ''
+                    }`}
+                  >
+                    <path
+                      d="M -6 6 C -6 -2, 6 -2, 6 6 C 4 5, 2 7, 0 5 C -2 7, -4 5, -6 6 Z"
+                      fill="#FFFFFF"
+                      stroke="#372F48"
+                      strokeWidth="1"
+                    />
                     <circle cx="-2" cy="1" r="0.8" fill="#372F48" />
                     <circle cx="2" cy="1" r="0.8" fill="#372F48" />
                     <circle cx="-3.5" cy="2.5" r="1.2" fill="#FF8BA7" opacity="0.8" />
                     <circle cx="3.5" cy="2.5" r="1.2" fill="#FF8BA7" opacity="0.8" />
-                    <path d="M -1 3.5 Q 0 4.5 1 3.5" fill="none" stroke="#372F48" strokeWidth="0.8" />
+                    <path d="M -1.5 3.5 Q 0 4.8 1.5 3.5" fill="none" stroke="#372F48" strokeWidth="0.8" />
+
+                    {/* Waving little ghost arms upon delivery */}
+                    {deliveredLocation === 'ghost-house' && (
+                      <g className="ghost-waving-arms">
+                        <path d="M 5 2 Q 8.5 -1 7 -3.5" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" className="ghost-wave-right" />
+                        <path d="M -5 2 Q -8.5 -1 -7 -3.5" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" className="ghost-wave-left" />
+                      </g>
+                    )}
                   </g>
+
                   {/* Ground Door and Porch Lantern */}
                   <rect x="-7" y="12" width="14" height="16" rx="1" fill="#7E6B56" stroke="#372F48" strokeWidth="1.2" />
                   <circle cx="16" cy="15" r="3.5" fill="#FFD54F" />
+
+                  {/* Delivered Dream Parcel at Door */}
+                  {deliveredLocation === 'ghost-house' && (
+                    <g className="delivered-parcel is-visible" transform="translate(0, 24)">
+                      <rect x="-3" y="-2" width="6" height="4.5" rx="0.6" fill="#FFFDF9" stroke="#8B264A" strokeWidth="0.7" />
+                      <path d="M -3 -2 L 0 0.5 L 3 -2" fill="none" stroke="#8B264A" strokeWidth="0.7" />
+                    </g>
+                  )}
+
+                  {/* Soft Lavender Sparkles upon Arrival */}
+                  {deliveredLocation === 'ghost-house' && (
+                    <g className="ghost-arrival-sparkles" fill="#CE93D8">
+                      <path d="M -24 -18 L -22 -15 L -24 -12 L -26 -15 Z" />
+                      <path d="M 26 -22 L 28 -19 L 26 -16 L 24 -19 Z" />
+                      <circle cx="-16" cy="-28" r="1.5" fill="#E1BEE7" />
+                      <circle cx="18" cy="-34" r="1.8" fill="#FFF9C4" />
+                    </g>
+                  )}
                 </g>
 
-                {/* --- DESTINATION 3: MOONBEAM TOWER ILLUSTRATION --- */}
+                {/* --- DESTINATION 3: MOONBEAM TOWER (ANIME LIGHTHOUSE) --- */}
                 <g className="map-illustration moonbeam-tower-art" transform="translate(730, 80)">
-                  {/* Silver Moonbeam Ray */}
-                  <polygon points="-12,-90 12,-90 38,70 -38,70" fill="url(#moonbeamGrad)" opacity="0.65" />
                   {/* Floating Celestial Base Rock */}
                   <ellipse cx="0" cy="38" rx="42" ry="14" fill="#B4C0DC" stroke="#5C4033" strokeWidth="1.5" />
                   {/* Tower Stone Spire */}
                   <polygon points="-18,36 -12,-30 12,-30 18,36" fill="#EDE4D8" stroke="#5C4033" strokeWidth="2" />
                   <line x1="-15" y1="12" x2="15" y2="12" stroke="#C5B7A6" strokeWidth="1.5" />
                   <line x1="-13" y1="-10" x2="13" y2="-10" stroke="#C5B7A6" strokeWidth="1.5" />
+
                   {/* Observatory Balcony Ring */}
                   <rect x="-16" y="-34" width="32" height="6" rx="2" fill="#D4A843" stroke="#5C4033" strokeWidth="1.5" />
                   {/* Dome Spire */}
                   <path d="M -13 -34 A 13 13 0 0 1 13 -34 Z" fill="#6A8EC4" stroke="#5C4033" strokeWidth="1.8" />
                   <rect x="-3" y="-44" width="6" height="8" rx="1" fill="#FFD54F" />
+
                   {/* Crescent Moon Flag */}
                   <line x1="0" y1="-44" x2="0" y2="-62" stroke="#5C4033" strokeWidth="2" />
                   <path d="M 0 -62 C 6 -62 10 -58 10 -54 C 6 -55 3 -53 0 -50 Z" fill="#F5D88C" stroke="#5C4033" strokeWidth="1.2" />
-                  {/* Glowing Windows */}
+
+                  {/* Glowing Spire Windows */}
                   <rect x="-3" y="-4" width="6" height="10" rx="1.5" fill="#FFE082" stroke="#5C4033" strokeWidth="1" />
                   <rect x="-3" y="18" width="6" height="10" rx="1.5" fill="#FFE082" stroke="#5C4033" strokeWidth="1" />
+
+                  {/* ======================================================= */}
+                  {/* ANIME-INSPIRED ROTATING LIGHTHOUSE SEARCHLIGHT BEACON   */}
+                  {/* Focal point at summit (0, -40). pointer-events: none    */}
+                  {/* ======================================================= */}
+                  <g className="lighthouse-beacon-system" transform="translate(0, -40)" pointerEvents="none">
+                    {/* Glowing Beacon Core Lantern */}
+                    <circle cx="0" cy="0" r="4.5" fill="#FFFDF9" filter="url(#routeGlow)" />
+                    <circle cx="0" cy="0" r="7.5" fill="url(#beaconCoreGlow)" />
+
+                    {/* Rotating Searchlight Conical Beam */}
+                    <g className={`lighthouse-beam-rotator ${beaconMode}`}>
+                      {/* Broad Luminous Atmosphere Cone */}
+                      <polygon points="0,-4 220,-50 220,50 0,4" fill="url(#lighthouseBeamGrad)" opacity="0.75" />
+                      {/* Focused Center Beam */}
+                      <polygon points="0,-2 220,-18 220,18 0,2" fill="url(#lighthouseBeamCoreGrad)" opacity="0.9" />
+                      {/* Subtle Opposite Rear Glow */}
+                      <polygon points="0,-2 -40,-12 -40,12 0,2" fill="url(#lighthouseBeamGrad)" opacity="0.25" />
+                    </g>
+                  </g>
+
+                  {/* Delivered Dream Parcel at Observatory Base */}
+                  {deliveredLocation === 'moonbeam-tower' && (
+                    <g className="delivered-parcel is-visible" transform="translate(0, 32)">
+                      <rect x="-3" y="-2" width="6" height="4.5" rx="0.6" fill="#FFFDF9" stroke="#8B264A" strokeWidth="0.7" />
+                      <path d="M -3 -2 L 0 0.5 L 3 -2" fill="none" stroke="#8B264A" strokeWidth="0.7" />
+                    </g>
+                  )}
+
+                  {/* Ceremonial Moonbeam Arrival Flare */}
+                  {deliveredLocation === 'moonbeam-tower' && (
+                    <g className="moonbeam-arrival-flare" pointerEvents="none">
+                      <circle cx="0" cy="-40" r="22" fill="url(#beaconCoreGlow)" opacity="0.85" />
+                      <circle cx="0" cy="-40" r="34" fill="#FFF" opacity="0.35" filter="url(#routeGlow)" />
+                      <path d="M -16 -40 L 16 -40" stroke="#FFF" strokeWidth="2" opacity="0.9" />
+                      <path d="M 0 -56 L 0 -24" stroke="#FFF" strokeWidth="2" opacity="0.9" />
+                    </g>
+                  )}
                 </g>
 
                 {/* --- DISPATCH ORIGIN: PIP'S MIDNIGHT DEPOT --- */}
                 <g className="map-illustration midnight-depot-art" transform="translate(80, 220)">
+                  {/* Depot Siding Platform Tracks */}
+                  <line x1="-60" y1="8" x2="45" y2="8" stroke="#3D3550" strokeWidth="2.5" />
+                  <line x1="-60" y1="8" x2="45" y2="8" stroke="#C59B3F" strokeWidth="5.5" strokeDasharray="2 7" opacity="0.8" />
                   <ellipse cx="0" cy="22" rx="36" ry="12" fill="#E8DED2" stroke="#5C4033" strokeWidth="1.5" />
                   <rect x="-20" y="2" width="40" height="20" rx="2" fill="#C55272" stroke="#5C4033" strokeWidth="2" />
                   <polygon points="-26,2 0,-14 26,2" fill="#7A4B38" stroke="#5C4033" strokeWidth="2" />
@@ -659,6 +1013,168 @@ export default function InventionWorkshop({
                   <text x="0" y="38" textAnchor="middle" fontSize="7.5" fontWeight="bold" fill="#A34063" letterSpacing="0.05em">
                     ★ DEPOT
                   </text>
+
+                  {/* Depot Dispatch Signal Light */}
+                  <circle
+                    cx="15"
+                    cy="8"
+                    r="3.2"
+                    fill={isDelivering ? '#4CAF50' : '#FFD54F'}
+                    stroke="#5C4033"
+                    strokeWidth="0.8"
+                    className={isDelivering ? 'depot-signal-active' : ''}
+                  />
+                </g>
+
+                {/* ======================================================= */}
+                {/* THE MIDNIGHT DREAM EXPRESS — NO. 003                    */}
+                {/* Handcrafted Miniature Locomotive & Postal Carriage      */}
+                {/* ======================================================= */}
+                <g className="dream-express-consist" pointerEvents="none">
+                  {/* --- TRAILING POSTAL CARRIAGE (No. 003) --- */}
+                  <g
+                    className={`express-carriage ${isDelivering ? 'in-flight' : 'is-idle'}`}
+                    transform={`translate(${trainPos.carriage.x}, ${trainPos.carriage.y}) rotate(${trainPos.carriage.angle})`}
+                  >
+                    {/* Carriage Ground Shadow */}
+                    <ellipse cx="0" cy="11" rx="14" ry="3.5" fill="rgba(37, 30, 51, 0.22)" />
+
+                    {/* Coupling Bar towards front engine */}
+                    <line x1="10" y1="6" x2="16" y2="6" stroke="#2D253B" strokeWidth="1.8" />
+
+                    {/* Chassis */}
+                    <rect x="-12" y="3" width="24" height="4" rx="1.5" fill="#3D3550" stroke="#251E33" strokeWidth="0.8" />
+
+                    {/* Body (Cream with Berry Trim) */}
+                    <rect x="-12" y="-9" width="24" height="13" rx="2" fill="#FFFDF9" stroke="#5C4033" strokeWidth="1.2" />
+                    {/* Berry lower skirt */}
+                    <path d="M -12 0 L 12 0 L 12 4 L -12 4 Z" fill="#8B264A" />
+
+                    {/* Arched Berry Roof */}
+                    <path d="M -13 -9 Q 0 -12 13 -9 L 12 -7 L -12 -7 Z" fill="#8B264A" stroke="#5C1630" strokeWidth="0.8" />
+
+                    {/* Mail Envelope Emblem */}
+                    <g transform="translate(-3, -5)">
+                      <rect x="0" y="0" width="7" height="5" rx="0.6" fill="#FFF8F1" stroke="#8B264A" strokeWidth="0.6" />
+                      <path d="M 0 0 L 3.5 2.5 L 7 0" fill="none" stroke="#8B264A" strokeWidth="0.6" />
+                    </g>
+
+                    {/* Archival Label: 003 */}
+                    <text x="6" y="-1.5" fontSize="3" fontWeight="bold" fill="#D4A843" fontFamily="monospace">003</text>
+
+                    {/* Rotating Carriage Wheels */}
+                    <g className="train-wheels-group">
+                      <g transform="translate(-7, 7)" className="train-wheel">
+                        <circle cx="0" cy="0" r="3.6" fill="#2D253B" stroke="#1D1726" strokeWidth="0.8" />
+                        <circle cx="0" cy="0" r="1.5" fill="#D4A843" />
+                        <line x1="-3.6" y1="0" x2="3.6" y2="0" stroke="#8C7A6B" strokeWidth="0.6" />
+                        <line x1="0" y1="-3.6" x2="0" y2="3.6" stroke="#8C7A6B" strokeWidth="0.6" />
+                      </g>
+                      <g transform="translate(7, 7)" className="train-wheel">
+                        <circle cx="0" cy="0" r="3.6" fill="#2D253B" stroke="#1D1726" strokeWidth="0.8" />
+                        <circle cx="0" cy="0" r="1.5" fill="#D4A843" />
+                        <line x1="-3.6" y1="0" x2="3.6" y2="0" stroke="#8C7A6B" strokeWidth="0.6" />
+                        <line x1="0" y1="-3.6" x2="0" y2="3.6" stroke="#8C7A6B" strokeWidth="0.6" />
+                      </g>
+                    </g>
+                  </g>
+
+                  {/* --- LEADING STEAM LOCOMOTIVE (No. 003) --- */}
+                  <g
+                    className={`express-locomotive ${isDelivering ? 'in-flight' : 'is-idle'}`}
+                    transform={`translate(${trainPos.loco.x}, ${trainPos.loco.y}) rotate(${trainPos.loco.angle})`}
+                  >
+                    {/* Ground Shadow */}
+                    <ellipse cx="0" cy="12" rx="20" ry="4" fill="rgba(37, 30, 51, 0.28)" />
+
+                    {/* Glowing Forward Headlamp Projection Beam */}
+                    <polygon
+                      points="17,-2 65,-18 65,14"
+                      fill="url(#headlampBeamGrad)"
+                      opacity="0.75"
+                      className="loco-headlamp-beam"
+                    />
+
+                    {/* Chimney Dream Smoke Puffs */}
+                    <g className="chimney-smoke-group" transform="translate(10, -15)">
+                      <circle className="chimney-puff puff-1" cx="0" cy="0" r="2.8" fill="#FFFDF9" />
+                      <circle className="chimney-puff puff-2" cx="0" cy="0" r="3.6" fill="#FFFDF9" />
+                      <circle className="chimney-puff puff-3" cx="0" cy="0" r="4.4" fill="#FFFDF9" />
+                      <circle className="chimney-puff idle-wisp" cx="0" cy="0" r="2" fill="#FFFDF9" opacity="0.6" />
+                    </g>
+
+                    {/* Underframe Chassis */}
+                    <rect x="-16" y="4" width="34" height="4.5" rx="1.5" fill="#3D3550" stroke="#251E33" strokeWidth="0.8" />
+                    {/* Cowcatcher / Front pilot */}
+                    <polygon points="17,4 21,8.5 17,8.5" fill="#D4A843" stroke="#5C4033" strokeWidth="0.6" />
+
+                    {/* Boiler Barrel (Signature Berry) */}
+                    <rect x="-6" y="-8" width="17" height="12.5" rx="2" fill="#8B264A" stroke="#5C1630" strokeWidth="1" />
+                    {/* Brass Boiler Straps */}
+                    <line x1="-1" y1="-8" x2="-1" y2="4.5" stroke="#F5D88C" strokeWidth="1" />
+                    <line x1="5" y1="-8" x2="5" y2="4.5" stroke="#F5D88C" strokeWidth="1" />
+
+                    {/* Steam Dome (Brass) */}
+                    <ellipse cx="0" cy="-9" rx="3.2" ry="2.2" fill="#D4A843" stroke="#8C6B1F" strokeWidth="0.6" />
+                    <circle cx="0" cy="-10.5" r="1" fill="#F5D88C" />
+
+                    {/* Front Smokebox (Dark Indigo) */}
+                    <path d="M 11 -8 L 15 -8 Q 17 -1.75 15 4.5 L 11 4.5 Z" fill="#251E33" stroke="#171221" strokeWidth="0.8" />
+
+                    {/* Chimney Smokestack */}
+                    <path d="M 9.5 -8 L 8.5 -14.5 L 13.5 -14.5 L 12.5 -8 Z" fill="#251E33" stroke="#171221" strokeWidth="0.8" />
+                    <ellipse cx="11" cy="-14.5" rx="3" ry="1.2" fill="#D4A843" stroke="#8C6B1F" strokeWidth="0.6" />
+
+                    {/* Front Brass Headlamp */}
+                    <rect x="15" y="-5" width="4" height="6.5" rx="1" fill="#D4A843" stroke="#5C4033" strokeWidth="0.8" />
+                    <ellipse cx="18" cy="-1.75" rx="1.6" ry="2.4" fill="#FFFDF9" />
+                    <circle cx="18" cy="-1.75" r="4" fill="url(#beaconCoreGlow)" opacity="0.85" />
+
+                    {/* Cab (Driver Cabin - Handcrafted Cream with Berry Arched Roof) */}
+                    <rect x="-16" y="-12" width="10.5" height="16.5" rx="1.5" fill="#FFFDF9" stroke="#5C4033" strokeWidth="1.2" />
+                    <path d="M -18 -12 Q -11 -15.5 -4 -12 L -4 -10 L -18 -10 Z" fill="#8B264A" stroke="#5C1630" strokeWidth="1" />
+                    {/* Cab Arched Window with Warm Gold Glow */}
+                    <rect x="-13.5" y="-8.5" width="5.5" height="6.5" rx="1.5" fill="#FFE082" stroke="#5C4033" strokeWidth="0.8" />
+                    {/* Star insignia and Pip's tiny engineer mark */}
+                    <text x="-12.5" y="1.5" fontSize="2.8" fontWeight="bold" fill="#8B264A">★ 003</text>
+
+                    {/* Wheels & Linkage Group */}
+                    <g className="train-wheels-group">
+                      {/* 3 Driving Wheels */}
+                      <g transform="translate(-10, 8)" className="train-wheel">
+                        <circle cx="0" cy="0" r="4.2" fill="#251E33" stroke="#171221" strokeWidth="0.9" />
+                        <circle cx="0" cy="0" r="1.8" fill="#D4A843" />
+                        <line x1="-4.2" y1="0" x2="4.2" y2="0" stroke="#8C7A6B" strokeWidth="0.8" />
+                        <line x1="0" y1="-4.2" x2="0" y2="4.2" stroke="#8C7A6B" strokeWidth="0.8" />
+                      </g>
+                      <g transform="translate(0, 8)" className="train-wheel">
+                        <circle cx="0" cy="0" r="4.2" fill="#251E33" stroke="#171221" strokeWidth="0.9" />
+                        <circle cx="0" cy="0" r="1.8" fill="#D4A843" />
+                        <line x1="-4.2" y1="0" x2="4.2" y2="0" stroke="#8C7A6B" strokeWidth="0.8" />
+                        <line x1="0" y1="-4.2" x2="0" y2="4.2" stroke="#8C7A6B" strokeWidth="0.8" />
+                      </g>
+                      <g transform="translate(10, 8)" className="train-wheel">
+                        <circle cx="0" cy="0" r="4.2" fill="#251E33" stroke="#171221" strokeWidth="0.9" />
+                        <circle cx="0" cy="0" r="1.8" fill="#D4A843" />
+                        <line x1="-4.2" y1="0" x2="4.2" y2="0" stroke="#8C7A6B" strokeWidth="0.8" />
+                        <line x1="0" y1="-4.2" x2="0" y2="4.2" stroke="#8C7A6B" strokeWidth="0.8" />
+                      </g>
+
+                      {/* Oscillating Connecting Rod */}
+                      <line
+                        x1="-10"
+                        y1="8"
+                        x2="10"
+                        y2="8"
+                        stroke="#F5D88C"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        className="train-connecting-rod"
+                      />
+                      {/* Piston Crosshead */}
+                      <rect x="9.5" y="6.8" width="4.5" height="2.4" rx="0.6" fill="#3D3550" />
+                    </g>
+                  </g>
                 </g>
               </svg>
 
@@ -679,7 +1195,7 @@ export default function InventionWorkshop({
                       top: `${(dest.pinCoords.y / 280) * 100}%`,
                     }}
                     onClick={() => handleSelectDestination(dest.id)}
-                    aria-label={`Send dream to ${dest.name}`}
+                    aria-label={`Send dream express to ${dest.name}`}
                   >
                     <span className="landmark-badge">
                       <span className="landmark-icon" aria-hidden="true">{dest.icon}</span>
@@ -695,26 +1211,6 @@ export default function InventionWorkshop({
                   </button>
                 );
               })}
-
-              {/* Animated Traveling Dream Envelope */}
-              {(isDelivering || selectedDestination) && (
-                <div
-                  className={`traveling-envelope ${isDelivering ? 'in-flight' : 'landed'}`}
-                  style={{
-                    left: `${(envelopePos.x / 840) * 100}%`,
-                    top: `${(envelopePos.y / 280) * 100}%`,
-                    transform: `translate(-50%, -50%) rotate(${envelopePos.angle}deg)`,
-                  }}
-                  aria-hidden="true"
-                >
-                  <div className="envelope-body">
-                    <span className="envelope-icon">✉️</span>
-                    <span className="envelope-wing left-wing">໒</span>
-                    <span className="envelope-wing right-wing">७</span>
-                  </div>
-                  {isDelivering && <span className="flight-stardust-trail"></span>}
-                </div>
-              )}
             </div>
           </div>
 
@@ -762,7 +1258,7 @@ export default function InventionWorkshop({
               ) : (
                 <div className="delivery-confirmation-card is-idle">
                   <span className="receipt-idle-icon" aria-hidden="true">📯</span>
-                  <span className="receipt-idle-text">Select a destination above to launch the Dream Express!</span>
+                  <span className="receipt-idle-text">Select a destination above to launch Locomotive No. 003!</span>
                 </div>
               )}
             </div>
@@ -775,7 +1271,7 @@ export default function InventionWorkshop({
               <p>“Guaranteed on-time delivery: 5 minutes before morning alarm clock. — Pip”</p>
             </div>
             <div className="station-stamp stamp-airmail">
-              <span>MIDNIGHT POST · SPECIAL AIR MAIL · 003</span>
+              <span>MIDNIGHT EXPRESS · SPECIAL SKYWAY RAIL · 003</span>
             </div>
           </footer>
         </article>
