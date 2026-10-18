@@ -8,14 +8,18 @@ import {
 import './MagicalStarTheater.css';
 
 /**
- * PASS 01C.4A: Pip's Magical Star Theater Opening Animation
- * Full 2D storybook cinematic film staging:
- * - Scene A (0.0s - 2.0s): Bedroom transforms via sweeping paper-cut clouds; 3 depth layers; camera push-in.
- * - Scene B (2.0s - 2.8s): Star 1 enters from far left along high arc with comet trail; Pip tracks it.
- * - Scene C (2.8s - 4.5s): Star 2 loops from upper right; Star 3 shoots up from below.
- * - Scene D (4.5s - 7.0s): 3-star coordinated spiral around Pip with tapering golden ribbons.
- * - Scene E (7.0s - 9.7s): Magic settles; constellation lines form; moon nods; "Whoa... did I just invent a galaxy?!".
- * - Scene F (9.7s+): Vocal lullaby starts once; song performance begins.
+ * PASS 01C.4A: Pip's Magical Star Theater — Living Paper-Craft World
+ * Inspired by layered 3D paper-quilling art:
+ * - Layer A: Deep midnight paper sky (#08102B -> #182E62)
+ * - Layer B: Small distant golden stars twinkling in coordinated waves
+ * - Layer C: Left-side cut-paper formations & animated quilled paper spirals
+ * - Layer D: Right-side cut-paper formations & rolled cloud shapes
+ * - Layer E: Partially hidden golden crescent moon peeking through paper clouds
+ * - Layer F: Midground clouds framing the central opening
+ * - Layer G: Pip seated on the cloud at the center, nestled in paper cloud cradle
+ * - Layer H: Three major animated golden stars with continuous comet ribbons & spiral
+ * - Layer I: Foreground overlapping blue paper clouds with breathing motion
+ * - Layer J: Dedicated readable cinematic subtitle layer & accessible controls
  */
 export default function MagicalStarTheater({
   isOpen = false,
@@ -24,8 +28,8 @@ export default function MagicalStarTheater({
   onCloseTheater,
   onTheaterComplete,
 }) {
-  // Phase state:
-  // 'curtain' (0-2s) | 'star1-enter' (2-2.8s) | 'stars23-enter' (2.8-4.5s) | 'spiral' (4.5-7s) | 'settle' (7-9.7s) | 'performing' (9.7s-27.15s) | 'celebrating' (27.15-31.15s) | 'exiting'
+  // Cinematic phase state:
+  // 'curtain' (0-2s) | 'star1-enter' (2-2.8s) | 'stars23-enter' (2.8-4.5s) | 'spiral' (4.5-7.5s) | 'settle' (7.5-10s) | 'performing' (10s+) | 'celebrating' | 'exiting'
   const [phase, setPhase] = useState('curtain');
   const [pipMotion, setPipMotion] = useState('idle');
   const [subtitle, setSubtitle] = useState({ speaker: 'Pip', text: '“Uh-oh... where did my bedroom go?!”' });
@@ -73,7 +77,7 @@ export default function MagicalStarTheater({
     setTimeout(() => {
       setCurtainsOpen(false);
       onCloseTheater();
-    }, 800);
+    }, 750);
   }, [clearAllTimers, onCloseTheater]);
 
   // Keyboard Escape Handler
@@ -97,57 +101,52 @@ export default function MagicalStarTheater({
 
   /**
    * Continuous Cinematic Star Trajectory Engine (rAF)
-   * Evaluates exact mathematical paths for Stars 1, 2, 3 and ribbon trails based on elapsed seconds.
+   * Mathematical flight paths for Stars 1, 2, 3 and luminous ribbon trails.
    */
   const updateStarPositions = useCallback((elapsedSec, width, height) => {
     const cx = width / 2;
     const cy = height / 2;
 
-    // Mobile adaptation factor
     const isMobile = width < 600;
-    const scale = isMobile ? 0.75 : 1.0;
+    const scale = isMobile ? 0.72 : 1.0;
 
-    // Default resting positions if not yet active
-    let p1 = { x: -150, y: cy, visible: false, scale: 1 };
-    let p2 = { x: width + 150, y: -100, visible: false, scale: 1 };
-    let p3 = { x: cx, y: height + 150, visible: false, scale: 1 };
+    let p1 = { x: -160, y: cy, visible: false, scale: 1 };
+    let p2 = { x: cx + 40, y: -160, visible: false, scale: 1 };
+    let p3 = { x: width + 160, y: cy + 120, visible: false, scale: 1 };
 
-    // Easing helper
     const easeOutQuad = (t) => t * (2 - t);
-    const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-    // --- SCENE B: STAR 1 ENTERS (2.0s to 2.8s) ---
+    // --- SCENE B: STAR 1 ENTERS FROM LEFT (2.0s to 2.8s) ---
     if (elapsedSec >= 2.0 && elapsedSec < 4.5) {
       p1.visible = true;
       if (elapsedSec < 2.8) {
         const t = (elapsedSec - 2.0) / 0.8;
         const e = easeOutQuad(t);
-        // Arcs from outside left (-120), loops up to high celestial arc, settles at (cx - 180, cy - 30)
-        p1.x = -100 + (cx - 180 * scale + 100) * e;
-        p1.y = cy - Math.sin(t * Math.PI) * 160 * scale - (30 * scale) * e;
+        p1.x = -120 + (cx - 190 * scale + 120) * e;
+        p1.y = cy - Math.sin(t * Math.PI) * 170 * scale - (35 * scale) * e;
         p1.scale = 1 + Math.sin(t * Math.PI) * 0.35;
       } else {
-        // Subtle resting hover before spiral
         const hoverT = (elapsedSec - 2.8) * 3;
-        p1.x = cx - 180 * scale + Math.cos(hoverT) * 4;
-        p1.y = cy - 30 * scale + Math.sin(hoverT) * 6;
+        p1.x = cx - 190 * scale + Math.cos(hoverT) * 4;
+        p1.y = cy - 35 * scale + Math.sin(hoverT) * 6;
       }
     }
 
-    // --- SCENE C: STARS 2 & 3 ENTER (2.8s to 4.5s) ---
+    // --- SCENE C: STAR 2 LOOPS FROM ABOVE & STAR 3 ENTERS FROM RIGHT (2.8s to 4.5s) ---
     if (elapsedSec >= 2.8 && elapsedSec < 4.5) {
       p2.visible = true;
       if (elapsedSec < 3.7) {
         const t = (elapsedSec - 2.8) / 0.9;
         const e = easeOutQuad(t);
-        // Enters from upper right, loops under moon to (cx + 170, cy + 20)
-        p2.x = width + 80 - (width + 80 - (cx + 170 * scale)) * e;
-        p2.y = -60 + (cy + 20 * scale + 60) * e + Math.sin(t * Math.PI) * 80 * scale;
+        // Loops in from above, dipping gently past the moon
+        p2.x = cx + 60 * scale + Math.sin(t * Math.PI * 1.5) * 120 * scale;
+        p2.y = -100 + (cy - 190 * scale + 100) * e;
         p2.scale = 1 + Math.sin(t * Math.PI) * 0.3;
       } else {
         const hoverT = (elapsedSec - 3.7) * 3;
-        p2.x = cx + 170 * scale + Math.sin(hoverT) * 5;
-        p2.y = cy + 20 * scale + Math.cos(hoverT) * 6;
+        p2.x = cx + 20 * scale + Math.sin(hoverT) * 5;
+        p2.y = cy - 190 * scale + Math.cos(hoverT) * 5;
       }
     }
 
@@ -156,60 +155,59 @@ export default function MagicalStarTheater({
       if (elapsedSec < 4.5) {
         const t = (elapsedSec - 3.6) / 0.9;
         const e = easeOutQuad(t);
-        // Shoots up from below, curves playfully to zenith (cx, cy - 200)
-        p3.x = cx + 40 * scale - (40 * scale) * e + Math.sin(t * Math.PI * 2) * 30 * scale;
-        p3.y = height + 80 - (height + 80 - (cy - 200 * scale)) * e;
+        // Swoops in from lower right across the paper clouds
+        p3.x = width + 80 - (width + 80 - (cx + 180 * scale)) * e;
+        p3.y = height * 0.8 - (height * 0.8 - (cy + 15 * scale)) * e + Math.sin(t * Math.PI) * 70 * scale;
         p3.scale = 1 + Math.sin(t * Math.PI) * 0.4;
       }
     }
 
-    // --- SCENE D: THE COORDINATED SPIRAL (4.5s to 7.0s) ---
-    if (elapsedSec >= 4.5 && elapsedSec < 7.0) {
+    // --- SCENE D: A REAL SPIRAL DANCE (4.5s to 7.5s) ---
+    if (elapsedSec >= 4.5 && elapsedSec < 7.5) {
       p1.visible = true;
       p2.visible = true;
       p3.visible = true;
 
-      const t = (elapsedSec - 4.5) / 2.5; // 0 to 1
+      const t = (elapsedSec - 4.5) / 3.0; // 0 to 1 over 3 full seconds
       const e = easeInOutCubic(t);
 
-      // Angle: 1.75 revolutions
-      const revs = 1.75 * Math.PI * 2;
+      // 1.85 revolutions
+      const revs = 1.85 * Math.PI * 2;
       const angleOffset = e * revs;
 
-      // Contracting radius from 290px to 190px (wide cinematic orbit)
-      const r = (290 - 100 * e) * scale;
-      const rY = r * 0.82; // Elliptical storybook tilt that never touches Pip's nightcap or face!
+      // Contracting spiral radius from 300px to 195px
+      const r = (300 - 105 * e) * scale;
+      const rY = r * 0.82; // Elliptical 2.5D tilt that stays clear of Pip's face
 
-      // Star 1: Starts at -120 deg (240 deg)
+      // Star 1 (starts at 240 deg)
       const a1 = (4 * Math.PI / 3) + angleOffset;
       p1.x = cx + r * Math.cos(a1);
       p1.y = cy + rY * Math.sin(a1);
 
-      // Star 2: Starts at 0 deg
+      // Star 2 (starts at 0 deg)
       const a2 = 0 + angleOffset;
       p2.x = cx + r * Math.cos(a2);
       p2.y = cy + rY * Math.sin(a2);
 
-      // Star 3: Starts at 120 deg
+      // Star 3 (starts at 120 deg)
       const a3 = (2 * Math.PI / 3) + angleOffset;
       p3.x = cx + r * Math.cos(a3);
       p3.y = cy + rY * Math.sin(a3);
     }
 
-    // --- SCENE E: THE MAGIC SETTLES INTO CONSTELLATION (7.0s to 10.0s) ---
-    if (elapsedSec >= 7.0) {
+    // --- SCENE E: THE STARS SETTLE (7.5s to 10.0s) ---
+    if (elapsedSec >= 7.5) {
       p1.visible = true;
       p2.visible = true;
       p3.visible = true;
 
-      const target1 = { x: cx - 210 * scale, y: cy - 90 * scale };
-      const target2 = { x: cx + 210 * scale, y: cy - 70 * scale };
-      const target3 = { x: cx, y: cy - 235 * scale };
+      const target1 = { x: cx - 215 * scale, y: cy - 90 * scale };
+      const target2 = { x: cx + 215 * scale, y: cy - 70 * scale };
+      const target3 = { x: cx, y: cy - 240 * scale };
 
-      if (elapsedSec < 8.2) {
-        const t = (elapsedSec - 7.0) / 1.2;
+      if (elapsedSec < 8.6) {
+        const t = (elapsedSec - 7.5) / 1.1;
         const e = easeOutQuad(t);
-        // Settle into final anchors from spiral exit
         p1.x = p1.x + (target1.x - p1.x) * e;
         p1.y = p1.y + (target1.y - p1.y) * e;
         p2.x = p2.x + (target2.x - p2.x) * e;
@@ -217,8 +215,7 @@ export default function MagicalStarTheater({
         p3.x = p3.x + (target3.x - p3.x) * e;
         p3.y = p3.y + (target3.y - p3.y) * e;
       } else {
-        // Idle breathing in constellation
-        const tIdle = (elapsedSec - 8.2) * 2;
+        const tIdle = (elapsedSec - 8.6) * 2;
         p1.x = target1.x + Math.sin(tIdle) * 3;
         p1.y = target1.y + Math.cos(tIdle) * 3;
         p2.x = target2.x + Math.cos(tIdle + 1) * 3;
@@ -242,21 +239,20 @@ export default function MagicalStarTheater({
       star3Ref.current.style.transform = `translate(${p3.x - 20}px, ${p3.y - 20}px) scale(${p3.scale})`;
     }
 
-    // Update coordinate history for luminous ribbons
+    // Coordinate history buffers for luminous ribbon trails
     if (p1.visible) {
       history1.current.push({ x: p1.x, y: p1.y });
-      if (history1.current.length > 20) history1.current.shift();
+      if (history1.current.length > 22) history1.current.shift();
     }
     if (p2.visible) {
       history2.current.push({ x: p2.x, y: p2.y });
-      if (history2.current.length > 20) history2.current.shift();
+      if (history2.current.length > 22) history2.current.shift();
     }
     if (p3.visible) {
       history3.current.push({ x: p3.x, y: p3.y });
-      if (history3.current.length > 20) history3.current.shift();
+      if (history3.current.length > 22) history3.current.shift();
     }
 
-    // Helper to format SVG path from history points
     const formatTrail = (pts) => {
       if (pts.length < 2) return '';
       return 'M ' + pts.map((pt) => `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' L ');
@@ -264,9 +260,8 @@ export default function MagicalStarTheater({
 
     if (trail1Ref.current) {
       trail1Ref.current.setAttribute('d', formatTrail(history1.current));
-      // Fade trail after spiral completes
-      if (elapsedSec > 7.0) {
-        const fade = Math.max(0, 1 - (elapsedSec - 7.0) / 2.0);
+      if (elapsedSec > 7.5) {
+        const fade = Math.max(0, 1 - (elapsedSec - 7.5) / 2.2);
         trail1Ref.current.style.opacity = fade.toString();
       } else {
         trail1Ref.current.style.opacity = '1';
@@ -274,8 +269,8 @@ export default function MagicalStarTheater({
     }
     if (trail2Ref.current) {
       trail2Ref.current.setAttribute('d', formatTrail(history2.current));
-      if (elapsedSec > 7.0) {
-        const fade = Math.max(0, 1 - (elapsedSec - 7.0) / 2.0);
+      if (elapsedSec > 7.5) {
+        const fade = Math.max(0, 1 - (elapsedSec - 7.5) / 2.2);
         trail2Ref.current.style.opacity = fade.toString();
       } else {
         trail2Ref.current.style.opacity = '1';
@@ -283,17 +278,17 @@ export default function MagicalStarTheater({
     }
     if (trail3Ref.current) {
       trail3Ref.current.setAttribute('d', formatTrail(history3.current));
-      if (elapsedSec > 7.0) {
-        const fade = Math.max(0, 1 - (elapsedSec - 7.0) / 2.0);
+      if (elapsedSec > 7.5) {
+        const fade = Math.max(0, 1 - (elapsedSec - 7.5) / 2.2);
         trail3Ref.current.style.opacity = fade.toString();
       } else {
         trail3Ref.current.style.opacity = '1';
       }
     }
 
-    // Update constellation triangle polygon when settled
-    if (constLineRef.current && elapsedSec >= 7.2) {
-      const lineOpacity = Math.min(1, (elapsedSec - 7.2) / 1.0);
+    // Constellation lines form between the three settled stars
+    if (constLineRef.current && elapsedSec >= 7.8) {
+      const lineOpacity = Math.min(1, (elapsedSec - 7.8) / 1.0);
       constLineRef.current.style.opacity = lineOpacity.toString();
       constLineRef.current.setAttribute(
         'points',
@@ -305,7 +300,7 @@ export default function MagicalStarTheater({
   }, []);
 
   /**
-   * Main Cinematic State Machine & rAF Loop
+   * Main Choreographed State Machine
    */
   useEffect(() => {
     if (!isOpen) {
@@ -323,18 +318,17 @@ export default function MagicalStarTheater({
     history2.current = [];
     history3.current = [];
 
-    // --- SCENE A: THE BEDROOM TRANSFORMS (0.0s - 2.0s) ---
+    // --- 0.0s to 2.0s: SCENE A (Paper Sky Opens) ---
     setPhase('curtain');
     setPipMotion('looking-up');
     setSubtitle({ speaker: 'Pip', text: '“Uh-oh... where did my bedroom go?!”' });
 
-    // Open paper-cut clouds wipe after a brief 100ms mount
     const tCurtains = setTimeout(() => {
       setCurtainsOpen(true);
-    }, 150);
+    }, 120);
     theaterTimersRef.current.push(tCurtains);
 
-    // --- SCENE B: STAR 1 ENTERS (2.0s - 2.8s) ---
+    // --- 2.0s to 2.8s: SCENE B (Star 1 Enters from Left) ---
     const tSceneB = setTimeout(() => {
       setPhase('star1-enter');
       setPipMotion('tilt-left');
@@ -343,7 +337,7 @@ export default function MagicalStarTheater({
     }, 2000);
     theaterTimersRef.current.push(tSceneB);
 
-    // --- SCENE C: STARS 2 & 3 ENTER (2.8s - 4.5s) ---
+    // --- 2.8s to 4.5s: SCENE C (Stars 2 & 3 Enter) ---
     const tSceneC1 = setTimeout(() => {
       setPhase('stars23-enter');
       setPipMotion('tilt-right');
@@ -357,7 +351,7 @@ export default function MagicalStarTheater({
     }, 3600);
     theaterTimersRef.current.push(tSceneC2);
 
-    // --- SCENE D: THE SPIRAL PERFORMANCE (4.5s - 7.0s) ---
+    // --- 4.5s to 7.5s: SCENE D (A Real Spiral Dance) ---
     const tSceneD = setTimeout(() => {
       setPhase('spiral');
       setPipMotion('spiral-dance');
@@ -365,22 +359,22 @@ export default function MagicalStarTheater({
     }, 4500);
     theaterTimersRef.current.push(tSceneD);
 
-    // --- SCENE E: THE MAGIC SETTLES (7.0s - 10.0s) ---
+    // --- 7.5s to 10.0s: SCENE E (The Stars Settle) ---
     const tSceneE = setTimeout(() => {
       setPhase('settle');
       setPipMotion('looking-up');
       setSubtitle({ speaker: 'Pip', text: '“Whoa... did I just invent a galaxy?!”' });
-    }, 7000);
+    }, 7500);
     theaterTimersRef.current.push(tSceneE);
 
-    // Musical anticipation cue at 9.6s
+    // Anticipation cue at 9.6s before song begins
     const tMusicCue = setTimeout(() => {
       setSubtitle({ speaker: 'The Stars', text: '✦ ✦ ✦ (Soft chimes build... lullaby about to begin!) ✦ ✦ ✦' });
     }, 9600);
     theaterTimersRef.current.push(tMusicCue);
 
-    // --- SCENE F: LULLABY CONCERT (10.0s - 27.45s) ---
-    // Single Audio Owner: Audio starts ONLY when the opening sequence finishes!
+    // --- 10.0s+: SCENE F (Lullaby Concert Begins) ---
+    // Single Audio Owner: Audio starts ONLY after the 10-second opening sequence completes!
     const tSceneF = setTimeout(() => {
       setPhase('performing');
       setPipMotion('sway-song');
@@ -390,11 +384,10 @@ export default function MagicalStarTheater({
       audioStartedRef.current = true;
       playVocalLullaby({
         onEnded: () => {
-          // If song audio ends naturally, proceed to finale
+          // Handled on completion
         },
       });
 
-      // Synchronized story sub-scenes
       const tSubB = setTimeout(() => {
         setActiveSubScene('B');
         setSubtitle({ speaker: 'Pip & The Stars', text: '“How I wonder what you are... ♫”' });
@@ -414,14 +407,13 @@ export default function MagicalStarTheater({
       }, 13500);
       theaterTimersRef.current.push(tSubD);
 
-      // --- SCENE G: GRAND FINALE (at 17.45s after start of song -> 27150ms total) ---
+      // Finale after 17.45s song
       const tFinale = setTimeout(() => {
         setPhase('celebrating');
         setPipMotion('celebrate-jump');
         playFaahSound(1.0);
         setSubtitle({ speaker: 'Pip', text: '“WOOHOO! You turned my bedroom into a STUDIO!”' });
 
-        // --- SCENE H: RETURN TO BEDROOM & POPUP TRIGGER ---
         const tReturn = setTimeout(() => {
           setPhase('exiting');
           const tComplete = setTimeout(() => {
@@ -435,10 +427,10 @@ export default function MagicalStarTheater({
         theaterTimersRef.current.push(tReturn);
       }, 17450);
       theaterTimersRef.current.push(tFinale);
-    }, 9700);
+    }, 10000);
     theaterTimersRef.current.push(tSceneF);
 
-    // Start rAF loop
+    // Start 60fps rAF loop
     startTimeRef.current = performance.now();
     const tick = (now) => {
       const elapsedSec = (now - startTimeRef.current) / 1000;
@@ -474,120 +466,291 @@ export default function MagicalStarTheater({
       aria-label="Pip's Magical Star Theater Film"
     >
       {/* =========================================================
-         1. SCENE A: Sweeping Storybook Cloud Curtains (Wipe Transition)
+         LAYER A: Deep Midnight Paper Sky (#08102B -> #182E62)
          ========================================================= */}
-      <div className={`storybook-curtain-layer ${curtainsOpen ? 'curtains-open' : ''}`} aria-hidden="true">
-        <div className="curtain-cloud curtain-left">
-          <svg viewBox="0 0 500 800" preserveAspectRatio="none">
+      <div className="layer-a-midnight-sky" aria-hidden="true">
+        <div className="sky-paper-fiber-overlay" />
+        <div className="sky-celestial-nebula" />
+      </div>
+
+      {/* =========================================================
+         LAYER B: Small Distant Golden Stars (Twinkling in Waves)
+         ========================================================= */}
+      <div className="layer-b-distant-stars" aria-hidden="true">
+        <span className="star-twinkle-wave w-1" style={{ top: '10%', left: '16%' }}>✦</span>
+        <span className="star-twinkle-wave w-2" style={{ top: '18%', left: '80%' }}>⋆</span>
+        <span className="star-twinkle-wave w-3" style={{ top: '28%', left: '32%' }}>✧</span>
+        <span className="star-twinkle-wave w-1" style={{ top: '14%', left: '62%' }}>✦</span>
+        <span className="star-twinkle-wave w-2" style={{ top: '34%', left: '88%' }}>⋆</span>
+        <span className="star-twinkle-wave w-3" style={{ top: '48%', left: '14%' }}>✧</span>
+        <span className="star-twinkle-wave w-1" style={{ top: '6%', left: '46%' }}>⋆</span>
+        <span className="star-twinkle-wave w-2" style={{ top: '56%', left: '74%' }}>✦</span>
+        <span className="star-twinkle-wave w-3" style={{ top: '68%', left: '26%' }}>✧</span>
+        <span className="star-twinkle-wave w-1" style={{ top: '40%', left: '52%' }}>⋆</span>
+      </div>
+
+      {/* =========================================================
+         SCENE A: Blue Cut-Paper Stage Curtains (Wipe Transition)
+         ========================================================= */}
+      <div className={`paper-curtain-layer ${curtainsOpen ? 'curtains-open' : ''}`} aria-hidden="true">
+        <div className="curtain-sheet curtain-left-sheet">
+          <svg viewBox="0 0 600 900" preserveAspectRatio="none">
             <path
-              d="M0,0 L320,0 C380,80 340,160 410,240 C470,320 430,400 480,500 C520,590 440,680 470,800 L0,800 Z"
-              fill="#FFF8F1"
+              d="M0,0 L420,0 C480,90 440,180 510,270 C570,360 520,450 580,560 C620,660 540,760 580,900 L0,900 Z"
+              fill="#142654"
             />
             <path
-              d="M0,0 L270,0 C320,70 290,140 350,220 C400,300 370,380 410,480 C440,560 380,650 400,800 L0,800 Z"
-              fill="#F5EFE6"
-              opacity="0.8"
+              d="M0,0 L360,0 C410,80 380,160 440,250 C490,340 450,430 500,530 C540,630 470,730 500,900 L0,900 Z"
+              fill="#1E3875"
+              opacity="0.9"
+            />
+            <path
+              d="M0,0 L300,0 C340,70 320,140 370,230 C410,310 380,390 420,490 C450,580 400,680 420,900 L0,900 Z"
+              fill="#2B4E9A"
+              opacity="0.85"
             />
           </svg>
         </div>
-        <div className="curtain-cloud curtain-right">
-          <svg viewBox="0 0 500 800" preserveAspectRatio="none">
+        <div className="curtain-sheet curtain-right-sheet">
+          <svg viewBox="0 0 600 900" preserveAspectRatio="none">
             <path
-              d="M500,0 L180,0 C120,80 160,160 90,240 C30,320 70,400 20,500 C-20,590 60,680 30,800 L500,800 Z"
-              fill="#FFF8F1"
+              d="M600,0 L180,0 C120,90 160,180 90,270 C30,360 80,450 20,560 C-20,660 60,760 20,900 L600,900 Z"
+              fill="#142654"
             />
             <path
-              d="M500,0 L230,0 C180,70 210,140 150,220 C100,300 130,380 90,480 C60,560 120,650 100,800 L500,800 Z"
-              fill="#F5EFE6"
-              opacity="0.8"
+              d="M600,0 L240,0 C190,80 220,160 160,250 C110,340 150,430 100,530 C60,630 130,730 100,900 L600,900 Z"
+              fill="#1E3875"
+              opacity="0.9"
+            />
+            <path
+              d="M600,0 L300,0 C260,70 280,140 230,230 C190,310 220,390 180,490 C150,580 200,680 180,900 L600,900 Z"
+              fill="#2B4E9A"
+              opacity="0.85"
             />
           </svg>
         </div>
       </div>
 
       {/* =========================================================
-         2. LAYER 1: Deep Celestial Sky & Golden Stars
+         LAYER C: Left-Side Cut-Paper Formations & Quilled Spirals
          ========================================================= */}
-      <div className="scenery-deep-sky" aria-hidden="true">
-        <div className="sky-nebula-glow" />
-        <div className="celestial-stars-grid">
-          {/* Handcrafted background twinkling stars */}
-          <span className="twinkle-star star-t1" style={{ top: '12%', left: '15%' }}>✦</span>
-          <span className="twinkle-star star-t2" style={{ top: '22%', left: '82%' }}>⋆</span>
-          <span className="twinkle-star star-t3" style={{ top: '35%', left: '8%' }}>✧</span>
-          <span className="twinkle-star star-t4" style={{ top: '18%', left: '60%' }}>✦</span>
-          <span className="twinkle-star star-t5" style={{ top: '48%', left: '92%' }}>⋆</span>
-          <span className="twinkle-star star-t6" style={{ top: '58%', left: '12%' }}>✧</span>
-          <span className="twinkle-star star-t7" style={{ top: '8%', left: '38%' }}>⋆</span>
-          <span className="twinkle-star star-t8" style={{ top: '65%', left: '78%' }}>✦</span>
-        </div>
+      <div className="layer-c-left-paper-clouds" aria-hidden="true">
+        <svg viewBox="0 0 380 650" className="left-paper-cloud-svg">
+          <defs>
+            <filter id="paperShadowL" x="-10%" y="-10%" width="140%" height="140%">
+              <feDropShadow dx="6" dy="12" stdDeviation="10" floodColor="#060C1F" floodOpacity="0.75" />
+            </filter>
+          </defs>
 
-        {/* Storybook Smiling Crescent Moon */}
-        <div className={`theater-moon ${phase === 'settle' ? 'moon-nodding' : ''}`}>
-          <svg viewBox="0 0 60 60" width="64" height="64">
-            <defs>
-              <radialGradient id="theaterMoonGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#FFF4D1" stopOpacity="0.95" />
-                <stop offset="60%" stopColor="#FFA62B" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#E6AF2E" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="30" cy="30" r="28" fill="url(#theaterMoonGlow)" />
+          {/* Tier 1: Deep Navy Paper Base */}
+          <path
+            d="M-20,0 L220,0 Q290,60 250,140 Q320,200 270,290 Q340,380 280,480 Q320,580 240,650 L-20,650 Z"
+            fill="#0F1C3F"
+            filter="url(#paperShadowL)"
+          />
+
+          {/* Tier 2: Royal Blue Paper Layer */}
+          <path
+            d="M-20,0 L180,0 Q240,50 200,120 Q260,180 220,260 Q270,340 210,430 Q250,520 180,650 L-20,650 Z"
+            fill="#1B336E"
+            stroke="rgba(120, 160, 220, 0.2)"
+            strokeWidth="1.5"
+            filter="url(#paperShadowL)"
+          />
+
+          {/* Quilled Spirals on Left Cloud Formations */}
+          {/* Spiral 1 (Top Left) */}
+          <g className="quill-coil quill-l1" transform="translate(140, 100)">
+            <circle cx="30" cy="30" r="26" fill="#142756" stroke="#3A64A8" strokeWidth="2" />
             <path
-              d="M36 12C26.059 12 18 20.059 18 30C18 39.941 26.059 48 36 48C30.2 46.5 25.8 41 25.8 30C25.8 19 30.2 13.5 36 12Z"
-              fill="#FFD45A"
-              stroke="#5C4033"
-              strokeWidth="2"
-            />
-            <path
-              d="M26 27C27.5 29 29.5 29 31 27"
+              d="M 30,6 A 24,24 0 0,1 54,30 A 21,21 0 0,1 32,51 A 18,18 0 0,1 12,32 A 15,15 0 0,1 30,17 A 12,12 0 0,1 42,30 A 9,9 0 0,1 31,39 A 6,6 0 0,1 25,30 A 3,3 0 0,1 30,27"
               fill="none"
-              stroke="#5C4033"
-              strokeWidth="1.5"
+              stroke="#7AA6E0"
+              strokeWidth="2.2"
               strokeLinecap="round"
             />
-          </svg>
-        </div>
-      </div>
+            <circle cx="30" cy="30" r="4" fill="#0D1836" stroke="#F5D88C" strokeWidth="1.5" />
+          </g>
 
-      {/* =========================================================
-         3. LAYER 2: Midground Fairytale Nursery Skyline & Clouds
-         ========================================================= */}
-      <div className="scenery-midground" aria-hidden="true">
-        {/* Fairytale Nursery Rooftops with warm glowing windows */}
-        <svg className="fairytale-skyline-svg" viewBox="0 0 1200 180" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="roofGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#1E233E" />
-              <stop offset="100%" stopColor="#111527" />
-            </linearGradient>
-          </defs>
-          {/* Rooftop silhouette */}
+          {/* Spiral 2 (Mid Left) */}
+          <g className="quill-coil quill-l2" transform="translate(170, 240)">
+            <circle cx="35" cy="35" r="32" fill="#1E3875" stroke="#4878C2" strokeWidth="2.5" />
+            <path
+              d="M 35,5 A 30,30 0 0,1 65,35 A 26,26 0 0,1 37,61 A 22,22 0 0,1 13,37 A 18,18 0 0,1 35,19 A 14,14 0 0,1 49,35 A 10,10 0 0,1 36,45 A 6,6 0 0,1 29,35 A 3,3 0 0,1 35,32"
+              fill="none"
+              stroke="#98BEEB"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            <circle cx="35" cy="35" r="5" fill="#142654" stroke="#FFE8A3" strokeWidth="2" />
+          </g>
+
+          {/* Spiral 3 (Lower Left) */}
+          <g className="quill-coil quill-l3" transform="translate(130, 420)">
+            <circle cx="28" cy="28" r="25" fill="#142756" stroke="#3A64A8" strokeWidth="2" />
+            <path
+              d="M 28,5 A 23,23 0 0,1 51,28 A 20,20 0 0,1 30,48 A 17,17 0 0,1 11,30 A 14,14 0 0,1 28,16 A 11,11 0 0,1 39,28 A 8,8 0 0,1 29,36 A 5,5 0 0,1 23,28"
+              fill="none"
+              stroke="#7AA6E0"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            />
+            <circle cx="28" cy="28" r="3.5" fill="#0D1836" stroke="#F5D88C" strokeWidth="1.5" />
+          </g>
+
+          {/* Tier 3: Cerulean Paper Crest */}
           <path
-            d="M0,180 L0,120 L60,95 L120,120 L150,80 L190,120 L280,120 L320,60 L360,120 L480,120 L530,70 L580,120 L700,120 L740,85 L780,120 L880,120 L920,50 L960,120 L1080,120 L1130,80 L1180,120 L1200,120 L1200,180 Z"
-            fill="url(#roofGrad)"
+            d="M-20,0 L120,0 Q180,40 140,110 Q200,160 160,230 Q210,310 150,390 Q190,480 130,650 L-20,650 Z"
+            fill="#2B4D96"
+            stroke="rgba(160, 200, 255, 0.3)"
+            strokeWidth="1.5"
+            filter="url(#paperShadowL)"
           />
-          {/* Little glowing windows */}
-          <rect x="85" y="105" width="10" height="14" rx="2" fill="#FFD45A" opacity="0.85" className="glow-window-1" />
-          <rect x="335" y="85" width="12" height="16" rx="2" fill="#FFD45A" opacity="0.9" className="glow-window-2" />
-          <rect x="550" y="92" width="10" height="14" rx="2" fill="#FFD45A" opacity="0.8" className="glow-window-3" />
-          <rect x="935" y="80" width="12" height="16" rx="2" fill="#FFD45A" opacity="0.9" className="glow-window-4" />
-          <rect x="1145" y="100" width="10" height="14" rx="2" fill="#FFD45A" opacity="0.75" className="glow-window-5" />
-        </svg>
 
-        {/* Drifting storybook clouds */}
-        <div className={`drifting-clouds-layer ${activeSubScene === 'B' || activeSubScene === 'C' ? 'clouds-visible' : ''}`}>
-          <svg className="storybook-cloud cloud-drift-1" viewBox="0 0 200 60">
-            <path d="M20,40 Q30,20 50,30 Q70,10 100,20 Q130,5 150,25 Q175,15 185,35 Q195,50 170,55 L20,55 Z" />
-          </svg>
-          <svg className="storybook-cloud cloud-drift-2" viewBox="0 0 220 70">
-            <path d="M25,50 Q40,25 70,35 Q95,15 130,25 Q165,10 185,35 Q205,25 210,48 Q215,65 180,65 L25,65 Z" />
-          </svg>
-        </div>
+          {/* Tier 4: Soft Periwinkle Fringe */}
+          <path
+            d="M-20,0 L70,0 Q120,40 90,100 Q140,150 100,210 Q140,280 90,360 L-20,650 Z"
+            fill="#4F7BB8"
+            opacity="0.85"
+          />
+        </svg>
       </div>
 
       {/* =========================================================
-         4. TOP CONTROLS BAR: Minimalist & Clean (No Overlap)
+         LAYER E: Partially Hidden Golden Crescent Moon
+         (Nestled between Layer D and Layer F on the right)
+         ========================================================= */}
+      <div className={`layer-e-paper-moon ${phase === 'settle' ? 'moon-peeking-out' : ''}`} aria-hidden="true">
+        <svg viewBox="0 0 120 120" className="crescent-moon-svg">
+          <defs>
+            <radialGradient id="paperMoonGrad" cx="40%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="#FFF9E6" />
+              <stop offset="50%" stopColor="#FFE082" />
+              <stop offset="100%" stopColor="#FFB74D" />
+            </radialGradient>
+            <filter id="moonGlowFilter" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="8" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          {/* Warm paper moon aura */}
+          <circle cx="60" cy="60" r="54" fill="rgba(255, 224, 130, 0.25)" filter="url(#moonGlowFilter)" />
+          {/* Layered cut-paper crescent */}
+          <path
+            d="M 75,15 C 42,15 22,42 22,65 C 22,88 42,105 75,105 C 55,98 42,84 42,65 C 42,46 55,22 75,15 Z"
+            fill="url(#paperMoonGrad)"
+            stroke="#5C4033"
+            strokeWidth="2.5"
+          />
+          {/* Gentle sleeping smile */}
+          <path
+            d="M 44,58 C 47,62 52,62 55,58"
+            fill="none"
+            stroke="#5C4033"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
+
+      {/* =========================================================
+         LAYER D: Right-Side Cut-Paper Formations & Rolled Cloud Shapes
+         ========================================================= */}
+      <div className="layer-d-right-paper-clouds" aria-hidden="true">
+        <svg viewBox="0 0 380 650" className="right-paper-cloud-svg">
+          <defs>
+            <filter id="paperShadowR" x="-10%" y="-10%" width="140%" height="140%">
+              <feDropShadow dx="-6" dy="12" stdDeviation="10" floodColor="#060C1F" floodOpacity="0.75" />
+            </filter>
+          </defs>
+
+          {/* Tier 1: Deep Navy Paper Base */}
+          <path
+            d="M400,0 L160,0 Q90,60 130,140 Q60,200 110,290 Q40,380 100,480 Q60,580 140,650 L400,650 Z"
+            fill="#0F1C3F"
+            filter="url(#paperShadowR)"
+          />
+
+          {/* Tier 2: Royal Blue Paper Layer (Embraces the Moon) */}
+          <path
+            d="M400,0 L200,0 Q140,50 180,120 Q120,180 160,260 Q110,340 170,430 Q130,520 200,650 L400,650 Z"
+            fill="#1B336E"
+            stroke="rgba(120, 160, 220, 0.2)"
+            strokeWidth="1.5"
+            filter="url(#paperShadowR)"
+          />
+
+          {/* Quilled Spirals on Right Cloud Formations */}
+          {/* Spiral 1 (Upper Right) */}
+          <g className="quill-coil quill-r1" transform="translate(180, 140)">
+            <circle cx="32" cy="32" r="28" fill="#1E3875" stroke="#4878C2" strokeWidth="2.2" />
+            <path
+              d="M 32,5 A 27,27 0 0,1 59,32 A 23,23 0 0,1 34,55 A 19,19 0 0,1 13,34 A 15,15 0 0,1 32,17 A 11,11 0 0,1 43,32 A 8,8 0 0,1 33,40 A 5,5 0 0,1 27,32"
+              fill="none"
+              stroke="#98BEEB"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            />
+            <circle cx="32" cy="32" r="4.5" fill="#142654" stroke="#FFE8A3" strokeWidth="2" />
+          </g>
+
+          {/* Spiral 2 (Lower Right) */}
+          <g className="quill-coil quill-r2" transform="translate(140, 320)">
+            <circle cx="36" cy="36" r="32" fill="#142756" stroke="#3A64A8" strokeWidth="2.5" />
+            <path
+              d="M 36,6 A 30,30 0 0,1 66,36 A 26,26 0 0,1 38,62 A 22,22 0 0,1 14,38 A 18,18 0 0,1 36,20 A 14,14 0 0,1 50,36 A 10,10 0 0,1 37,46 A 6,6 0 0,1 30,36 A 3,3 0 0,1 36,33"
+              fill="none"
+              stroke="#7AA6E0"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            <circle cx="36" cy="36" r="5" fill="#0D1836" stroke="#F5D88C" strokeWidth="2" />
+          </g>
+
+          {/* Tier 3: Cerulean Paper Crest */}
+          <path
+            d="M400,0 L260,0 Q200,40 240,110 Q180,160 220,230 Q170,310 230,390 Q190,480 250,650 L400,650 Z"
+            fill="#2B4D96"
+            stroke="rgba(160, 200, 255, 0.3)"
+            strokeWidth="1.5"
+            filter="url(#paperShadowR)"
+          />
+
+          {/* Tier 4: Slate Paper Fringe */}
+          <path
+            d="M400,0 L310,0 Q260,40 290,100 Q240,150 280,210 Q240,280 290,360 L400,650 Z"
+            fill="#4F7BB8"
+            opacity="0.85"
+          />
+        </svg>
+      </div>
+
+      {/* =========================================================
+         LAYER F: Midground Clouds Framing Central Skylight
+         ========================================================= */}
+      <div className="layer-f-midground-clouds" aria-hidden="true">
+        <svg viewBox="0 0 1200 300" className="midground-cloud-shelf-svg" preserveAspectRatio="none">
+          <defs>
+            <filter id="shelfShadow" x="0" y="-20%" width="100%" height="150%">
+              <feDropShadow dx="0" dy="-8" stdDeviation="12" floodColor="#060C1F" floodOpacity="0.6" />
+            </filter>
+          </defs>
+          <path
+            d="M0,300 L0,180 Q140,110 320,150 Q500,80 680,140 Q860,90 1040,160 Q1140,130 1200,170 L1200,300 Z"
+            fill="#1E3875"
+            filter="url(#shelfShadow)"
+          />
+          <path
+            d="M0,300 L0,210 Q180,150 400,180 Q620,130 820,175 Q1020,140 1200,195 L1200,300 Z"
+            fill="#2D529E"
+            stroke="rgba(255,255,255,0.15)"
+            strokeWidth="1"
+          />
+        </svg>
+      </div>
+
+      {/* =========================================================
+         TOP CONTROLS BAR: Accessible & Uncluttered
          ========================================================= */}
       <header className="theater-top-controls">
         <button
@@ -601,7 +764,6 @@ export default function MagicalStarTheater({
           <span className="btn-keycap" aria-hidden="true">Esc</span>
         </button>
 
-        {/* Storybook Star Scene Indicator (Replaces large progress bar) */}
         <div className="theater-scene-indicator" aria-hidden="true">
           <span className={`ind-star ${phase !== 'curtain' ? 'active' : ''}`}>✦</span>
           <span className={`ind-star ${phase === 'spiral' || phase === 'settle' || phase === 'performing' || phase === 'celebrating' ? 'active' : ''}`}>✦</span>
@@ -621,20 +783,25 @@ export default function MagicalStarTheater({
       </header>
 
       {/* =========================================================
-         5. STAGE: Pip Storybook Cloud Bed & Choreographed Stars
+         LAYERS G & H: Stage with Pip Cloud Cradle & Moving Stars
          ========================================================= */}
       <main className="theater-stage" ref={stageRef}>
         {/* Dynamic SVG Layer for Luminous Ribbon Comet Trails & Constellation */}
         <svg className="theater-trails-svg" aria-hidden="true">
           <defs>
             <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFF8F1" stopOpacity="0.95" />
-              <stop offset="50%" stopColor="#F5D88C" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#A34063" stopOpacity="0.2" />
+              <stop offset="0%" stopColor="#FFF9E6" stopOpacity="0.95" />
+              <stop offset="45%" stopColor="#FFD45A" stopOpacity="0.85" />
+              <stop offset="85%" stopColor="#E6983B" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#A34063" stopOpacity="0" />
             </linearGradient>
+            <filter id="ribbonGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
           </defs>
 
-          {/* Golden Constellation Lines */}
+          {/* Golden Constellation Polygon */}
           <polygon
             ref={constLineRef}
             points="0,0 0,0 0,0"
@@ -642,32 +809,20 @@ export default function MagicalStarTheater({
             className="constellation-polygon"
           />
 
-          {/* Trailing Comet Ribbon Paths */}
+          {/* Dynamic 60fps Comet Ribbon Paths */}
           <path ref={trail1Ref} d="" fill="none" className="comet-ribbon-path ribbon-1" />
           <path ref={trail2Ref} d="" fill="none" className="comet-ribbon-path ribbon-2" />
           <path ref={trail3Ref} d="" fill="none" className="comet-ribbon-path ribbon-3" />
         </svg>
 
-        {/* PIP'S STORYBOOK CLOUD CRADLE:
-            Artistic compositing solution: Official artwork is nestled inside
-            a layered storybook cloud bed with foreground puffs that lap over
-            the lower base, fully eliminating rectangular edges without any oval shortcut! */}
+        {/* =========================================================
+           LAYER G: Pip Seated on Cloud inside Storybook Cloud Cradle
+           ========================================================= */}
         <div className={`pip-storybook-cradle pip-motion-${pipMotion}`}>
-          {/* Celestial Moonlit Aura behind cloud */}
+          {/* Celestial Moonlit Aura */}
           <div className="cradle-celestial-aura" aria-hidden="true" />
 
-          {/* Background Cloud Bed Backing */}
-          <div className="cradle-cloud-backdrop" aria-hidden="true">
-            <svg viewBox="0 0 340 380" className="cloud-backdrop-svg">
-              <path
-                d="M40,240 C20,180 60,110 130,100 C170,50 250,60 280,120 C330,140 340,210 310,260 C330,300 290,360 220,360 C170,370 120,360 80,340 C30,320 20,280 40,240 Z"
-                fill="#FFF4E6"
-                opacity="0.9"
-              />
-            </svg>
-          </div>
-
-          {/* SVG Definitions for Fairytale Cloud Cluster Mask */}
+          {/* SVG Definitions for Fairytale Multi-Lobed Cloud Mask */}
           <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
             <defs>
               <clipPath id="fairytaleCloudCluster" clipPathUnits="objectBoundingBox">
@@ -676,7 +831,18 @@ export default function MagicalStarTheater({
             </defs>
           </svg>
 
-          {/* Official Character Artwork nestled in Storybook Cloud Cluster */}
+          {/* Paper-Craft Cloud Backing Shell */}
+          <div className="cradle-cloud-backdrop" aria-hidden="true">
+            <svg viewBox="0 0 340 380" className="cloud-backdrop-svg">
+              <path
+                d="M40,240 C20,180 60,110 130,100 C170,50 250,60 280,120 C330,140 340,210 310,260 C330,300 290,360 220,360 C170,370 120,360 80,340 C30,320 20,280 40,240 Z"
+                fill="#FFF4E6"
+                opacity="0.95"
+              />
+            </svg>
+          </div>
+
+          {/* Official Character Artwork (Untouched pixels, nestled inside Cloud Mask) */}
           <div className="cradle-character-wrap">
             <img
               src="/assets/pip/pip_avatar_cloud.png"
@@ -687,7 +853,7 @@ export default function MagicalStarTheater({
             />
           </div>
 
-          {/* Golden Embroidered Cloud Rim */}
+          {/* Embroidered Paper-Cut Golden Rim */}
           <div className="cradle-cloud-rim" aria-hidden="true">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="cloud-rim-svg">
               <path
@@ -696,12 +862,12 @@ export default function MagicalStarTheater({
                 stroke="#F5D88C"
                 strokeWidth="2.5"
                 strokeDasharray="5 4"
-                opacity="0.85"
+                opacity="0.9"
               />
             </svg>
           </div>
 
-          {/* Foreground Cloud Puffs: Cup and blend the lower edge naturally into the sky */}
+          {/* Layered Foreground Paper Puffs (Physical overlap cupping Pip's cloud) */}
           <div className="cradle-foreground-puffs" aria-hidden="true">
             <svg viewBox="0 0 340 100" className="foreground-puffs-svg">
               <path
@@ -710,14 +876,15 @@ export default function MagicalStarTheater({
                 stroke="#E2D5C3"
                 strokeWidth="1.5"
               />
-              {/* Soft warm highlight puff */}
-              <ellipse cx="110" cy="50" rx="30" ry="14" fill="#FFF9F0" />
-              <ellipse cx="220" cy="46" rx="35" ry="16" fill="#FFF9F0" />
+              <ellipse cx="110" cy="50" rx="32" ry="15" fill="#FFF9F0" />
+              <ellipse cx="220" cy="46" rx="36" ry="17" fill="#FFF9F0" />
             </svg>
           </div>
         </div>
 
-        {/* THE THREE MOVING CHOREOGRAPHED STARS */}
+        {/* =========================================================
+           LAYER H: The Three Major Animated Golden Stars
+           ========================================================= */}
         <button
           ref={star1Ref}
           type="button"
@@ -759,21 +926,43 @@ export default function MagicalStarTheater({
       </main>
 
       {/* =========================================================
-         6. LAYER 3: Foreground Framing Clouds
+         LAYER I: Foreground Overlapping Blue Paper Clouds
+         (Breathing/dancing with subtle vertical motion)
          ========================================================= */}
-      <div className="scenery-foreground-clouds" aria-hidden="true">
-        <svg className="fg-cloud fg-cloud-left" viewBox="0 0 350 120" preserveAspectRatio="none">
-          <path d="M0,120 L0,50 Q40,10 90,35 Q140,5 190,40 Q250,20 300,70 Q330,85 350,120 Z" fill="#14192F" opacity="0.85" />
-        </svg>
-        <svg className="fg-cloud fg-cloud-right" viewBox="0 0 350 120" preserveAspectRatio="none">
-          <path d="M350,120 L350,45 Q310,15 260,35 Q200,5 150,45 Q90,15 40,75 Q15,90 0,120 Z" fill="#14192F" opacity="0.85" />
+      <div className="layer-i-foreground-paper-clouds" aria-hidden="true">
+        <svg viewBox="0 0 1440 240" className="foreground-paper-waves-svg" preserveAspectRatio="none">
+          <defs>
+            <filter id="fgWaveShadow" x="0" y="-30%" width="100%" height="160%">
+              <feDropShadow dx="0" dy="-10" stdDeviation="14" floodColor="#040815" floodOpacity="0.8" />
+            </filter>
+          </defs>
+          {/* Deep Navy Lower Paper Bank */}
+          <path
+            d="M0,240 L0,120 Q160,50 360,95 Q560,40 760,85 Q960,35 1160,80 Q1300,50 1440,90 L1440,240 Z"
+            fill="#0E1938"
+            filter="url(#fgWaveShadow)"
+          />
+          {/* Royal Blue Mid-Paper Bank */}
+          <path
+            d="M0,240 L0,150 Q180,90 420,130 Q660,75 900,120 Q1140,80 1440,125 L1440,240 Z"
+            fill="#182E62"
+            stroke="rgba(255,255,255,0.12)"
+            strokeWidth="1.5"
+          />
+          {/* Cerulean Wave Crest with Soft Quilled Details */}
+          <path
+            d="M0,240 L0,175 Q220,130 500,165 Q780,120 1060,155 Q1260,135 1440,160 L1440,240 Z"
+            fill="#274688"
+            stroke="rgba(255,255,255,0.18)"
+            strokeWidth="1.5"
+          />
         </svg>
       </div>
 
       {/* =========================================================
-         7. DEDICATED CINEMATIC SUBTITLE LAYER: Bottom Safe Zone
+         LAYER J: Dedicated Readable Cinematic Subtitle Plaque
          ========================================================= */}
-      <footer className="cinematic-subtitle-layer">
+      <footer className="layer-j-cinematic-subtitles">
         <div className="subtitle-card" aria-live="polite">
           <span className="subtitle-speaker">{subtitle.speaker}:</span>
           <p className="subtitle-text">{subtitle.text}</p>
