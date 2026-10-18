@@ -127,6 +127,11 @@ async function runFinalVerification() {
       await page.screenshot({ path: 'screenshots/final_exp1_orchestra.png' });
 
       // Close experience using Back button
+      // The full-screen film owns the visible controls after star three.
+      if (await page.$('.magical-star-theater')) {
+        await page.click('.back-bedroom-btn');
+        await page.waitForSelector('.conductor-sky-stage');
+      }
       const closeBtn = await page.$('.shell-back-btn');
       if (closeBtn) await closeBtn.click();
       await new Promise((r) => setTimeout(r, 300));
@@ -147,7 +152,7 @@ async function runFinalVerification() {
 
     // Test Brightness Slider
     await page.evaluate(() => {
-      const slider = document.querySelector('.desk-slider');
+      const slider = document.querySelector('.bedside-range-slider');
       if (slider) {
         slider.value = 50;
         slider.dispatchEvent(new Event('input', { bubbles: true }));
@@ -267,6 +272,7 @@ async function runFinalVerification() {
 
   } catch (err) {
     console.error('Verification failed with error:', err);
+    process.exitCode = 1;
   } finally {
     await browser.close();
     console.log('\n====================================================');

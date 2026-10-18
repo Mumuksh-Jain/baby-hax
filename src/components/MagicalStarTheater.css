@@ -783,8 +783,8 @@
   100% { transform: scale(1.3); opacity: 1; }
 }
 
-.cinematic-star-node:hover {
-  transform: scale(1.25) !important;
+.cinematic-star-node:hover .star-sprite-img {
+  filter: drop-shadow(0 0 14px var(--color-soft-gold));
 }
 
 /* ==========================================================================

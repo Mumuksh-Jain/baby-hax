@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import RoomSet from './RoomSet';
+import { OfficialLantern } from '../../components/OfficialArt';
 import ExperienceShell from '../ExperienceShell';
 import {
   playLanternSwitchSound,
@@ -29,6 +31,14 @@ export default function MoonlightExperience({
   const [starPattern, setStarPattern] = useState('twinkle'); // 'still' | 'twinkle' | 'constellation'
   const [isTesting, setIsTesting] = useState(false);
   const [testOutcome, setTestOutcome] = useState(null); // null | 'too-dark' | 'too-bright' | 'cozy-sleep'
+  const timers = useRef([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  useEffect(() => {
+    if (!isOpen) {
+      timers.current.forEach(clearTimeout);
+      setIsTesting(false);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -62,7 +72,7 @@ export default function MoonlightExperience({
   const handleTestNightlight = () => {
     setIsTesting(true);
 
-    setTimeout(() => {
+    timers.current.push(setTimeout(() => {
       setIsTesting(false);
       if (brightness < 25) {
         setTestOutcome('too-dark');
@@ -73,13 +83,13 @@ export default function MoonlightExperience({
         setTestOutcome('cozy-sleep');
         if (soundEnabled) {
           playGhostSnoreSound();
-          setTimeout(() => {
+          timers.current.push(setTimeout(() => {
             playStampEarnedSound();
-          }, 800);
+          }, 800));
         }
         if (onEarnStamp) onEarnStamp('moonlight');
       }
-    }, 900);
+    }, 900));
   };
 
   return (
@@ -100,6 +110,11 @@ export default function MoonlightExperience({
           }}
           aria-label="Nightlight Illumination Preview Chamber"
         >
+          <RoomSet />
+          <div className="room-ambient-shade" aria-hidden="true" />
+          <div className="room-moonwash" aria-hidden="true" />
+          <div className="room-lamplight" aria-hidden="true" />
+          <div className="room-scene-caption">Pip's bedside studio <span>One little light. A whole room of dreams.</span></div>
           {/* Ceiling & Wall Star Pattern Projections */}
           <div className={`star-projection-layer pattern-${starPattern}`} aria-hidden="true">
             <span className="proj-star ps-1">✦</span>
@@ -142,17 +157,17 @@ export default function MoonlightExperience({
               <div className="chamber-ghost">
                 <svg viewBox="0 0 80 80" className="ghost-svg" aria-hidden="true">
                   <path
-                    d="M 20 55 C 20 20, 60 20, 60 55 C 50 68, 30 68, 20 55 Z"
+                    d="M18 53C16 47 19 42 20 38C20 15 60 15 60 38C61 46 65 48 62 54C60 59 55 58 52 55C49 63 42 61 40 57C35 63 28 61 27 56C24 60 17 59 18 53Z"
                     fill="#FFFDF8"
                     stroke="#5C4033"
-                    strokeWidth="2.5"
+                    strokeWidth="1.5"
                   />
                   {/* Blushing Cheeks */}
                   <circle cx="30" cy="44" r="3.5" fill="#F5C0C0" opacity="0.8" />
                   <circle cx="50" cy="44" r="3.5" fill="#F5C0C0" opacity="0.8" />
 
                   {/* Dynamic Eyes based on mood */}
-                  {ghostMood === 'asleep' ? (
+                  {ghostMood === 'asleep' || ghostMood === 'sleepy' ? (
                     // Closed sleepy crescent eyes
                     <g stroke="#5C4033" strokeWidth="2" fill="none">
                       <path d="M 28 39 Q 33 43 38 39" />
@@ -171,6 +186,7 @@ export default function MoonlightExperience({
                       <circle cx="49" cy="38" r="3.5" />
                     </g>
                   )}
+                  {ghostMood === 'too-dark' ? <ellipse cx="41" cy="51" rx="3" ry="4" fill="#5C4033" /> : <path d="M36 50Q41 55 46 50" stroke="#5C4033" strokeWidth="2" fill="none" strokeLinecap="round" />}
                 </svg>
 
                 {/* Floating Sleep Zzz particles */}
@@ -189,19 +205,16 @@ export default function MoonlightExperience({
               {ghostMood === 'too-dark' && '“Too dark! I can’t find my bedtime blanket! 👻”'}
               {ghostMood === 'too-bright' && '“Eep! It’s brighter than breakfast! 🙈”'}
               {ghostMood === 'comfortable' && '“Mmm, warming up... getting cozier! ☁️”'}
+              {ghostMood === 'sleepy' && '“A little softer... I can feel a yawn coming.”'}
               {ghostMood === 'asleep' && '“Zzz... perfect starlight... goodnight Pip... 🌙”'}
             </div>
           </div>
 
           {/* Wooden Bedside Table with Official Lantern Artwork */}
-          <div className="chamber-bedside-table" aria-hidden="true">
+          <div className="chamber-bedside-table">
             {/* Official Lantern sitting physically on table */}
             <div className="chamber-lantern-wrap">
-              <img
-                src="/assets/pip/pip_dream_lantern.png"
-                alt="Pip's handcrafted dream lantern sitting on wooden bedside table"
-                className="chamber-lantern-img"
-              />
+              <OfficialLantern className="chamber-lantern-img" />
               {/* Dynamic Glow Halo modulated by brightness & color */}
               <div
                 className="chamber-lantern-halo"

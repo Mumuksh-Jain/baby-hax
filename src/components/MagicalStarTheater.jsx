@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { OfficialPip } from './OfficialArt';
 import {
   playVocalLullaby,
   stopAllOrchestraAudio,
@@ -28,6 +29,8 @@ export default function MagicalStarTheater({
   onCloseTheater,
   onTheaterComplete,
 }) {
+  const completionRef = useRef(onTheaterComplete);
+  completionRef.current = onTheaterComplete;
   // Cinematic phase state:
   // 'curtain' (0-2s) | 'star1-enter' (2-2.8s) | 'stars23-enter' (2.8-4.5s) | 'spiral' (4.5-7.5s) | 'settle' (7.5-10s) | 'performing' (10s+) | 'celebrating' | 'exiting'
   const [phase, setPhase] = useState('curtain');
@@ -103,8 +106,12 @@ export default function MagicalStarTheater({
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        handleExit();
+      if (e.key === 'Escape') { e.preventDefault(); handleExit(); }
+      if (e.key === 'Tab') {
+        const items = [...document.querySelectorAll('.magical-star-theater button:not(:disabled), .magical-star-theater [tabindex="0"]')].filter(el => el.getClientRects().length && getComputedStyle(el).opacity !== '0');
+        const index = items.indexOf(document.activeElement);
+        if (e.shiftKey && index <= 0) { e.preventDefault(); items.at(-1)?.focus(); }
+        else if (!e.shiftKey && (index === items.length - 1 || index === -1)) { e.preventDefault(); items[0]?.focus(); }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -376,18 +383,28 @@ export default function MagicalStarTheater({
       }
     }
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      p1 = {x: width * .23, y: height * .36, rot: 0, scale: 1, visible: elapsedSec >= 2};
+      p2 = {x: width * .5, y: height * .18, rot: 0, scale: 1, visible: elapsedSec >= 2.8};
+      p3 = {x: width * .77, y: height * .36, rot: 0, scale: 1, visible: elapsedSec >= 3.6};
+    }
+    // Keep animated stars within the stage on narrow phones.
+    for (const p of [p1, p2, p3]) if (p.visible) {
+      p.x = Math.max(32, Math.min(width - 50, p.x));
+      p.y = Math.max(38, Math.min(height - 55, p.y));
+    }
     // Direct DOM transform updates for 60fps performance (zero React re-renders)
     if (star1Ref.current) {
       star1Ref.current.style.opacity = p1.visible ? '1' : '0';
-      star1Ref.current.style.transform = `translate(${p1.x - 20}px, ${p1.y - 20}px) rotate(${p1.rot.toFixed(1)}deg) scale(${p1.scale.toFixed(2)})`;
+      star1Ref.current.style.transform = `translate(${p1.x - 36}px, ${p1.y - 44}px) rotate(${p1.rot.toFixed(1)}deg) scale(${p1.scale.toFixed(2)})`;
     }
     if (star2Ref.current) {
       star2Ref.current.style.opacity = p2.visible ? '1' : '0';
-      star2Ref.current.style.transform = `translate(${p2.x - 20}px, ${p2.y - 20}px) rotate(${p2.rot.toFixed(1)}deg) scale(${p2.scale.toFixed(2)})`;
+      star2Ref.current.style.transform = `translate(${p2.x - 36}px, ${p2.y - 44}px) rotate(${p2.rot.toFixed(1)}deg) scale(${p2.scale.toFixed(2)})`;
     }
     if (star3Ref.current) {
       star3Ref.current.style.opacity = p3.visible ? '1' : '0';
-      star3Ref.current.style.transform = `translate(${p3.x - 20}px, ${p3.y - 20}px) rotate(${p3.rot.toFixed(1)}deg) scale(${p3.scale.toFixed(2)})`;
+      star3Ref.current.style.transform = `translate(${p3.x - 36}px, ${p3.y - 44}px) rotate(${p3.rot.toFixed(1)}deg) scale(${p3.scale.toFixed(2)})`;
     }
 
     // Coordinate history buffers for luminous ribbon trails
@@ -710,7 +727,7 @@ export default function MagicalStarTheater({
               clearAllTimers();
               stopAllOrchestraAudio();
               setPhase('inactive');
-              if (onTheaterComplete) onTheaterComplete();
+              completionRef.current?.();
             }, 1000);
             theaterTimersRef.current.push(tComplete);
           }, 4500);
@@ -738,7 +755,7 @@ export default function MagicalStarTheater({
       clearAllTimers();
       stopAllOrchestraAudio();
     };
-  }, [isOpen, clearAllTimers, onTheaterComplete, updateStarPositions]);
+  }, [isOpen, clearAllTimers, updateStarPositions]);
 
   // Interactive star click during theater
   const handleTapStar = (starIndex, e) => {
@@ -1188,13 +1205,7 @@ export default function MagicalStarTheater({
             }}
             aria-label="Pip resting in starry cloud. Click to interact."
           >
-            <img
-              src="/assets/pip/pip_avatar_cloud.png"
-              alt="Pip, a friendly baby with a round skull face and starry nightcap, nestled safely in the midnight sky clouds."
-              className="pip-character-asset"
-              width="310"
-              height="360"
-            />
+            <OfficialPip className="pip-character-asset" />
           </div>
 
           {/* Embroidered Paper-Cut Golden Rim */}
@@ -1236,9 +1247,7 @@ export default function MagicalStarTheater({
           onClick={(e) => handleTapStar(0, e)}
           aria-label="Star 1: Click to hear bedtime chime"
         >
-          <svg viewBox="0 0 32 32" className="star-svg">
-            <polygon points="16,2 20,11 30,11 22,18 25,28 16,22 7,28 10,18 2,11 12,11" />
-          </svg>
+          <img className="star-sprite-img production-star-1" src="/assets/production-art/sprites/orchestra_star_1.png" alt="" />
           <span className="star-glow-halo" aria-hidden="true" />
         </button>
 
@@ -1249,9 +1258,7 @@ export default function MagicalStarTheater({
           onClick={(e) => handleTapStar(1, e)}
           aria-label="Star 2: Click to hear bedtime chime"
         >
-          <svg viewBox="0 0 32 32" className="star-svg">
-            <polygon points="16,2 20,11 30,11 22,18 25,28 16,22 7,28 10,18 2,11 12,11" />
-          </svg>
+          <img className="star-sprite-img production-star-2" src="/assets/production-art/sprites/orchestra_star_2.png" alt="" />
           <span className="star-glow-halo" aria-hidden="true" />
         </button>
 
@@ -1262,9 +1269,7 @@ export default function MagicalStarTheater({
           onClick={(e) => handleTapStar(2, e)}
           aria-label="Star 3: Click to hear bedtime chime"
         >
-          <svg viewBox="0 0 32 32" className="star-svg">
-            <polygon points="16,2 20,11 30,11 22,18 25,28 16,22 7,28 10,18 2,11 12,11" />
-          </svg>
+          <img className="star-sprite-img production-star-3" src="/assets/production-art/sprites/orchestra_star_3.png" alt="" />
           <span className="star-glow-halo" aria-hidden="true" />
         </button>
 

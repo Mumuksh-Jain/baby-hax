@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { OfficialPip } from '../../components/OfficialArt';
 import ExperienceShell from '../ExperienceShell';
 import MagicalStarTheater from '../../components/MagicalStarTheater';
 import { playStarSound, playStarTwoChime, playStampEarnedSound } from '../../utils/soundEngine';
@@ -24,6 +25,27 @@ export default function OrchestraExperience({
   const [conductionStep, setConductionStep] = useState(0); // 0: initial, 1: 1 star, 2: 2 stars, 3: full theater
   const [isTheaterActive, setIsTheaterActive] = useState(false);
   const [showCelebrationBanner, setShowCelebrationBanner] = useState(false);
+  const launchTimer = useRef(null);
+  useEffect(() => () => clearTimeout(launchTimer.current), []);
+  useEffect(() => {
+    if (!isOpen) {
+      clearTimeout(launchTimer.current);
+      setIsTheaterActive(false);
+      setConductionStep(0);
+      setShowCelebrationBanner(false);
+    }
+  }, [isOpen]);
+
+  const handleTheaterComplete = useCallback(() => {
+    setIsTheaterActive(false);
+    setShowCelebrationBanner(true);
+    if (onEarnStamp) onEarnStamp('orchestra');
+    if (soundEnabled) playStampEarnedSound();
+  }, [onEarnStamp, soundEnabled]);
+  const handleTheaterExit = useCallback(() => {
+    setIsTheaterActive(false);
+    setConductionStep(0);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -42,17 +64,10 @@ export default function OrchestraExperience({
     if (nextStep === 3) {
       if (onEarnStamp) onEarnStamp('orchestra');
       // Launch the full cinematic theater
-      setTimeout(() => {
+      launchTimer.current = setTimeout(() => {
         setIsTheaterActive(true);
       }, 500);
     }
-  };
-
-  const handleTheaterComplete = () => {
-    setIsTheaterActive(false);
-    setShowCelebrationBanner(true);
-    if (onEarnStamp) onEarnStamp('orchestra');
-    if (soundEnabled) playStampEarnedSound();
   };
 
   const handleConductAgain = () => {
@@ -89,11 +104,7 @@ export default function OrchestraExperience({
 
               {/* Pip on Cloud Podium */}
               <div className="podium-pip-wrap">
-                <img
-                  src="/assets/pip/pip_avatar_cloud.png"
-                  alt="Pip the Skull Baby waiting with a tiny golden conductor baton"
-                  className="podium-pip-img"
-                />
+                <OfficialPip className="podium-pip-img" />
                 <div className="podium-thought-bubble">
                   {conductionStep === 0 && '“Which star wants to sing first?”'}
                   {conductionStep === 1 && '“One little star tuned! Who else?”'}
@@ -170,7 +181,7 @@ export default function OrchestraExperience({
             isOpen={true}
             soundEnabled={soundEnabled}
             onToggleSound={onToggleSound}
-            onCloseTheater={() => setIsTheaterActive(false)}
+            onCloseTheater={handleTheaterExit}
             onTheaterComplete={handleTheaterComplete}
           />
         )}

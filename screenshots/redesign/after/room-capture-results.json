@@ -1,0 +1,152 @@
+[
+  {
+    "width": 1440,
+    "brightness": 15,
+    "mood": 1,
+    "state": "too-dark",
+    "top": 169.40625,
+    "bottom": 907.59375,
+    "viewport": 1000,
+    "scroll": 0
+  },
+  {
+    "width": 1440,
+    "brightness": 90,
+    "mood": 2,
+    "state": "too-bright",
+    "top": 169.40625,
+    "bottom": 907.59375,
+    "viewport": 1000,
+    "scroll": 0
+  },
+  {
+    "width": 1440,
+    "brightness": 55,
+    "mood": 3,
+    "state": "asleep",
+    "top": 169.40625,
+    "bottom": 907.59375,
+    "viewport": 1000,
+    "scroll": 0
+  },
+  {
+    "width": 768,
+    "brightness": 15,
+    "mood": 1,
+    "state": "too-dark",
+    "top": 80,
+    "bottom": 600,
+    "viewport": 1024,
+    "scroll": 0
+  },
+  {
+    "width": 768,
+    "brightness": 90,
+    "mood": 2,
+    "state": "too-bright",
+    "top": 80,
+    "bottom": 600,
+    "viewport": 1024,
+    "scroll": 0
+  },
+  {
+    "width": 768,
+    "brightness": 55,
+    "mood": 3,
+    "state": "asleep",
+    "top": 80,
+    "bottom": 600,
+    "viewport": 1024,
+    "scroll": 0
+  },
+  {
+    "width": 375,
+    "brightness": 15,
+    "mood": 1,
+    "state": "too-dark",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 375,
+    "brightness": 90,
+    "mood": 2,
+    "state": "too-bright",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 375,
+    "brightness": 55,
+    "mood": 3,
+    "state": "asleep",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 320,
+    "brightness": 15,
+    "mood": 1,
+    "state": "too-dark",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 320,
+    "brightness": 90,
+    "mood": 2,
+    "state": "too-bright",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 320,
+    "brightness": 55,
+    "mood": 3,
+    "state": "asleep",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 414,
+    "brightness": 15,
+    "mood": 1,
+    "state": "too-dark",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 414,
+    "brightness": 90,
+    "mood": 2,
+    "state": "too-bright",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  },
+  {
+    "width": 414,
+    "brightness": 55,
+    "mood": 3,
+    "state": "asleep",
+    "top": 112.828125,
+    "bottom": 462.828125,
+    "viewport": 812,
+    "scroll": 0
+  }
+]

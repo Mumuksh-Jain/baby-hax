@@ -21,3 +21,7 @@ Thumbs.db
 # Archives
 *.zip
 
+# Local rejected visual experiments; final evidence is screenshots/redesign/after
+screenshots/redesign/after-initial/
+screenshots/redesign/after-clean-art/
+

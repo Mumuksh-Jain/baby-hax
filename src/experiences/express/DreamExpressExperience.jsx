@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ExperienceShell from '../ExperienceShell';
+import DreamTrain from './DreamTrain';
 import {
   playDeliveryDispatchSound,
   playDeliveryArrivedSound,
@@ -39,6 +40,16 @@ export default function DreamExpressExperience({
       if (animRef.current) cancelAnimationFrame(animRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      cancelAnimationFrame(animRef.current);
+      setIsTraveling(false);
+      setProgress(0);
+      setDeliveredDest(null);
+      setDeliveryReceipt(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -145,10 +156,10 @@ export default function DreamExpressExperience({
 
   // Train Path Coordinates
   const getTrainPositions = () => {
-    const DEPOT_LOCO_X = 140;
-    const DEPOT_LOCO_Y = 420;
-    const DEPOT_CAR_X = 68;
-    const DEPOT_CAR_Y = 420;
+    const DEPOT_LOCO_X = 170;
+    const DEPOT_LOCO_Y = 680;
+    const DEPOT_CAR_X = 98;
+    const DEPOT_CAR_Y = 680;
 
     const currentDestId = selectedDest;
     const pathElem = pathRefs.current[currentDestId];
@@ -212,11 +223,10 @@ export default function DreamExpressExperience({
   // Dynamic Camera Following during travel
   // Camera pans to follow train smoothly
   const getCameraViewBox = () => {
-    if (!isTraveling) return '0 0 1200 520';
-    // Center camera near train position with bounding
-    const centerX = Math.max(450, Math.min(750, trainPos.loco.x));
-    const startX = centerX - 450;
-    return `${startX} 0 900 520`;
+    if (!isTraveling || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return '0 0 1200 792';
+    const zoomWidth = 1000;
+    const x = Math.max(0, Math.min(1200 - zoomWidth, trainPos.loco.x - zoomWidth / 2));
+    return `${x} 0 ${zoomWidth} 792`;
   };
 
   // Lighthouse searchlight mode
@@ -239,7 +249,7 @@ export default function DreamExpressExperience({
     >
       <div className="dream-express-experience-layout">
         {/* Main Panoramic Interactive Railway Stage (75% dominance) */}
-        <div className="express-stage-viewport" role="region" aria-label="Panoramic Railway Stage">
+        <div className="express-stage-viewport" role="region" aria-label="Panoramic Railway Stage" data-progress={progress.toFixed(3)}>
           {/* Compass / Wayfinder Chip */}
           <div className="express-wayfinder" aria-hidden="true">
             <span className="wayfinder-star">✦</span>
@@ -271,10 +281,10 @@ export default function DreamExpressExperience({
               </linearGradient>
 
               <linearGradient id="expLighthouseBeamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
-                <stop offset="30%" stopColor="#E0ECFF" stopOpacity="0.55" />
-                <stop offset="70%" stopColor="#9AB8F5" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#8CA8F5" stopOpacity="0" />
+                <stop offset="0%" stopColor="#F5D88C" stopOpacity="0" />
+                <stop offset="30%" stopColor="#F5D88C" stopOpacity="0.08" />
+                <stop offset="70%" stopColor="#FFF0BD" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#FFF8DC" stopOpacity="0.7" />
               </linearGradient>
 
               <radialGradient id="expBeaconGlow" cx="50%" cy="50%" r="50%">
@@ -284,51 +294,52 @@ export default function DreamExpressExperience({
               </radialGradient>
             </defs>
 
-            {/* Sky & Landscape rendered via dream_express_world.png base plate */}
+            {/* Landscape and train share the same SVG coordinates and camera. */}
+            <image href="/assets/production-art/derived/dream_express_world_no_beam.png" x="0" y="0" width="1200" height="792" preserveAspectRatio="none" />
 
             {/* Railway Track Paths */}
             {/* Route 1: Depot -> Cloud Cottage */}
             <g className={`exp-rail ${selectedDest === 'cloud-cottage' ? 'is-active' : ''}`}>
-              <path d="M 130 420 C 210 420, 260 280, 365 230" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray="4 6" opacity="0.3" />
+              <path d="M 170 680 C 265 650, 210 435, 355 350" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray="4 6" opacity="0.3" />
               {selectedDest === 'cloud-cottage' && (
                 <g filter="url(#expRouteGlow)">
-                  <path d="M 130 420 C 210 420, 260 280, 365 230" fill="none" stroke="#F5D88C" strokeWidth="8" opacity="0.4" />
-                  <path d="M 130 420 C 210 420, 260 280, 365 230" fill="none" stroke="#C59B3F" strokeWidth="8" strokeDasharray="3 9" opacity="0.85" />
-                  <path d="M 130 420 C 210 420, 260 280, 365 230" fill="none" stroke="#FFFDF9" strokeWidth="2.5" />
+                  <path d="M 170 680 C 265 650, 210 435, 355 350" fill="none" stroke="#F5D88C" strokeWidth="8" opacity="0.4" />
+                  <path d="M 170 680 C 265 650, 210 435, 355 350" fill="none" stroke="#C59B3F" strokeWidth="8" strokeDasharray="3 9" opacity="0.85" />
+                  <path d="M 170 680 C 265 650, 210 435, 355 350" fill="none" stroke="#FFFDF9" strokeWidth="2.5" />
                 </g>
               )}
-              <path ref={(el) => (pathRefs.current['cloud-cottage'] = el)} d="M 130 420 C 210 420, 260 280, 365 230" fill="none" stroke="transparent" />
+              <path ref={(el) => (pathRefs.current['cloud-cottage'] = el)} d="M 170 680 C 265 650, 210 435, 355 350" fill="none" stroke="transparent" />
             </g>
 
             {/* Route 2: Depot -> Sleepy Ghost House */}
             <g className={`exp-rail ${selectedDest === 'ghost-house' ? 'is-active' : ''}`}>
-              <path d="M 130 420 C 280 420, 480 440, 705 390" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray="4 6" opacity="0.3" />
+              <path d="M 170 680 C 340 650, 480 694, 740 660" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray="4 6" opacity="0.3" />
               {selectedDest === 'ghost-house' && (
                 <g filter="url(#expRouteGlow)">
-                  <path d="M 130 420 C 280 420, 480 440, 705 390" fill="none" stroke="#F5D88C" strokeWidth="8" opacity="0.4" />
-                  <path d="M 130 420 C 280 420, 480 440, 705 390" fill="none" stroke="#C59B3F" strokeWidth="8" strokeDasharray="3 9" opacity="0.85" />
-                  <path d="M 130 420 C 280 420, 480 440, 705 390" fill="none" stroke="#FFFDF9" strokeWidth="2.5" />
+                  <path d="M 170 680 C 340 650, 480 694, 740 660" fill="none" stroke="#F5D88C" strokeWidth="8" opacity="0.4" />
+                  <path d="M 170 680 C 340 650, 480 694, 740 660" fill="none" stroke="#C59B3F" strokeWidth="8" strokeDasharray="3 9" opacity="0.85" />
+                  <path d="M 170 680 C 340 650, 480 694, 740 660" fill="none" stroke="#FFFDF9" strokeWidth="2.5" />
                 </g>
               )}
-              <path ref={(el) => (pathRefs.current['ghost-house'] = el)} d="M 130 420 C 280 420, 480 440, 705 390" fill="none" stroke="transparent" />
+              <path ref={(el) => (pathRefs.current['ghost-house'] = el)} d="M 170 680 C 340 650, 480 694, 740 660" fill="none" stroke="transparent" />
             </g>
 
             {/* Route 3: Depot -> Moonbeam Tower */}
             <g className={`exp-rail ${selectedDest === 'moonbeam-tower' ? 'is-active' : ''}`}>
-              <path d="M 130 420 C 350 420, 680 270, 985 320" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray="4 6" opacity="0.3" />
+              <path d="M 170 680 C 320 422, 680 355, 1010 354" fill="none" stroke="#D4A843" strokeWidth="2" strokeDasharray="4 6" opacity="0.3" />
               {selectedDest === 'moonbeam-tower' && (
                 <g filter="url(#expRouteGlow)">
-                  <path d="M 130 420 C 350 420, 680 270, 985 320" fill="none" stroke="#F5D88C" strokeWidth="8" opacity="0.4" />
-                  <path d="M 130 420 C 350 420, 680 270, 985 320" fill="none" stroke="#C59B3F" strokeWidth="8" strokeDasharray="3 9" opacity="0.85" />
-                  <path d="M 130 420 C 350 420, 680 270, 985 320" fill="none" stroke="#FFFDF9" strokeWidth="2.5" />
+                  <path d="M 170 680 C 320 422, 680 355, 1010 354" fill="none" stroke="#F5D88C" strokeWidth="8" opacity="0.4" />
+                  <path d="M 170 680 C 320 422, 680 355, 1010 354" fill="none" stroke="#C59B3F" strokeWidth="8" strokeDasharray="3 9" opacity="0.85" />
+                  <path d="M 170 680 C 320 422, 680 355, 1010 354" fill="none" stroke="#FFFDF9" strokeWidth="2.5" />
                 </g>
               )}
-              <path ref={(el) => (pathRefs.current['moonbeam-tower'] = el)} d="M 130 420 C 350 420, 680 270, 985 320" fill="none" stroke="transparent" />
+              <path ref={(el) => (pathRefs.current['moonbeam-tower'] = el)} d="M 170 680 C 320 422, 680 355, 1010 354" fill="none" stroke="transparent" />
             </g>
 
             {/* Landmarks (Waypoints & Arrival Effects matching dream_express_world.png) */}
             {/* Depot Tag (130, 420) */}
-            <g transform="translate(130, 420)">
+            <g transform="translate(170, 710)">
               <rect x="-65" y="-30" width="130" height="22" rx="11" fill="rgba(15, 23, 42, 0.85)" stroke="#F5D88C" strokeWidth="1.5" />
               <text x="0" y="-15" textAnchor="middle" fill="#F5D88C" fontSize="9" fontWeight="bold" fontFamily="monospace">
                 ★ DEPOT NO. 003
@@ -336,7 +347,7 @@ export default function DreamExpressExperience({
             </g>
 
             {/* Cloud Cottage Station (410, 170) */}
-            <g className={`exp-landmark ${deliveredDest === 'cloud-cottage' ? 'is-delivered' : ''}`} transform="translate(410, 170)">
+            <g className={`exp-landmark ${deliveredDest === 'cloud-cottage' ? 'is-delivered' : ''}`} transform="translate(355, 400)">
               <rect x="-65" y="-12" width="130" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
               <text x="0" y="4" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
                 ☁️ Cloud Cottage {deliveredDest === 'cloud-cottage' && '✓'}
@@ -347,7 +358,7 @@ export default function DreamExpressExperience({
             </g>
 
             {/* Sleepy Ghost House Station (760, 340) */}
-            <g className={`exp-landmark ${deliveredDest === 'ghost-house' ? 'is-delivered' : ''}`} transform="translate(760, 340)">
+            <g className={`exp-landmark ${deliveredDest === 'ghost-house' ? 'is-delivered' : ''}`} transform="translate(770, 708)">
               <rect x="-75" y="-12" width="150" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
               <text x="0" y="4" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
                 👻 Sleepy Ghost House {deliveredDest === 'ghost-house' && '✓'}
@@ -358,16 +369,16 @@ export default function DreamExpressExperience({
             </g>
 
             {/* Moonbeam Tower Station & Rotating Searchlight (1050, 160) */}
-            <g className={`exp-landmark ${deliveredDest === 'moonbeam-tower' ? 'is-delivered' : ''}`} transform="translate(1050, 160)">
+            <g className={`exp-landmark ${deliveredDest === 'moonbeam-tower' ? 'is-delivered' : ''}`} transform="translate(1047, 139)">
               {/* Rotating Searchlight Beam from Lighthouse Lantern Room */}
-              <g className={`exp-beam-rotor ${getLighthouseMode()}`} transform="translate(-5, -55)">
+              <g className={`exp-beam-rotor ${getLighthouseMode()}`}>
                 <polygon points="0,0 -480,-140 -480,140" fill="url(#expLighthouseBeamGrad)" />
                 <circle cx="0" cy="0" r="16" fill="url(#expBeaconGlow)" />
                 <circle cx="0" cy="0" r="6" fill="#FFFFFF" />
               </g>
 
-              <rect x="-75" y="-12" width="150" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
-              <text x="0" y="4" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
+              <rect x="-75" y="235" width="150" height="24" rx="12" fill="rgba(15, 23, 42, 0.88)" stroke="#F5D88C" strokeWidth="1.8" />
+              <text x="0" y="251" textAnchor="middle" fill="#FAF0CA" fontSize="10" fontWeight="bold" fontFamily="var(--font-display)">
                 🏰 Moonbeam Tower {deliveredDest === 'moonbeam-tower' && '✓'}
               </text>
               {deliveredDest === 'moonbeam-tower' && (
@@ -375,36 +386,10 @@ export default function DreamExpressExperience({
               )}
             </g>
 
-            {/* Locomotive Mailcar No. 003 — Mounted Transparent Raster Sprite */}
-            <g
-              className="exp-train-group"
-              transform={`translate(${trainPos.loco.x}, ${trainPos.loco.y}) rotate(${trainPos.loco.angle})`}
-            >
-              {/* Headlamp beam */}
-              <polygon points="46,-12 180,-35 180,10" fill="url(#expHeadlampGrad)" opacity={isTraveling ? 0.9 : 0.4} />
-
-              {/* Raster Cutout: Locomotive & Mailcar (Flipped horizontally so locomotive leads) */}
-              <image
-                href="/assets/production-art/sprites/locomotive_mailcar.png"
-                width="110"
-                height="38"
-                x="-55"
-                y="-24"
-                transform="scale(-1, 1)"
-                style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6))' }}
-              />
-
-              {/* Chimney Steam Puffs during flight */}
-              {isTraveling && (
-                <g className="exp-steam-puffs" aria-hidden="true">
-                  <circle className="exp-puff ep1" cx="35" cy="-28" r="5" fill="#FFFFFF" opacity="0.9" />
-                  <circle className="exp-puff ep2" cx="28" cy="-38" r="7" fill="#FFFDF8" opacity="0.75" />
-                  <circle className="exp-puff ep3" cx="18" cy="-48" r="10" fill="#F0F4FC" opacity="0.55" />
-                </g>
-              )}
-            </g>
+            <DreamTrain positions={trainPos} moving={isTraveling} />
           </svg>
 
+          <div className="express-trip-status" role="status">{isTraveling ? `Delivering to ${DESTINATIONS[selectedDest].name} · ${Math.round(progress * 100)}%` : deliveredDest ? 'Dream delivered. Another little goodnight?' : 'Locomotive 003 · Ready for a little night shift'}</div>
           {/* Delivery Receipt Card on Arrival */}
           {deliveryReceipt && (
             <div className="express-delivery-receipt exp-delivery-receipt" role="region" aria-label="Official Postal Receipt">

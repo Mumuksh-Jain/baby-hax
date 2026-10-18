@@ -21,6 +21,9 @@ export default function ExperienceShell({
   const backBtnRef = useRef(null);
 
   useEffect(() => {
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     // Focus the Back button when mounted for accessibility
     const timer = setTimeout(() => {
       if (backBtnRef.current) {
@@ -29,9 +32,17 @@ export default function ExperienceShell({
     }, 60);
 
     const handleKeyDown = (e) => {
+      // The nested cinematic owns its own Escape and focus while visible.
+      if (document.querySelector('.magical-star-theater.theater-active')) return;
       if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
+      }
+      if (e.key === 'Tab') {
+        const items = [...containerRef.current.querySelectorAll('button:not(:disabled), input, a[href], [tabindex="0"]')].filter(el => el.getClientRects().length);
+        const index = items.indexOf(document.activeElement);
+        if (e.shiftKey && index <= 0) { e.preventDefault(); items.at(-1)?.focus(); }
+        else if (!e.shiftKey && (index === items.length - 1 || index === -1)) { e.preventDefault(); items[0]?.focus(); }
       }
     };
 
@@ -39,6 +50,8 @@ export default function ExperienceShell({
     return () => {
       clearTimeout(timer);
       window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
     };
   }, [onClose]);
 
@@ -62,7 +75,8 @@ export default function ExperienceShell({
               aria-label="Back to Invention Workshop"
             >
               <span className="back-arrow" aria-hidden="true">⬅</span>
-              <span>Back to Workshop</span>
+              <span className="shell-back-full">Back to Workshop</span>
+              <span className="shell-back-short" aria-hidden="true">Workshop</span>
             </button>
 
             <div className="shell-title-group">

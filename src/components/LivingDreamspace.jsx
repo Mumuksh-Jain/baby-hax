@@ -82,6 +82,7 @@ export default function LivingDreamspace({ stamps = {}, soundEnabled = false }) 
         )}
       </svg>
 
+      <div className="dreamspace-target-layer" role="group" aria-label="Dream passport constellation chimes">
       {/* Constellation Star 1: Star Conductor */}
       <button
         type="button"
@@ -155,6 +156,7 @@ export default function LivingDreamspace({ stamps = {}, soundEnabled = false }) 
         <span className="star-glyph">★</span>
       </button>
 
+      </div>
       {/* Click Sparkle Bursts */}
       {sparkles.map((s) => (
         <div

@@ -122,7 +122,7 @@ async function runArtKitVerification() {
     await page.screenshot({ path: 'screenshots/artkit_lighthouse_angle2.png' });
     console.log('[SAVED] screenshots/artkit_lighthouse_angle2.png');
 
-    // PROOF (c): Select destination 3 (Moonbeam Tower, 8.5s travel) and capture at 25%, 50%, 75%
+    // Capture the actual eased React progress, rather than assumed wall-clock times.
     const destBtns = await page.$$('.dest-select-btn');
     if (destBtns.length >= 3) {
       await destBtns[2].click(); // Moonbeam Tower
@@ -138,20 +138,20 @@ async function runArtKitVerification() {
     const dispatchBtn = await page.$('.dispatch-train-btn');
     if (dispatchBtn) {
       await dispatchBtn.click();
-      console.log('[PASS] Dispatched train to Moonbeam Tower (8.5s trip)!');
+      console.log('[PASS] Dispatched train to Moonbeam Tower (6.8s trip)!');
 
       // 25% of 8500ms = ~2125ms
-      await new Promise((r) => setTimeout(r, 2100));
+      await page.waitForFunction(() => Number(document.querySelector('.express-stage-viewport').dataset.progress) >= 0.25);
       await page.screenshot({ path: 'screenshots/artkit_locomotive_25pct.png' });
       console.log('[SAVED] screenshots/artkit_locomotive_25pct.png (25% flight)');
 
       // 50% of 8500ms = ~4250ms (+2150ms)
-      await new Promise((r) => setTimeout(r, 2150));
+      await page.waitForFunction(() => Number(document.querySelector('.express-stage-viewport').dataset.progress) >= 0.5);
       await page.screenshot({ path: 'screenshots/artkit_locomotive_50pct.png' });
       console.log('[SAVED] screenshots/artkit_locomotive_50pct.png (50% flight)');
 
       // 75% of 8500ms = ~6375ms (+2125ms)
-      await new Promise((r) => setTimeout(r, 2125));
+      await page.waitForFunction(() => Number(document.querySelector('.express-stage-viewport').dataset.progress) >= 0.75);
       await page.screenshot({ path: 'screenshots/artkit_locomotive_75pct.png' });
       console.log('[SAVED] screenshots/artkit_locomotive_75pct.png (75% flight)');
 

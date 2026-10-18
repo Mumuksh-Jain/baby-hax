@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import StampTray from '../experiences/shared/StampTray';
 import PipSecretPostcard from './PipSecretPostcard';
+import { OfficialLantern, OfficialPip } from './OfficialArt';
+import RoomSet from '../experiences/moonlight/RoomSet';
 import './InventionWorkshop.css';
 
 /**
@@ -57,6 +59,7 @@ export default function InventionWorkshop({
             </div>
 
             <div className="doorway-preview-art orchestra-art">
+              <OfficialPip className="gallery-pip" />
               <div className="music-box-preview-wrap">
                 <img
                   src="/assets/pip/pip_lullaby_box.png"
@@ -84,7 +87,7 @@ export default function InventionWorkshop({
                 onClick={() => onOpenExperience?.('orchestra')}
                 aria-label="Enter the Star Orchestra experience"
               >
-                <span>🎶 Enter the Star Orchestra ➔</span>
+                <span>Conduct the stars →</span>
               </button>
             </div>
           </article>
@@ -99,12 +102,9 @@ export default function InventionWorkshop({
             </div>
 
             <div className="doorway-preview-art moonlight-art">
+              <RoomSet />
               <div className="lantern-preview-wrap">
-                <img
-                  src="/assets/pip/pip_dream_lantern.png"
-                  alt="Official Dream Lantern"
-                  className="preview-lantern-img"
-                />
+                <OfficialLantern className="preview-lantern-img" />
                 <div className="preview-swatches" aria-hidden="true">
                   <span className="swatch sw-warm" title="Warm Amber" />
                   <span className="swatch sw-cyan" title="Dream Cyan" />
@@ -126,7 +126,7 @@ export default function InventionWorkshop({
                 onClick={() => onOpenExperience?.('moonlight')}
                 aria-label="Open the Moonlight Lab experience"
               >
-                <span>💡 Open the Moonlight Lab ➔</span>
+                <span>Make a little moonlight →</span>
               </button>
             </div>
           </article>
@@ -189,7 +189,7 @@ export default function InventionWorkshop({
                 onClick={() => onOpenExperience?.('express')}
                 aria-label="Board the Living Dream Express experience"
               >
-                <span>🚂 Board the Dream Express ➔</span>
+                <span>Deliver a dream →</span>
               </button>
             </div>
           </div>

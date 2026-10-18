@@ -1,0 +1,308 @@
+/* Hallmark · genre: playful · macrostructure: illustrated invitations / stage-and-desk
+ * design-system: design.md · designed-as-app
+ * pre-emit critique: P4 H4 E4 S5 R4 V4 */
+@import '../../tokens.css';
+
+html, body { overflow-x: clip; }
+h1, h2, h3 { font-style: normal; overflow-wrap: anywhere; min-width: 0; }
+button, a { -webkit-tap-highlight-color: transparent; }
+
+/* The page keeps its familiar nursery, with artwork only in the outer gutters. */
+.living-dreamspace-root { z-index: 8; }
+.retro-browser-container { z-index: 1; }
+.dreamspace-paper-clouds-frame { inset: auto 0 0; height: 100%; opacity: .6; }
+.dreamspace-paper-clouds-img {
+  position: absolute; width: 440px; height: 240px; max-width: none;
+  object-fit: cover; object-position: left bottom; left: -290px; bottom: -50px;
+  filter: none; transform: rotate(12deg);
+}
+.dreamspace-paper-clouds-frame::after {
+  content: ''; position: absolute; width: 440px; height: 240px; right: -290px; top: -30px;
+  background: url('/assets/production-art/sprites/dreamspace_paper_clouds.png') right bottom / cover;
+  transform: rotate(180deg); pointer-events: none;
+}
+.dreamspace-cloud { display: none; }
+.dreamspace-star-btn { z-index: 2; min-width: 44px; min-height: 44px; }
+.living-dreamspace-root .star-label { color: var(--color-cocoa); text-shadow: none; font-family: var(--font-body); }
+.dreamspace-constellation-svg { display: none; }
+
+/* A quiet paper header, then the whole scene. One scroller owns scene and controls. */
+.experience-overlay { padding: var(--space-md); background: var(--color-stage-glass); }
+.experience-shell-container { max-width: 1360px; max-height: calc(100dvh - 48px); border: 1px solid var(--color-stitch); border-radius: 18px; box-shadow: 0 24px 90px var(--color-stage-shadow); animation: expFadeIn var(--dur-short) var(--ease-out); }
+.experience-shell-header { padding: var(--space-sm) var(--space-md); background: var(--color-bg-cream); border-bottom: 1px solid var(--color-stitch); }
+.shell-header-left { flex-wrap: nowrap; min-width: 0; }
+.shell-header-right { gap: var(--space-2xs); }
+.shell-experience-title { color: var(--color-cocoa); font-size: 1.35rem; }
+.shell-category-chip { font-size: .6rem; letter-spacing: .1em; }
+.shell-back-btn, .shell-sound-btn, .shell-close-btn { box-shadow: none; min-height: 44px; white-space: nowrap; }
+.shell-close-btn { min-width: 44px; }
+.shell-back-short { display: none; }
+.experience-shell-body { min-height: 0; overscroll-behavior: contain; }
+.moonlight-lab-workspace, .dream-express-experience-layout { grid-template-columns: minmax(0, 1fr) 312px; min-height: 650px; flex-shrink: 0; }
+.moonlight-control-desk, .express-control-desk { background: var(--color-bg-cream); padding: var(--space-md); gap: var(--space-sm); overflow: visible; border: 0; border-radius: 0; box-shadow: none; }
+.experience-shell-body .desk-header { border-bottom: 1px solid var(--color-paper-border); padding-bottom: var(--space-xs); }
+.experience-shell-body .desk-badge { font-family: var(--font-mono); font-size: .58rem; background: transparent; border: 0; padding: 0; color: var(--color-berry); }
+.experience-shell-body .desk-title { font-family: var(--font-display); color: var(--color-cocoa); font-size: 1.4rem; }
+.experience-shell-body .desk-desc { font-size: .85rem; }
+.experience-shell-body .desk-pill-btn, .experience-shell-body .pattern-btn,
+.dest-select-btn, .cargo-select-btn { min-height: 44px; border-width: 1px; border-radius: var(--radius-sm); padding: 8px 10px; box-shadow: none; font-weight: 500; }
+.experience-shell-body .is-active, .dest-select-btn.is-selected, .cargo-select-btn.is-selected { background: var(--color-gold-glow); border-color: var(--color-berry); box-shadow: inset 3px 0 var(--color-berry); }
+.experience-shell-body .desk-pill-btn span, .experience-shell-body .pattern-btn span { white-space: nowrap; }
+.experience-shell-body .control-group-label, .desk-label { font-family: var(--font-mono); font-size: .66rem; letter-spacing: 0; text-transform: none; }
+.test-nightlight-btn, .dispatch-train-btn { font-family: var(--font-body); font-size: .9rem; border: 0; border-radius: var(--radius-sm); min-height: 48px; background: var(--color-berry-deep); box-shadow: none; padding: 10px; white-space: nowrap; }
+.test-hint, .dispatch-hint { font-family: var(--font-body); font-size: .74rem; font-style: normal; line-height: 1.4; }
+.bedside-range-slider { min-height: 32px; }
+.slider-ticks { font-size: .56rem; }
+
+/* Stage invitation. Every waking star remains an independent native button. */
+.orchestra-experience-content { min-height: 0; }
+.conductor-podium-stage { padding: var(--space-md) var(--space-md) var(--space-sm); background: var(--color-stage); }
+.conductor-header { margin-bottom: var(--space-md); max-width: 700px; }
+.conductor-role-badge { border: 0; background: none; font-size: .6rem; color: var(--color-soft-gold); margin: 0 0 var(--space-2xs); }
+.conductor-stage-title { font-size: clamp(1.4rem, 2.5vw, 2rem); }
+.conductor-instructions { font-size: .9rem; color: var(--color-stage-muted); }
+.conductor-sky-stage { max-width: 1060px; height: auto; aspect-ratio: 1.9; border: 1px solid var(--color-room-trim); border-radius: 12px; background-position: center 65%; box-shadow: none; }
+.podium-pip-wrap { position: absolute; inset: auto 32% 9%; margin: 0; pointer-events: none; }
+.podium-pip-img { width: 210px; height: 255px; object-fit: contain; border: 0; border-radius: 0; box-shadow: none; filter: drop-shadow(0 10px 12px var(--color-stage-shadow)); }
+.podium-thought-bubble { margin-top: -12px; font-family: var(--font-body); font-size: .82rem; line-height: 1.3; max-width: 320px; padding: 8px 14px; border: 0; }
+.podium-star { width: 116px; min-height: 135px; padding: 4px; opacity: 1; }
+.podium-star.is-waiting { opacity: .8; }
+.podium-star:disabled { cursor: default; }
+.star-sprite-img { width: 90px; height: 110px; object-fit: fill; filter: drop-shadow(0 2px 9px var(--color-gold-halo)); }
+.star-node-1 .star-sprite-img, .production-star-1 { clip-path: polygon(48% 14%,61% 36%,91% 37%,91% 44%,74% 58%,79% 80%,72% 84%,50% 73%,28% 86%,23% 81%,25% 59%,9% 48%,9% 42%,36% 35%); }
+.star-node-2 .star-sprite-img, .production-star-2 { clip-path: polygon(47% 11%,53% 13%,64% 32%,92% 33%,95% 39%,76% 56%,85% 76%,80% 80%,55% 74%,35% 82%,29% 79%,30% 59%,9% 46%,8% 40%,35% 32%); }
+.star-node-3 .star-sprite-img, .production-star-3 { clip-path: polygon(47% 10%,52% 11%,64% 32%,88% 30%,93% 35%,77% 52%,83% 71%,79% 77%,55% 71%,36% 82%,29% 80%,29% 58%,11% 47%,11% 41%,35% 33%); }
+.star-node-1 { left: 18%; top: 13%; }
+.star-node-2 { right: 18%; top: 10%; }
+.star-node-3 { right: 8%; top: 51%; }
+.star-note-chip { font-size: .65rem; padding: 3px 10px; white-space: nowrap; }
+.conductor-progress-pill { font-size: .62rem; bottom: 10px; padding: 5px 14px; white-space: nowrap; }
+.podium-star.is-tuned .star-note-chip { background: var(--color-paper-light); }
+.podium-star.is-tuned .star-sprite-img { animation-duration: 4s; }
+.orchestra-celebration-screen { min-height: 520px; }
+
+/* A built room, referenced to the kit's arched window and lavender nursery. */
+.moonlight-bedroom-chamber { min-height: 650px; padding: 0; isolation: isolate; border: 0; background: var(--color-stage) !important; }
+.room-set { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -3; object-fit: cover; }
+.room-ambient-shade { position: absolute; inset: 0; background: var(--color-stage); opacity: calc(.52 - var(--room-brightness) * .35); z-index: -2; pointer-events: none; }
+.chamber-window, .chamber-shelf { display: none; }
+.room-moonwash { position: absolute; left: 20%; top: 10%; width: 52%; height: 75%; background: linear-gradient(140deg, var(--color-room-moon), transparent 70%); clip-path: polygon(0 0,50% 0,100% 100%,10% 100%); opacity: .12; z-index: -1; pointer-events: none; }
+.room-lamplight { position: absolute; inset: 0; background: radial-gradient(ellipse at 67% 68%, var(--room-light) 0%, transparent 66%); opacity: calc(.05 + var(--room-brightness) * .5); mix-blend-mode: screen; z-index: -1; pointer-events: none; transition: opacity var(--dur-short), background var(--dur-short); }
+.color-warm { --room-light: var(--color-room-warm); }
+.color-sleepy { --room-light: var(--color-room-moon); }
+.color-starlight { --room-light: var(--color-room-star); }
+.color-sleepy .room-moonwash { opacity: .3; }
+.color-starlight .room-moonwash { opacity: .2; }
+.room-scene-caption { position: absolute; top: 25px; left: 28px; font-family: var(--font-display); font-size: 1.15rem; color: var(--color-bg-cream); }
+.room-scene-caption span { display: block; font-family: var(--font-body); font-size: .7rem; color: var(--color-stage-muted); }
+.star-projection-layer { inset: 12% 12% auto 12%; height: 40%; z-index: 1; opacity: calc(.15 + var(--room-brightness) * .65); }
+.proj-star { color: var(--room-light); }
+.chamber-bedside-table { bottom: 25%; right: 24%; width: 26%; z-index: 3; }
+.chamber-bedside-table .table-top, .chamber-bedside-table .table-legs { display: none; }
+.chamber-lantern-wrap { width: 230px; max-width: 160%; height: auto; aspect-ratio: 1.12; margin: 0 0 -24px; }
+.chamber-lantern-img { width: 100%; height: 100%; max-width: none; border-radius: 0; mask-image: none; -webkit-mask-image: none; filter: drop-shadow(0 8px 8px var(--color-stage-shadow)); z-index: 2; }
+.chamber-lantern-halo { width: 200px; height: 220px; background: radial-gradient(ellipse, var(--room-light), transparent 68%) !important; filter: blur(8px); z-index: 1; }
+.table-top { width: 100%; height: 14px; background: var(--color-room-trim); border: 2px solid var(--color-room-wood); }
+.table-legs { width: 85%; height: 45px; border-color: var(--color-room-wood); border-width: 12px; }
+.chamber-ghost-bed { left: 4%; bottom: 30%; width: 32%; z-index: 4; }
+.chamber-ghost-bed .bed-mattress { width: 100%; height: 110px; border: 0; background: transparent; box-shadow: none; }
+.chamber-ghost-bed .bed-pillow, .chamber-ghost-bed .bed-blanket { display: none; }
+.chamber-ghost { width: 150px; height: 150px; transform: none; }
+.ghost-svg { width: 150px; height: 150px; filter: drop-shadow(0 8px 8px var(--color-stage-shadow)); }
+.ghost-speech-bubble { position: absolute; top: 92%; width: 235px; max-width: 120%; font-family: var(--font-body); font-size: .78rem; line-height: 1.35; padding: 8px 12px; border: 0; border-radius: 12px; color: var(--color-cocoa); }
+.chamber-ghost-bed.too-dark .chamber-ghost { animation: ghostShiver .2s linear infinite alternate; }
+@keyframes ghostShiver { to { transform: translateX(2px) rotate(2deg); } }
+.chamber-ghost-bed.sleepy .chamber-ghost { animation: ghostBreathe 4s var(--ease-in-out) infinite alternate; }
+@keyframes ghostBreathe { to { transform: translateY(4px); } }
+.pip-lab-reward-badge { top: auto; bottom: 16px; left: 16px; right: auto; max-width: calc(100% - 32px); padding: 8px 12px; border: 1px solid var(--color-room-trim); }
+.pip-lab-reward-badge .reward-text span { font-size: .68rem; }
+
+/* The plate travels with the SVG camera; no cropped CSS background under it. */
+.dream-express-experience-layout { gap: 0; padding: 0; background: var(--color-stage); height: auto; }
+.express-stage-viewport { background: var(--color-stage); border: 0; border-radius: 0; min-height: 650px; height: auto; display: block; }
+.express-svg-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.express-wayfinder { top: 20px; left: 20px; padding: 7px 12px; border: 1px solid var(--color-room-trim); color: var(--color-soft-gold); font-family: var(--font-mono); font-size: .58rem; box-shadow: none; }
+.express-trip-status { position: absolute; bottom: 16px; left: 16px; right: 16px; width: fit-content; max-width: calc(100% - 32px); padding: 7px 12px; background: var(--color-stage-glass); border: 1px solid var(--color-room-trim); border-radius: var(--radius-pill); color: var(--color-stage-ink); font-size: .72rem; }
+.exp-beam-rotor { transform-box: view-box; transform-origin: 0 0; }
+.beacon-idle-sweep { animation: liveBeacon 7s var(--ease-in-out) infinite alternate; }
+.beacon-tracking-mode { animation: liveBeacon 2s var(--ease-in-out) infinite alternate; }
+.beacon-celebration-mode { animation: liveBeacon 1.4s var(--ease-in-out) infinite alternate; }
+@keyframes liveBeacon { from { transform: rotate(-16deg); opacity: .65; } to { transform: rotate(18deg); opacity: .9; } }
+.train-wheel.is-spinning { animation: axleTurn .55s linear infinite; transform-box: view-box; transform-origin: 0 0; }
+@keyframes axleTurn { to { transform: rotate(360deg); } }
+.train-piston.is-moving { animation: pistonStroke .55s linear infinite; }
+@keyframes pistonStroke { 50% { transform: translateY(3px); } }
+.exp-steam-puffs { fill: var(--color-paper-light); }
+.exp-puff { animation: liveSteam 1.8s var(--ease-out) infinite; transform-box: fill-box; transform-origin: center; }
+.ep2 { animation-delay: .6s; }.ep3 { animation-delay: 1.2s; }
+@keyframes liveSteam { from { opacity: .8; transform: translate(0,0) scale(.7); } to { opacity: 0; transform: translate(-25px,-45px) scale(1.5); } }
+.express-delivery-receipt { width: min(350px, calc(100% - 32px)); left: auto; right: 16px; bottom: 65px; padding: 16px; border: 1px solid var(--color-room-trim); border-radius: 10px; background: var(--color-bg-cream); }
+.exp-receipt-stamp { font-family: var(--font-mono); font-size: .57rem; line-height: 1.5; }
+.exp-receipt-destination { font-family: var(--font-display); }
+.exp-receipt-footer { gap: 12px; font-size: .6rem; }
+.exp-receipt-close { min-width: 44px; min-height: 44px; }
+.dest-btn-sub, .cargo-btn-sub { white-space: normal; line-height: 1.3; }
+
+/* Cinematic owner retained. The illustrated set replaces only redundant static scenery. */
+.magical-star-theater { background: var(--color-stage) url('/assets/production-art/backgrounds/star_theater.png') center / cover; font-family: var(--font-body); height: 100dvh; }
+.magical-star-theater .layer-a-midnight-sky { background: linear-gradient(var(--color-stage-shadow), transparent 30%, var(--color-stage-shadow)); }
+.magical-star-theater .sky-paper-fiber-overlay, .magical-star-theater .sky-celestial-nebula { display: none; }
+.magical-star-theater .layer-c-left-paper-clouds, .magical-star-theater .layer-d-right-paper-clouds { opacity: .22; width: 14%; }
+.magical-star-theater .layer-e-paper-moon { opacity: 0; }
+.magical-star-theater .layer-f-midground-clouds { opacity: .15; }
+.magical-star-theater .layer-i-foreground-paper-clouds { opacity: .35; }
+.cinematic-star-node .star-sprite-img { width: 72px; height: 88px; animation: none; }
+.theater-top-controls { z-index: 100; }
+.theater-ctrl-btn { min-height: 44px; }
+.layer-j-cinematic-subtitles { z-index: 90; pointer-events: none; }
+.cinematic-star-node { z-index: 35; }
+.magical-star-theater .cinematic-star-node { top: 0; left: 0; right: auto; bottom: auto; width: 72px; height: 88px; padding: 0; }
+.magical-star-theater .cradle-character-wrap { mask: none; -webkit-mask: none; clip-path: none; -webkit-clip-path: none; overflow: visible; border-radius: 0; background: none; }
+.magical-star-theater .pip-character-asset { object-fit: contain; mask: none; -webkit-mask: none; filter: drop-shadow(0 10px 12px var(--color-stage-shadow)); }
+.magical-star-theater .cradle-cloud-backdrop, .magical-star-theater .cradle-cloud-rim, .magical-star-theater .cradle-foreground-puffs { display: none; }
+.magical-star-theater .layer-c-left-paper-clouds { clip-path: ellipse(100% 50% at 0 50%); }
+.magical-star-theater .layer-d-right-paper-clouds { clip-path: ellipse(100% 50% at 100% 50%); }
+
+/* Illustrated invitations — same artwork, concise actions, actual routes. */
+.invention-workshop-doorway-gallery { padding: var(--space-xl) var(--space-lg); border-top: 1px solid var(--color-stitch); }
+.workshop-gallery-header { align-items: flex-start; text-align: left; max-width: 1040px; margin-bottom: var(--space-lg); }
+.workshop-pill-tag { border: 0; background: transparent; padding: 0; border-radius: 0; font-family: var(--font-mono); font-size: .62rem; }
+.workshop-gallery-title { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.65rem,3vw,2.5rem); line-height: 1.15; }
+.workshop-gallery-subtitle { max-width: 620px; font-size: .95rem; }
+.doorways-row-two-col { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.doorway-card { padding: 0; overflow: hidden; border: 1px solid var(--color-stitch); border-radius: 14px; box-shadow: 0 6px 20px var(--color-paper-shadow); }
+.doorway-badge-row { padding: 12px 18px; margin: 0; gap: 8px; flex-wrap: wrap; }
+.doorway-exp-tag { font-family: var(--font-mono); font-size: .58rem; }
+.doorway-preview-art { height: 225px; border: 0; border-radius: 0; margin: 0; }
+.doorway-preview-art.orchestra-art { background: var(--color-stage) url('/assets/production-art/backgrounds/star_theater.png') center 65% / cover; }
+.gallery-pip { width: 165px; height: 205px; align-self: end; }
+.orchestra-art .music-box-preview-wrap { display: none; }
+.music-box-preview-wrap { background: var(--color-bg-cream); border-radius: 50%; padding: 10px; width: 122px; height: 122px; }
+.preview-music-box-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.preview-stars-cluster { display: none; }
+.doorway-preview-art.moonlight-art { background: var(--color-stage); position: relative; }
+.moonlight-art .room-set { z-index: 0; }
+.moonlight-art .lantern-preview-wrap { margin-left: 25%; transform: translateY(14px); }
+.moonlight-art::before { content: ''; position: absolute; width: 120px; height: 180px; top: 25px; left: 16%; border: 5px solid var(--color-room-trim); border-radius: 80px 80px 0 0; background: linear-gradient(var(--color-stage),var(--color-stage-soft)); }
+.doorway-preview-art.moonlight-art::before { content: none; }
+.lantern-preview-wrap { position: relative; z-index: 1; }
+.preview-lantern-img { width: 210px; height: 190px; border-radius: 0; filter: drop-shadow(0 6px 20px var(--color-gold-halo)); }
+.preview-swatches { display: none; }
+.doorway-content { padding: 20px 22px 24px; gap: 8px; }
+.doorway-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; }
+.doorway-role { font-size: .68rem; margin-bottom: 4px; }
+.doorway-desc { font-size: .88rem; line-height: 1.55; }
+.doorway-launch-btn { margin-top: 12px; font-family: var(--font-body); font-size: .9rem; min-height: 46px; border: 0; border-radius: 8px; background: var(--color-berry-deep); box-shadow: none; padding: 10px 14px; white-space: nowrap; }
+.doorway-launch-btn span { color: var(--color-paper-light); }
+.express-doorway-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0,1fr); gap: 0; }
+.express-preview-mini-stage { margin: 0; height: 100%; min-height: 280px; border: 0; border-radius: 0; background: var(--color-stage) url('/assets/production-art/backgrounds/dream_express_world.png') center / cover; }
+.express-mini-svg { display: none; }
+.archival-seal-trigger-btn { font-family: var(--font-body); font-size: .8rem; min-height: 44px; max-width: 100%; border-radius: 8px; }
+
+@media (max-width: 1200px) {
+  .dreamspace-paper-clouds-frame { display: none; }
+  .living-dreamspace-root { position: absolute; inset: 0 0 auto; height: 60px; overflow: visible; }
+  .living-dreamspace-root .dreamspace-cloud { display: none; }
+  .dreamspace-target-layer { display: flex; justify-content: center; gap: 24px; padding-top: 6px; }
+  .dreamspace-target-layer .constellation-star { position: static; display: flex; }
+  .dreamspace-target-layer .ambient-chime { display: none; }
+  .dreamspace-target-layer .star-label { display: none; }
+  .retro-browser-container { padding-top: 62px; }
+  .moonlight-lab-workspace, .dream-express-experience-layout { grid-template-columns: minmax(0,1fr) 290px; }
+}
+@media (max-width: 900px) {
+  .experience-overlay { padding: 10px; }
+  .experience-shell-container { max-height: calc(100dvh - 20px); }
+  .experience-shell-header { padding: 12px 16px; gap: 10px; }
+  .shell-header-left { gap: 12px; }
+  .shell-back-btn { font-size: .75rem; padding: 6px 10px; }
+  .shell-category-chip { font-size: .5rem; }
+  .shell-experience-title { font-size: 1.1rem; }
+  .moonlight-lab-workspace, .dream-express-experience-layout { grid-template-columns: minmax(0,1fr); }
+  .moonlight-bedroom-chamber, .express-stage-viewport { height: 520px; min-height: 520px; }
+  .room-set { object-fit: cover; }
+  .moonlight-control-desk, .express-control-desk { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  .moonlight-control-desk .desk-header, .express-control-desk .desk-header { grid-column: 1/-1; }
+  .desk-test-action-wrap, .desk-dispatch-action { align-self: end; }
+  .podium-pip-img { width: 170px; height: 205px; }
+  .podium-star { width: 95px; min-height: 110px; }
+  .star-sprite-img { width: 76px; height: 94px; }
+}
+@media (max-width: 600px) {
+  .experience-overlay { padding: 0; }
+  .experience-shell-container { max-height: 100dvh; height: 100dvh; border: 0; border-radius: 0; }
+  .experience-shell-header { display: grid; grid-template-columns: minmax(0,1fr) auto; padding: 10px 12px; }
+  .shell-header-left { display: contents; }
+  .shell-title-group { grid-column: 1/-1; grid-row: 2; }
+  .shell-back-btn { justify-self: start; }
+  .shell-back-full { display: none; }
+  .shell-back-short { display: inline; }
+  .shell-header-right { grid-column: 2; grid-row: 1; }
+  .shell-category-chip { font-size: .5rem; }
+  .shell-experience-title { font-size: 1.2rem; }
+  .shell-sound-btn { padding: 5px 8px; font-size: .68rem; }
+  .shell-close-btn { border: 0; }
+  .conductor-podium-stage { padding: 22px 10px; min-height: 540px; justify-content: center; }
+  .conductor-header { margin-bottom: 18px; padding: 0 6px; }
+  .conductor-stage-title { font-size: 1.45rem; }
+  .conductor-instructions { font-size: .82rem; }
+  .conductor-sky-stage { aspect-ratio: auto; height: 360px; background-position: center; }
+  .podium-pip-wrap { inset: auto 20% 14%; }
+  .podium-pip-img { width: 150px; height: 180px; }
+  .podium-thought-bubble { font-size: .68rem; margin-top: -4px; padding: 7px 10px; }
+  .podium-star { width: 80px; min-height: 92px; gap: 0; }
+  .star-sprite-img { width: 68px; height: 84px; }
+  .star-node-1 { left: 2%; top: 16%; }
+  .star-node-2 { right: 3%; top: 9%; }
+  .star-node-3 { right: 1%; top: 47%; }
+  .star-note-chip { font-size: .55rem; padding: 3px 7px; }
+  .conductor-progress-pill { font-size: .54rem; letter-spacing: .02em; }
+  .moonlight-bedroom-chamber { min-height: 350px; height: 350px; }
+  .room-set { width: 100%; }
+  .room-scene-caption { left: 16px; top: 16px; font-size: .9rem; }
+  .room-scene-caption span { font-size: .58rem; }
+  .chamber-bedside-table { right: 21%; bottom: 25%; }
+  .chamber-lantern-wrap { width: 140px; margin-bottom: -16px; }
+  .chamber-lantern-halo { width: 140px; height: 150px; }
+  .table-legs { height: 27px; border-width: 8px; }
+  .table-top { height: 10px; }
+  .chamber-ghost-bed { left: 4%; bottom: 29%; width: 35%; }
+  .chamber-ghost-bed .bed-mattress, .chamber-ghost, .ghost-svg { width: 78px; height: 78px; }
+  .ghost-speech-bubble { font-size: .61rem; padding: 6px 8px; width: 150px; max-width: 135%; }
+  .pip-lab-reward-badge { bottom: 7px; left: 8px; padding: 5px 8px; gap: 6px; }
+  .pip-lab-reward-badge .reward-text strong { font-size: .66rem; }
+  .pip-lab-reward-badge .reward-text span { font-size: .54rem; }
+  .moonlight-control-desk, .express-control-desk { display: flex; gap: 20px; padding: 22px 16px 30px; }
+  .express-stage-viewport { min-height: 350px; height: 350px; }
+  .express-wayfinder { top: 12px; left: 12px; font-size: .48rem; letter-spacing: .03em; }
+  .express-trip-status { bottom: 12px; left: 10px; right: 10px; max-width: calc(100% - 20px); font-size: .61rem; }
+  .express-delivery-receipt { bottom: 52px; right: 10px; left: 10px; width: calc(100% - 20px); padding: 10px; }
+  .exp-receipt-note, .exp-receipt-cargo { font-size: .7rem; margin-bottom: 6px; }
+  .exp-receipt-destination { font-size: 1rem; }
+  .exp-receipt-header { padding-bottom: 4px; margin-bottom: 6px; }
+  .exp-receipt-footer { font-size: .53rem; }
+  .celebration-actions { flex-direction: column; }
+  .magical-star-theater .theater-scene-indicator { display: none; }
+  .magical-star-theater .theater-top-controls { gap: 8px; }
+  .magical-star-theater .theater-ctrl-btn { font-size: .67rem; padding: 6px 9px; white-space: nowrap; }
+  .cinematic-star-node .star-sprite-img { width: 52px; height: 64px; }
+  .magical-star-theater .layer-j-cinematic-subtitles { padding: 0 12px 22px; }
+  .magical-star-theater .subtitle-text { font-size: .85rem; }
+  .invention-workshop-doorway-gallery { padding: 32px 14px; }
+  .doorways-row-two-col, .express-doorway-layout { grid-template-columns: minmax(0,1fr); }
+  .doorway-preview-art { height: 190px; }
+  .doorway-content { padding: 18px 16px 22px; }
+  .doorway-title { font-size: 1.45rem; }
+  .doorway-launch-btn { font-size: .8rem; }
+  .express-preview-mini-stage { min-height: 210px; }
+  .doorway-role { font-size: .61rem; }
+  .archival-seal-trigger-btn { padding: 10px; font-size: .68rem; }
+  .workshop-pill-tag { font-size: .5rem; letter-spacing: .03em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .experience-overlay *, .magical-star-theater *, .living-dreamspace-root *, .doorway-card { animation: none !important; transition: opacity var(--dur-short) !important; }
+  .magical-star-theater .theater-stage { animation: none !important; transform: none !important; }
+  .theater-trails-svg .comet-ribbon-path, .glitter-spray-diamonds, .glitter-spray-specks { opacity: 0 !important; }
+  .pip-storybook-cradle { transform: none !important; }
+}
