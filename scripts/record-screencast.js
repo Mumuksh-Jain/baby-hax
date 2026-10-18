@@ -179,7 +179,6 @@ if (!fs.existsSync(RECORDING_DIR)) {
             }, 1000 / 12);
           }
 
-          scrubber.addEventListener('input', (e) => {
             clearInterval(interval);
             isPlaying = false;
             showFrame(parseInt(e.target.value, 10));
@@ -192,8 +191,8 @@ if (!fs.existsSync(RECORDING_DIR)) {
     </html>
   `;
 
-  fs.writeFileSync('recordings/pass01c4a-animation-recording.html', playerHtml);
-  console.log('✓ Saved interactive continuous recording: recordings/pass01c4a-animation-recording.html');
+  fs.writeFileSync('recordings/pass01c4b-animation-recording.html', playerHtml);
+  console.log('✓ Saved interactive continuous recording: recordings/pass01c4b-animation-recording.html');
 
   await browser.close();
 })();

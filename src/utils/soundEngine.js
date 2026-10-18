@@ -67,8 +67,11 @@ export async function preloadFaahAudio() {
 
 /**
  * Preload and decode the shortened twinkle_vocal_short.mp3 file
- * Audio is pre-trimmed with FFmpeg to a natural musical phrase (~17.45s)
- * with transparent fade-in and smooth 0.5s bedtime fade-out.
+/**
+ * Preload and decode the shortened twinkle_vocal_short_v2.mp3 file
+ * Audio is pre-trimmed with FFmpeg to a natural musical phrase (20.00s)
+ * starting from the true vocal line: "Twinkle, twinkle, little star..."
+ * with transparent fade-in and smooth 0.7s bedtime fade-out.
  */
 export async function preloadTwinkleVocalAudio() {
   if (twinkleVocalBuffer || isLoadingVocal) return twinkleVocalBuffer;
@@ -76,13 +79,13 @@ export async function preloadTwinkleVocalAudio() {
   try {
     const ctx = getAudioContext();
     if (!ctx) return null;
-    const res = await fetch('/assets/audio/twinkle_vocal_short.mp3');
+    const res = await fetch('/assets/audio/twinkle_vocal_short_v2.mp3');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const arrayBuffer = await res.arrayBuffer();
     twinkleVocalBuffer = await ctx.decodeAudioData(arrayBuffer);
     return twinkleVocalBuffer;
   } catch (err) {
-    console.warn('Could not decode /assets/audio/twinkle_vocal_short.mp3, will use synthesized fallback:', err);
+    console.warn('Could not decode /assets/audio/twinkle_vocal_short_v2.mp3, will use synthesized fallback:', err);
     return null;
   } finally {
     isLoadingVocal = false;
