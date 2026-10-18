@@ -8,6 +8,16 @@
   padding: 1.5rem 1rem;
   position: relative;
   overflow-x: hidden;
+  transition: background-color var(--transition-normal);
+}
+
+.shell-nightlight {
+  background-color: #F8F0E5;
+}
+
+.shell-nightlight .ambient-star {
+  color: #FFA62B;
+  opacity: 0.7;
 }
 
 /* Accessible Skip Link */

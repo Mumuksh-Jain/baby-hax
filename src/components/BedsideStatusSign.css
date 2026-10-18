@@ -72,6 +72,24 @@
   animation: sign-shiver 0.3s ease infinite alternate;
 }
 
+.is-nightlight-mode .bedside-sign-body {
+  background-color: #FFF9E6;
+  border-color: var(--color-gold-deep);
+  box-shadow: 0 4px 0 var(--color-gold-deep), 0 0 14px rgba(245, 216, 140, 0.45);
+}
+
+.is-nightlight-mode .sign-status-text {
+  color: #7A5B00;
+}
+
+.is-nightlight-mode .glow-core {
+  background-color: #E6AF2E;
+}
+
+.is-nightlight-mode .glow-ring {
+  background-color: #FFD45A;
+}
+
 @keyframes sign-shiver {
   0% { transform: rotate(-0.8deg) translateY(0); }
   100% { transform: rotate(0.8deg) translateY(-1px); }

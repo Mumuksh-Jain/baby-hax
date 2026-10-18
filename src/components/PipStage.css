@@ -8,53 +8,134 @@
   max-width: 440px;
   width: 100%;
   margin: 0 auto;
+  transition: all var(--transition-normal);
 }
 
-/* Dream Atmosphere (Moon & Stars) */
+/* Dream Atmosphere (Interactive Moon & Stars) */
 .dream-environment {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 15;
 }
 
-.mini-moon-badge {
+/* Interactive Moon Button */
+.mini-moon-btn {
   position: absolute;
-  top: -10px;
+  top: -12px;
   right: -8px;
-  animation: moon-drift 4s ease-in-out infinite alternate;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-bounce), filter var(--transition-fast);
+  z-index: 25;
 }
 
-@keyframes moon-drift {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-6px) rotate(4deg); }
+.mini-moon-btn:hover {
+  transform: translateY(-4px) scale(1.1) rotate(6deg);
 }
+
+.mini-moon-btn:focus-visible {
+  outline: 3px solid var(--color-gold-deep);
+  outline-offset: 4px;
+}
+
+.moon-svg {
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(92, 64, 51, 0.15));
+}
+
+.mini-moon-btn.is-glowing-night .moon-glow-circle {
+  animation: night-moon-pulse 2.2s infinite alternate ease-in-out;
+}
+
+@keyframes night-moon-pulse {
+  0% { transform-origin: center; transform: scale(0.95); opacity: 0.8; }
+  100% { transform-origin: center; transform: scale(1.15); opacity: 1; }
+}
+
+.moon-touch-hint {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--color-cocoa);
+  background-color: var(--color-gold-glow);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-soft-gold);
+  margin-top: -6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Interactive Stars */
+.star-wrapper {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.star-1-wrap { top: 12%; left: -14px; }
+.star-2-wrap { top: 44%; right: -16px; }
+.star-3-wrap { bottom: 24%; left: -20px; }
 
 .paper-star {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform var(--transition-bounce);
+}
+
+.paper-star:hover {
+  transform: scale(1.3) rotate(25deg);
+}
+
+.paper-star:focus-visible {
+  outline: 2px solid var(--color-berry);
+  outline-offset: 2px;
+}
+
+.star-popping {
+  animation: star-pop-burst 0.5s var(--ease-bounce) forwards;
+}
+
+@keyframes star-pop-burst {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.5) rotate(180deg); }
+  100% { transform: scale(1.1) rotate(360deg); }
+}
+
+/* Star Sparkle Particles */
+.star-sparkle-particle {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  font-size: 1rem;
+  font-weight: 800;
+  animation: particle-burst 0.6s ease-out forwards;
+  z-index: 30;
 }
 
-.star-1 {
-  top: 15%;
-  left: -12px;
-  animation: star-twinkle 3.2s ease-in-out infinite alternate;
-}
-
-.star-2 {
-  top: 45%;
-  right: -16px;
-  animation: star-twinkle 2.6s ease-in-out infinite alternate 0.8s;
-}
-
-.star-3 {
-  bottom: 25%;
-  left: -18px;
-  animation: star-twinkle 3.8s ease-in-out infinite alternate 1.4s;
-}
-
-@keyframes star-twinkle {
-  0% { transform: scale(0.9) rotate(-6deg); opacity: 0.8; }
-  100% { transform: scale(1.15) rotate(12deg); opacity: 1; }
+@keyframes particle-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4);
+  }
 }
 
 /* Main Pip Polaroid Frame */
@@ -73,21 +154,65 @@
 }
 
 .pip-frame:hover {
-  transform: rotate(0deg) translateY(-3px);
+  transform: rotate(0deg) translateY(-2px);
   box-shadow: 0 20px 40px rgba(92, 64, 51, 0.16), 0 6px 0 var(--color-cocoa);
 }
 
-/* Gentle Reaction When 'Psst, Pip?' Is Activated */
-.pip-frame.is-reacting {
-  animation: pip-wiggle-react 0.65s var(--ease-bounce) forwards;
+/* Pip Reaction Animations */
+.anim-wiggle {
+  animation: pip-wiggle 0.65s var(--ease-bounce) forwards;
 }
 
-@keyframes pip-wiggle-react {
+.anim-hop {
+  animation: pip-hop 0.55s var(--ease-bounce) forwards;
+}
+
+.anim-squash {
+  animation: pip-squash 0.6s var(--ease-bounce) forwards;
+}
+
+.anim-drift {
+  animation: pip-drift 0.7s ease-in-out forwards;
+}
+
+.anim-tilt {
+  animation: pip-tilt 0.65s var(--ease-bounce) forwards;
+}
+
+@keyframes pip-wiggle {
   0% { transform: rotate(1deg) scale(1); }
-  20% { transform: rotate(-3.5deg) scale(1.04) translateY(-6px); }
-  45% { transform: rotate(3deg) scale(1.03) translateY(-3px); }
-  70% { transform: rotate(-1.5deg) scale(1.01); }
+  25% { transform: rotate(-3.5deg) scale(1.04) translateY(-5px); }
+  50% { transform: rotate(3deg) scale(1.03) translateY(-2px); }
+  75% { transform: rotate(-1.5deg) scale(1.01); }
   100% { transform: rotate(0.5deg) scale(1); }
+}
+
+@keyframes pip-hop {
+  0% { transform: scale(1, 1) translateY(0); }
+  30% { transform: scale(1.08, 0.92) translateY(3px); }
+  60% { transform: scale(0.96, 1.06) translateY(-14px); }
+  85% { transform: scale(1.02, 0.98) translateY(1px); }
+  100% { transform: scale(1, 1) translateY(0); }
+}
+
+@keyframes pip-squash {
+  0% { transform: scale(1, 1); }
+  30% { transform: scale(1.12, 0.88); }
+  65% { transform: scale(0.94, 1.06); }
+  100% { transform: scale(1, 1); }
+}
+
+@keyframes pip-drift {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(-2deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes pip-tilt {
+  0% { transform: rotate(0deg); }
+  40% { transform: rotate(5deg) scale(1.04); }
+  80% { transform: rotate(-2deg) scale(1.01); }
+  100% { transform: rotate(0deg) scale(1); }
 }
 
 /* Washi Tape Strips */
@@ -149,14 +274,29 @@
   border-right: 2px dashed var(--color-stitch);
 }
 
-/* Photo Wrapper matching cream background of official art */
-.pip-photo-wrapper {
-  position: relative;
+/* Pip Photo Button Trigger */
+.pip-poke-btn {
+  width: 100%;
+  display: block;
+  background: none;
   border: 2px solid var(--color-paper-border);
   border-radius: var(--radius-sm);
   background-color: #FAF6EC;
   overflow: hidden;
   box-shadow: inset 0 2px 6px rgba(92, 64, 51, 0.06);
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  transition: transform var(--transition-fast);
+}
+
+.pip-poke-btn:hover {
+  transform: scale(1.015);
+}
+
+.pip-poke-btn:focus-visible {
+  outline: 3px solid var(--color-berry);
+  outline-offset: 3px;
 }
 
 .pip-image {
@@ -167,39 +307,84 @@
   display: block;
 }
 
-/* Panic Fluster Overlay */
-.panic-overlay {
+/* Dynamic Reaction Floating Overlay */
+.reaction-overlay-layer {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 16px;
+  right: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
   animation: fluster-in 0.3s ease-out forwards;
+  z-index: 20;
 }
 
-.panic-droplet {
-  font-size: 1.5rem;
-  animation: droplet-shake 0.4s ease infinite alternate;
+.overlay-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--color-paper-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-cocoa);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-.panic-fluster-lines {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--color-panic-red);
-  line-height: 1;
+.sweat-badge {
+  border-color: var(--color-panic-red);
+  background-color: var(--color-panic-bg);
 }
 
-@keyframes fluster-in {
-  0% { transform: scale(0) rotate(15deg); opacity: 0; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+.warning-badge {
+  border-color: #D4A843;
+  background-color: #FFF9D2;
 }
 
-@keyframes droplet-shake {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-4px); }
+.milk-badge {
+  border-color: #4A90E2;
+  background-color: #E8F4FD;
+}
+
+.zzz-badge {
+  border-color: #9B59B6;
+  background-color: #F5EEF8;
+}
+
+.stars-badge {
+  border-color: var(--color-berry);
+  background-color: var(--color-faded-blush);
+}
+
+.badge-icon {
+  font-size: 1.15rem;
+}
+
+.badge-text {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-night-ink);
+}
+
+/* Poke Hint Overlay */
+.pip-poke-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(37, 36, 61, 0.75);
+  color: var(--color-paper-light);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  opacity: 0.75;
+  transition: opacity var(--transition-fast);
+}
+
+.pip-poke-btn:hover .pip-poke-hint {
+  opacity: 1;
 }
 
 /* Frame Caption */
@@ -286,5 +471,9 @@
   }
   .caption-text {
     font-size: 0.74rem;
+  }
+  .mini-moon-btn {
+    top: -8px;
+    right: -4px;
   }
 }

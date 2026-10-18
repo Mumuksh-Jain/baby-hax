@@ -1,0 +1,215 @@
+.dream-blueprint-panel {
+  position: relative;
+  width: 100%;
+  padding: 1.5rem 1rem;
+  animation: panel-fade-in 0.25s var(--ease-snappy) forwards;
+}
+
+.blueprint-panel-inner {
+  background-color: #17243A;
+  color: #D4E4F7;
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-storybook-float);
+  overflow: hidden;
+  max-width: 860px;
+  margin: 0 auto;
+  font-family: var(--font-body);
+}
+
+.blueprint-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background-color: #0E1829;
+  border-bottom: 2px solid #233757;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.blueprint-stamp {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  background-color: #D4A843;
+  color: #0E1829;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.blueprint-title {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #8BE9FD;
+  margin: 4px 0 0 0;
+}
+
+.blueprint-close-btn {
+  background-color: var(--color-soft-gold);
+  color: var(--color-night-ink);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-cocoa);
+  box-shadow: 0 2px 0 var(--color-cocoa);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.blueprint-close-btn:hover {
+  background-color: #FFF;
+  transform: translateY(-1px);
+}
+
+.blueprint-canvas {
+  padding: 20px;
+  background-color: #142033;
+  /* Blueprint grid pattern */
+  background-image:
+    linear-gradient(rgba(139, 233, 253, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 233, 253, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 440px;
+  overflow-y: auto;
+}
+
+/* Yellow Sticky Note from Supervisor Barnaby */
+.supervisor-sticky-note {
+  position: relative;
+  background-color: #FFF9D2;
+  color: #5C4033;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1.5px solid #D4A843;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  transform: rotate(-1.5deg);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.sticky-pin {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+}
+
+.sticky-from {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-berry);
+  margin: 0 0 4px 0;
+  letter-spacing: 0.05em;
+}
+
+.sticky-body {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  font-style: italic;
+  margin: 0 0 4px 0;
+}
+
+.sticky-sig {
+  display: block;
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--color-berry);
+}
+
+/* Blueprint Items Grid */
+.blueprint-schematic {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.blueprint-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: rgba(23, 36, 58, 0.7);
+  border: 1.5px dashed #2A456F;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+}
+
+.blueprint-svg-wrap {
+  flex-shrink: 0;
+  background-color: #0E1829;
+  border: 1px solid #233757;
+  border-radius: 4px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blueprint-info h4 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: #F5D88C;
+  margin: 0 0 4px 0;
+}
+
+.blueprint-info p {
+  font-size: 0.82rem;
+  color: #C0D6F0;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+.blueprint-info code {
+  background-color: #0E1829;
+  color: #50FA7B;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+.spec-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #8BE9FD;
+  background-color: rgba(139, 233, 253, 0.12);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.blueprint-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background-color: #0E1829;
+  border-top: 1px solid #233757;
+  font-size: 0.72rem;
+  color: #7E96B8;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blueprint-author {
+  color: #F5D88C;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .blueprint-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

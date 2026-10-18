@@ -5,13 +5,18 @@ import './HeroSection.css';
 
 /**
  * HeroSection Component
- * Implements Pass 01: The responsive introductory hero experience for Pip.
+ * Implements Pass 01B: The live, interactive hero experience for Pip.
  */
 export default function HeroSection({
   isPanicking,
   showDialogue,
+  currentReaction,
   onPsst,
+  onPokePip,
   onDismissDialogue,
+  isNightlight,
+  onToggleMoon,
+  onStarClick,
 }) {
   return (
     <section className="hero-section" aria-labelledby="hero-main-title">
@@ -38,7 +43,11 @@ export default function HeroSection({
 
           {/* Bedside Status Sign */}
           <div className="hero-status-wrapper">
-            <BedsideStatusSign isPanicking={isPanicking} />
+            <BedsideStatusSign
+              isPanicking={isPanicking}
+              currentReaction={currentReaction}
+              isNightlight={isNightlight}
+            />
           </div>
 
           {/* Primary Interaction Action Area */}
@@ -73,7 +82,12 @@ export default function HeroSection({
           <PipStage
             isPanicking={isPanicking}
             showDialogue={showDialogue}
+            currentReaction={currentReaction}
+            onPokePip={onPokePip}
             onDismissDialogue={onDismissDialogue}
+            isNightlight={isNightlight}
+            onToggleMoon={onToggleMoon}
+            onStarClick={onStarClick}
           />
         </div>
       </div>
