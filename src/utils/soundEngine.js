@@ -103,8 +103,8 @@ export async function preloadTwinkleVocalAudio() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const arrayBuffer = await res.arrayBuffer();
     const rawBuffer = await ctx.decodeAudioData(arrayBuffer);
-    // Trim first 5 seconds of acoustic intro
-    twinkleVocalBuffer = trimAudioBufferStart(ctx, rawBuffer, 5.0);
+    // Trim first 10 seconds of acoustic intro (trimmed 5 more seconds)
+    twinkleVocalBuffer = trimAudioBufferStart(ctx, rawBuffer, 10.0);
     return twinkleVocalBuffer;
   } catch (err) {
     console.warn('Could not decode /assets/audio/twinkle_vocal.mp3, will use synthesized fallback:', err);
