@@ -394,14 +394,11 @@ export default function App() {
   }, [clearOrchestraTimers, clearPipMotionTimer, clearDialogueTimer]);
 
   /**
-   * Skip / Early Finish handler when visitor taps Pip during vocal lullaby
+   * PASS 01C.4C: Tapping Pip during vocal lullaby NEVER skips or triggers premature finale
    */
   const handleSkipLullaby = useCallback(() => {
-    if (orchestraState === 'performing') {
-      stopAllOrchestraAudio();
-      triggerFinale();
-    }
-  }, [orchestraState, triggerFinale]);
+    // Song continues uninterrupted; no premature finale!
+  }, []);
 
   /**
    * PASS 01C.4: Fullscreen Magical Star Theater Handlers

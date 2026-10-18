@@ -42,23 +42,23 @@ if (!fs.existsSync(RECORDING_DIR)) {
     } catch (e) {}
   });
 
-  // Start screencast at 15 fps
+  // Start screencast at ~10 fps for the 36-second storybook performance
   await client.send('Page.startScreencast', {
     format: 'jpeg',
-    quality: 80,
+    quality: 75,
     maxWidth: 960,
     maxHeight: 600,
-    everyNthFrame: 1,
+    everyNthFrame: 2,
   });
 
-  console.log('▶️ Triggering 3rd star to begin opening animation...');
+  console.log('▶️ Triggering 3rd star to begin full animated storybook performance...');
   await page.click('.star-3');
 
-  // Record for 10.5 seconds (full opening animation)
-  await new Promise((r) => setTimeout(r, 10500));
+  // Record for 36.5 seconds (full opening + 4 scenes + finale + bedroom return)
+  await new Promise((r) => setTimeout(r, 36500));
 
   await client.send('Page.stopScreencast');
-  console.log(`✓ Screencast recorded ${frames.length} continuous frames across the 10-second opening!`);
+  console.log(`✓ Screencast recorded ${frames.length} continuous frames across the 36.5-second storybook film!`);
 
   // Build standalone HTML animation player
   const playerHtml = `
@@ -66,7 +66,7 @@ if (!fs.existsSync(RECORDING_DIR)) {
     <html>
       <head>
         <meta charset="utf-8" />
-        <title>PASS 01C.4A — 10-Second Continuous Animation Player</title>
+        <title>PASS 01C.4C — 36-Second Lullaby Animated Storybook Film Player</title>
         <style>
           body {
             margin: 0;
@@ -191,8 +191,8 @@ if (!fs.existsSync(RECORDING_DIR)) {
     </html>
   `;
 
-  fs.writeFileSync('recordings/pass01c4b-animation-recording.html', playerHtml);
-  console.log('✓ Saved interactive continuous recording: recordings/pass01c4b-animation-recording.html');
+  fs.writeFileSync('recordings/pass01c4c-storybook-recording.html', playerHtml);
+  console.log('✓ Saved interactive continuous recording: recordings/pass01c4c-storybook-recording.html');
 
   await browser.close();
 })();

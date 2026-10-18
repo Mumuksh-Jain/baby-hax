@@ -665,6 +665,27 @@
   75% { transform: rotate(2deg) translateY(2px); }
 }
 
+/* PASS 01C.4C — TASK B: Scene 2 & 3 Character Animation States */
+.pip-storybook-cradle.pip-motion-curious-look {
+  animation: pipCuriousLook 3.8s ease-in-out infinite alternate;
+}
+
+@keyframes pipCuriousLook {
+  0% { transform: translateY(-8px) rotate(-3.5deg); }
+  50% { transform: translateY(-16px) rotate(4deg) scale(1.02); }
+  100% { transform: translateY(-10px) rotate(-1.5deg); }
+}
+
+.pip-storybook-cradle.pip-motion-looking-down {
+  animation: pipLookingDown 4.2s ease-in-out infinite alternate;
+}
+
+@keyframes pipLookingDown {
+  0% { transform: translateY(-6px) rotate(-2deg); }
+  50% { transform: translateY(6px) rotate(2.5deg) scale(1.01); }
+  100% { transform: translateY(-3px) rotate(-1deg); }
+}
+
 .pip-storybook-cradle.pip-motion-celebrate-jump {
   animation: pipGrandHop 1.0s cubic-bezier(0.2, 0.8, 0.2, 1.2) infinite alternate;
 }
@@ -674,6 +695,30 @@
   45% { transform: translateY(-36px) scale(0.96, 1.08) rotate(-3deg); }
   55% { transform: translateY(-36px) scale(0.96, 1.08) rotate(3deg); }
   100% { transform: translateY(-4px) scale(1.04, 0.96); }
+}
+
+/* PASS 01C.4C — TASK A: Interactive Pip Tap Reactions */
+.pip-storybook-cradle.pip-tap-bounce {
+  animation: pipSurpriseBounce 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+@keyframes pipSurpriseBounce {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-16px) scale(0.96, 1.06) rotate(-2deg); }
+  65% { transform: translateY(-4px) scale(1.03, 0.98) rotate(1.5deg); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.pip-storybook-cradle.pip-tap-listening {
+  animation: pipListeningNod 1.2s ease-in-out !important;
+}
+
+@keyframes pipListeningNod {
+  0% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-3.5deg) translateY(-8px) scale(1.02); }
+  55% { transform: rotate(3deg) translateY(-5px) scale(1.01); }
+  80% { transform: rotate(-1deg) translateY(-2px); }
+  100% { transform: rotate(0deg) translateY(0); }
 }
 
 /* ==========================================================================
@@ -820,6 +865,247 @@
 }
 
 /* ==========================================================================
+   PASS 01C.4C — TASK B: The 4-Scene Lullaby Animated Storybook World
+   ========================================================================== */
+
+/* Scene 1 Atmosphere: Petal-bloom pulse rhythm on stars */
+.magical-star-theater.subscene-A .cinematic-star-node {
+  filter: drop-shadow(0 0 16px rgba(255, 220, 100, 0.95));
+}
+
+/* Scene 2: The Curious Sky — Question-Mark Constellation */
+.scene-storybook-question-mark {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.7);
+  width: 170px;
+  height: 210px;
+  z-index: 26;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.scene-storybook-question-mark.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.question-mark-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.question-constellation-curve {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+}
+
+.scene-storybook-question-mark.is-visible .question-constellation-curve {
+  animation: drawQuestionCurve 1.6s ease-out forwards;
+}
+
+@keyframes drawQuestionCurve {
+  0% { stroke-dashoffset: 240; opacity: 0; }
+  30% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.question-stars-group circle {
+  animation: questionStarTwinkle 2.8s ease-in-out infinite alternate;
+}
+
+.question-stars-group circle:nth-child(2) { animation-delay: 0.4s; }
+.question-stars-group circle:nth-child(3) { animation-delay: 0.8s; }
+.question-stars-group circle:nth-child(4) { animation-delay: 1.2s; }
+.question-stars-group circle:nth-child(5) { animation-delay: 1.6s; }
+
+@keyframes questionStarTwinkle {
+  0% { transform: scale(0.9); opacity: 0.75; }
+  100% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 10px #FFD700); }
+}
+
+/* Scene 2: Miniature Paper-Craft Telescope Unfolding */
+.scene-storybook-telescope {
+  position: absolute;
+  left: calc(50% - 265px);
+  bottom: 25%;
+  width: 140px;
+  height: 170px;
+  z-index: 26;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.3) translateY(30px) rotate(15deg);
+  filter: drop-shadow(0 6px 14px rgba(4, 8, 24, 0.5));
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scene-storybook-telescope.is-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0) rotate(0deg);
+}
+
+.telescope-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.telescope-barrel-group {
+  transform-origin: 70px 115px;
+  animation: telescopeStargaze 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes telescopeStargaze {
+  0% { transform: rotate(-32deg); }
+  50% { transform: rotate(-44deg); }
+  100% { transform: rotate(-36deg); }
+}
+
+/* Scene 3: "Up above the world so high" — Sleeping Paper Village */
+.scene-storybook-village {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 35px;
+  height: 220px;
+  z-index: 38;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(70px);
+  filter: drop-shadow(0 -4px 12px rgba(4, 8, 24, 0.6));
+  transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scene-storybook-village.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.village-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Subscene C: Lower Clouds Part Downward to reveal the Village */
+.magical-star-theater.subscene-C .layer-i-foreground-paper-clouds {
+  transform: translateY(115px) scaleY(0.85);
+  opacity: 0.75;
+  transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.5s ease;
+}
+
+.village-window {
+  animation: sleepyWindowBreathe 3.5s ease-in-out infinite alternate;
+}
+
+.village-window.win-2 { animation-delay: 0.6s; }
+.village-window.win-3 { animation-delay: 1.2s; }
+.village-window.win-4 { animation-delay: 1.8s; }
+.village-window.win-5 { animation-delay: 0.9s; }
+.village-window.win-6 { animation-delay: 1.5s; }
+.village-window.win-7 { animation-delay: 2.1s; }
+.village-window.win-clock { animation-delay: 0.3s; }
+
+@keyframes sleepyWindowBreathe {
+  0% { fill: #E6983B; opacity: 0.65; }
+  50% { fill: #FFD54F; opacity: 1; }
+  100% { fill: #FFA726; opacity: 0.85; }
+}
+
+.chimney-smoke-wisp {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: chimneySmokeRise 4.5s ease-out infinite;
+}
+
+.smoke-2 {
+  animation-delay: 2.2s;
+}
+
+@keyframes chimneySmokeRise {
+  0% { stroke-dashoffset: 60; opacity: 0; transform: translateY(0) scale(0.8); }
+  25% { opacity: 0.7; }
+  80% { opacity: 0.4; }
+  100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-16px) scale(1.3); }
+}
+
+/* Scene 4: "Like a diamond in the sky" — Brilliant Diamond Constellation */
+.scene-storybook-diamond {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  width: 440px;
+  height: 440px;
+  z-index: 24;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.0s ease, transform 1.0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scene-storybook-diamond.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.diamond-constellation-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.diamond-perimeter-line {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+}
+
+.scene-storybook-diamond.is-visible .diamond-perimeter-line {
+  animation: drawDiamondEdges 1.8s ease-out forwards;
+}
+
+@keyframes drawDiamondEdges {
+  0% { stroke-dashoffset: 1200; opacity: 0; }
+  20% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.diamond-facet-core {
+  animation: diamondCoreGlow 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes diamondCoreGlow {
+  0% { opacity: 0.55; stroke-width: 1.5; }
+  100% { opacity: 1; stroke-width: 2.8; filter: drop-shadow(0 0 10px #FFD700); }
+}
+
+.diamond-apex-node {
+  animation: apexStarTwinkle 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes apexStarTwinkle {
+  0% { transform: translate(230px, 35px) scale(0.85); opacity: 0.8; }
+  100% { transform: translate(230px, 35px) scale(1.25); opacity: 1; filter: drop-shadow(0 0 12px #FFFFFF); }
+}
+
+/* Grand Finale Celebrations */
+.magical-star-theater.phase-celebrating .layer-e-paper-moon {
+  animation: moonCelebrateWobble 1.2s ease-in-out infinite alternate !important;
+}
+
+@keyframes moonCelebrateWobble {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(8deg) scale(1.1); }
+  100% { transform: rotate(-6deg) scale(1.08); }
+}
+
+.magical-star-theater.phase-pause-stillness .cinematic-star-node {
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 20px rgba(255, 240, 180, 1));
+}
+
+/* ==========================================================================
    Accessibility & Responsive Viewports
    ========================================================================== */
 @media (max-width: 768px) {
@@ -902,6 +1188,30 @@
   .subtitle-text {
     font-size: 0.88rem;
   }
+
+  /* Storybook Scene Scaling on Tablets / Smaller screens */
+  .scene-storybook-telescope {
+    left: 8%;
+    bottom: 24%;
+    width: 100px;
+    height: 125px;
+  }
+
+  .scene-storybook-question-mark {
+    top: 10%;
+    width: 125px;
+    height: 155px;
+  }
+
+  .scene-storybook-village {
+    height: 145px;
+    bottom: 0;
+  }
+
+  .scene-storybook-diamond {
+    width: 320px;
+    height: 320px;
+  }
 }
 
 @media (max-width: 375px) {
@@ -960,6 +1270,30 @@
 
   .subtitle-text {
     font-size: 0.8rem;
+  }
+
+  /* Compact Storybook Scale on Small Mobile */
+  .scene-storybook-telescope {
+    left: 4%;
+    bottom: 22%;
+    width: 80px;
+    height: 100px;
+  }
+
+  .scene-storybook-question-mark {
+    top: 8%;
+    width: 100px;
+    height: 125px;
+  }
+
+  .scene-storybook-village {
+    height: 115px;
+    bottom: 0;
+  }
+
+  .scene-storybook-diamond {
+    width: 250px;
+    height: 250px;
   }
 }
 
