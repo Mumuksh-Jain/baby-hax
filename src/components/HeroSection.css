@@ -1,0 +1,319 @@
+.hero-section {
+  position: relative;
+  width: 100%;
+  padding: 2.5rem 2.25rem;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  align-items: center;
+  gap: 2.5rem;
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+/* Left Column: Typography & Story */
+.hero-text-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  z-index: 2;
+}
+
+/* Eyebrow Container */
+.eyebrow-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background-color: var(--color-faded-blush);
+  border: 1.5px solid var(--color-berry);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 0 rgba(92, 64, 51, 0.15);
+}
+
+.eyebrow-pin {
+  color: var(--color-berry);
+  font-size: 0.8rem;
+}
+
+.eyebrow-text {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-berry);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Main Heading */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.12;
+  color: var(--color-night-ink);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.title-highlight {
+  color: var(--color-berry);
+  position: relative;
+  display: inline-block;
+}
+
+.title-highlight::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-soft-gold);
+  border-radius: var(--radius-pill);
+  z-index: -1;
+  opacity: 0.75;
+  transform: rotate(-1deg);
+}
+
+/* Supporting Text */
+.hero-support {
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--color-cocoa);
+  max-width: 520px;
+  margin: 0;
+}
+
+/* Bedside Status Sign */
+.hero-status-wrapper {
+  margin-top: 0.25rem;
+}
+
+/* Primary Interaction Action Area */
+.hero-action-area {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+/* 'Psst, Pip?' Storybook Button */
+.psst-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  background-color: var(--color-berry);
+  color: var(--color-paper-light);
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-retro-md);
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.psst-button:hover {
+  background-color: var(--color-berry-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-retro-lg);
+}
+
+.psst-button:active,
+.psst-button.is-active {
+  transform: translateY(3px);
+  box-shadow: var(--shadow-retro-active);
+  background-color: var(--color-berry-deep);
+}
+
+.btn-sparkle {
+  color: var(--color-soft-gold);
+  font-size: 1.15rem;
+  animation: star-blink 2s infinite ease-in-out;
+}
+
+.btn-text {
+  position: relative;
+}
+
+.btn-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-faded-blush);
+  text-transform: lowercase;
+  opacity: 0.85;
+}
+
+.action-hint {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-cocoa-soft);
+  font-style: italic;
+}
+
+/* Signature */
+.hero-signature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1.5px dashed var(--color-paper-border);
+  max-width: 480px;
+}
+
+.sig-icon {
+  color: var(--color-gold-deep);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.sig-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--color-cocoa-soft);
+  margin: 0;
+}
+
+/* Right Column: Visual Stage */
+.hero-visual-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 980px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .hero-text-col {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-support {
+    max-width: 600px;
+  }
+
+  .hero-action-area {
+    justify-content: center;
+  }
+
+  .hero-signature {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .title-highlight::after {
+    left: 5%;
+    width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-support {
+    font-size: 1.05rem;
+  }
+
+  .psst-button {
+    padding: 12px 22px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .eyebrow-container {
+    padding: 3px 8px;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .eyebrow-text {
+    font-size: 0.6rem;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+
+  .hero-title {
+    font-size: 1.65rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .hero-support {
+    font-size: 0.95rem;
+    padding: 0 2px;
+    word-break: break-word;
+  }
+
+  .hero-action-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .psst-button {
+    width: 100%;
+    max-width: 260px;
+    justify-content: center;
+    padding: 12px 18px;
+  }
+
+  .hero-signature {
+    padding: 0.75rem 2px 0;
+  }
+
+  .sig-text {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 340px) {
+  .hero-section {
+    padding: 0.85rem 0.25rem;
+  }
+  .eyebrow-text {
+    font-size: 0.54rem;
+  }
+  .hero-title {
+    font-size: 1.3rem;
+  }
+  .hero-support {
+    font-size: 0.86rem;
+  }
+  .psst-button {
+    font-size: 0.9rem;
+    padding: 11px 14px;
+    max-width: 240px;
+  }
+}

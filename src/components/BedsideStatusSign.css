@@ -1,0 +1,182 @@
+.bedside-sign {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  user-select: none;
+}
+
+/* Hanging strings and pins */
+.bedside-sign-hangers {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  pointer-events: none;
+}
+
+.hanger-pin {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-berry);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid var(--color-paper-light);
+}
+
+.hanger-pin.left {
+  left: 20px;
+}
+
+.hanger-pin.right {
+  right: 20px;
+}
+
+.hanger-cord {
+  position: absolute;
+  top: 4px;
+  width: 1.5px;
+  height: 8px;
+  background-color: var(--color-stitch);
+}
+
+.hanger-cord.left {
+  left: 23px;
+}
+
+.hanger-cord.right {
+  right: 23px;
+}
+
+/* Signboard Body */
+.bedside-sign-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background-color: var(--color-paper-light);
+  border: 2px solid var(--color-cocoa);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-retro-md);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.is-panicking .bedside-sign-body {
+  background-color: var(--color-panic-bg);
+  border-color: var(--color-panic-red);
+  box-shadow: 0 4px 0 var(--color-panic-red), 0 0 12px rgba(197, 40, 82, 0.2);
+  animation: sign-shiver 0.3s ease infinite alternate;
+}
+
+@keyframes sign-shiver {
+  0% { transform: rotate(-0.8deg) translateY(0); }
+  100% { transform: rotate(0.8deg) translateY(-1px); }
+}
+
+/* Pulsing Status Dot */
+.sign-glow-dot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.glow-core {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-gold-deep);
+  transition: background-color var(--transition-fast);
+}
+
+.glow-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--color-soft-gold);
+  opacity: 0.75;
+  animation: pulse-ring 2s infinite ease-out;
+}
+
+.is-panicking .glow-core {
+  background-color: var(--color-panic-red);
+}
+
+.is-panicking .glow-ring {
+  background-color: var(--color-panic-red);
+  animation: pulse-panic 0.6s infinite ease-out;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes pulse-panic {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Content */
+.sign-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.sign-micro-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-cocoa-soft);
+  text-transform: uppercase;
+}
+
+.sign-status-text {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-night-ink);
+  transition: color var(--transition-fast);
+}
+
+.is-panicking .sign-status-text {
+  color: var(--color-panic-red);
+}
+
+.sign-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sign-icon .panic-sweat {
+  font-size: 1.1rem;
+  animation: sweat-bob 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes sweat-bob {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2px); }
+}
+
+@media (max-width: 480px) {
+  .bedside-sign-body {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+  .sign-status-text {
+    font-size: 0.8rem;
+  }
+}

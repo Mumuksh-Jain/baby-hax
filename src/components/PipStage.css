@@ -1,0 +1,290 @@
+.pip-stage-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem 2rem;
+  max-width: 440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Dream Atmosphere (Moon & Stars) */
+.dream-environment {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.mini-moon-badge {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  animation: moon-drift 4s ease-in-out infinite alternate;
+}
+
+@keyframes moon-drift {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-6px) rotate(4deg); }
+}
+
+.paper-star {
+  position: absolute;
+}
+
+.star-1 {
+  top: 15%;
+  left: -12px;
+  animation: star-twinkle 3.2s ease-in-out infinite alternate;
+}
+
+.star-2 {
+  top: 45%;
+  right: -16px;
+  animation: star-twinkle 2.6s ease-in-out infinite alternate 0.8s;
+}
+
+.star-3 {
+  bottom: 25%;
+  left: -18px;
+  animation: star-twinkle 3.8s ease-in-out infinite alternate 1.4s;
+}
+
+@keyframes star-twinkle {
+  0% { transform: scale(0.9) rotate(-6deg); opacity: 0.8; }
+  100% { transform: scale(1.15) rotate(12deg); opacity: 1; }
+}
+
+/* Main Pip Polaroid Frame */
+.pip-frame {
+  position: relative;
+  background-color: var(--color-paper-light);
+  border: 3px solid var(--color-cocoa);
+  border-radius: var(--radius-lg);
+  padding: 16px 16px 20px 16px;
+  box-shadow: var(--shadow-storybook-float), 0 4px 0 var(--color-cocoa);
+  transform: rotate(1deg);
+  transition: transform var(--transition-bounce), box-shadow var(--transition-normal);
+  z-index: 10;
+  max-width: 360px;
+  width: 100%;
+}
+
+.pip-frame:hover {
+  transform: rotate(0deg) translateY(-3px);
+  box-shadow: 0 20px 40px rgba(92, 64, 51, 0.16), 0 6px 0 var(--color-cocoa);
+}
+
+/* Gentle Reaction When 'Psst, Pip?' Is Activated */
+.pip-frame.is-reacting {
+  animation: pip-wiggle-react 0.65s var(--ease-bounce) forwards;
+}
+
+@keyframes pip-wiggle-react {
+  0% { transform: rotate(1deg) scale(1); }
+  20% { transform: rotate(-3.5deg) scale(1.04) translateY(-6px); }
+  45% { transform: rotate(3deg) scale(1.03) translateY(-3px); }
+  70% { transform: rotate(-1.5deg) scale(1.01); }
+  100% { transform: rotate(0.5deg) scale(1); }
+}
+
+/* Washi Tape Strips */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  height: 24px;
+  width: 72px;
+  background-color: rgba(245, 220, 229, 0.88);
+  border: 1px dashed rgba(163, 64, 99, 0.4);
+  box-shadow: 0 2px 4px rgba(92, 64, 51, 0.12);
+  z-index: 12;
+}
+
+.tape-top-left {
+  left: 24px;
+  transform: rotate(-7deg);
+  background-color: rgba(245, 216, 140, 0.88);
+}
+
+.tape-top-right {
+  right: 24px;
+  transform: rotate(6deg);
+}
+
+/* Stitched Corner Accents */
+.stitched-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.stitched-corner.corner-tl {
+  top: 6px;
+  left: 6px;
+  border-top: 2px dashed var(--color-stitch);
+  border-left: 2px dashed var(--color-stitch);
+}
+
+.stitched-corner.corner-tr {
+  top: 6px;
+  right: 6px;
+  border-top: 2px dashed var(--color-stitch);
+  border-right: 2px dashed var(--color-stitch);
+}
+
+.stitched-corner.corner-bl {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 2px dashed var(--color-stitch);
+  border-left: 2px dashed var(--color-stitch);
+}
+
+.stitched-corner.corner-br {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 2px dashed var(--color-stitch);
+  border-right: 2px dashed var(--color-stitch);
+}
+
+/* Photo Wrapper matching cream background of official art */
+.pip-photo-wrapper {
+  position: relative;
+  border: 2px solid var(--color-paper-border);
+  border-radius: var(--radius-sm);
+  background-color: #FAF6EC;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(92, 64, 51, 0.06);
+}
+
+.pip-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 6;
+  object-fit: cover;
+  display: block;
+}
+
+/* Panic Fluster Overlay */
+.panic-overlay {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  animation: fluster-in 0.3s ease-out forwards;
+}
+
+.panic-droplet {
+  font-size: 1.5rem;
+  animation: droplet-shake 0.4s ease infinite alternate;
+}
+
+.panic-fluster-lines {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-panic-red);
+  line-height: 1;
+}
+
+@keyframes fluster-in {
+  0% { transform: scale(0) rotate(15deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes droplet-shake {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+/* Frame Caption */
+.pip-frame-caption {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.caption-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-cocoa);
+  font-style: italic;
+}
+
+.caption-sparkle {
+  font-size: 0.9rem;
+}
+
+/* Soft Bedside Pillows Base */
+.pillow-ground {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: -14px;
+  z-index: 6;
+}
+
+.soft-pillow {
+  position: relative;
+  height: 26px;
+  border: 2px solid var(--color-cocoa);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 3px 0 var(--color-cocoa);
+}
+
+.pillow-center {
+  width: 170px;
+  background-color: var(--color-cloud-white);
+  z-index: 3;
+}
+
+.pillow-left {
+  width: 110px;
+  background-color: var(--color-faded-blush);
+  margin-right: -24px;
+  transform: rotate(-4deg);
+  z-index: 2;
+}
+
+.pillow-right {
+  width: 110px;
+  background-color: var(--color-soft-gold);
+  margin-left: -24px;
+  transform: rotate(4deg);
+  z-index: 2;
+}
+
+.pillow-stitch {
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  border-top: 1.5px dashed rgba(92, 64, 51, 0.25);
+  transform: translateY(-50%);
+}
+
+@media (max-width: 480px) {
+  .pip-stage-container {
+    padding: 1rem 0.5rem;
+    max-width: 320px;
+  }
+  .pip-frame {
+    max-width: 290px;
+    padding: 12px 12px 16px 12px;
+  }
+  .caption-text {
+    font-size: 0.74rem;
+  }
+}

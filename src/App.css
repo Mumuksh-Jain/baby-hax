@@ -1,0 +1,103 @@
+.app-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Accessible Skip Link */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 100;
+  padding: 8px 16px;
+  background-color: var(--color-berry);
+  color: var(--color-paper-light);
+  font-family: var(--font-body);
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-retro-md);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Storybook Ambience Accents in the Outer Viewport */
+.storybook-ambience {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-star {
+  position: absolute;
+  color: var(--color-soft-gold);
+  opacity: 0.45;
+  user-select: none;
+  animation: ambient-pulse 4s ease-in-out infinite alternate;
+}
+
+.amb-star-1 {
+  top: 8%;
+  left: 6%;
+  font-size: 1.4rem;
+  animation-delay: 0.2s;
+}
+
+.amb-star-2 {
+  top: 14%;
+  right: 8%;
+  font-size: 1.8rem;
+  animation-delay: 1.2s;
+}
+
+.amb-star-3 {
+  bottom: 12%;
+  left: 10%;
+  font-size: 1.6rem;
+  animation-delay: 2.1s;
+}
+
+.amb-star-4 {
+  bottom: 18%;
+  right: 7%;
+  font-size: 1.2rem;
+  animation-delay: 0.7s;
+}
+
+.amb-star-5 {
+  top: 48%;
+  left: 2%;
+  font-size: 1rem;
+  animation-delay: 2.8s;
+}
+
+@keyframes ambient-pulse {
+  0% { transform: scale(0.85) rotate(0deg); opacity: 0.3; }
+  100% { transform: scale(1.2) rotate(20deg); opacity: 0.65; }
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 0.75rem 0.5rem;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 340px) {
+  .app-shell {
+    padding: 0.35rem 0.1rem;
+  }
+}

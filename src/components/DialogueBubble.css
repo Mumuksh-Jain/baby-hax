@@ -1,0 +1,123 @@
+.dialogue-bubble-wrapper {
+  position: absolute;
+  top: -18px;
+  left: -24px;
+  z-index: 30;
+  max-width: 290px;
+  animation: bubble-pop 0.38s var(--ease-bounce) forwards;
+  filter: drop-shadow(0 8px 16px rgba(37, 36, 61, 0.16));
+}
+
+@keyframes bubble-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) translateY(16px) rotate(-4deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-3px) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(-1deg);
+  }
+}
+
+.dialogue-bubble {
+  position: relative;
+  background-color: var(--color-paper-light);
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px 12px 16px;
+  box-shadow: var(--shadow-retro-md);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Speech bubble pointer / tail pointing towards Pip */
+.dialogue-tail {
+  position: absolute;
+  bottom: -13px;
+  right: 48px;
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 13px solid var(--color-cocoa);
+}
+
+.dialogue-tail::after {
+  content: '';
+  position: absolute;
+  bottom: 2.5px;
+  left: -9px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 11px solid var(--color-paper-light);
+}
+
+.dialogue-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dialogue-whisper-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-berry);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dialogue-quote {
+  font-family: var(--font-body);
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-night-ink);
+}
+
+.dialogue-quote em {
+  font-style: normal;
+  color: var(--color-berry);
+  font-weight: 700;
+  text-decoration: underline wavy var(--color-soft-gold) 2px;
+}
+
+.dialogue-dismiss-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--color-cocoa-soft);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  transition: color var(--transition-fast);
+  margin-left: 2px;
+}
+
+.dialogue-dismiss-btn:hover {
+  color: var(--color-berry);
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .dialogue-bubble-wrapper {
+    top: -24px;
+    left: 10px;
+    right: 10px;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+  
+  .dialogue-tail {
+    right: 50%;
+    transform: translateX(50%);
+  }
+}

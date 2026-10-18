@@ -1,0 +1,53 @@
+:root {
+  /* Official Core Palette */
+  --color-bg-cream: #FFF8F1;
+  --color-berry: #A34063;
+  --color-cocoa: #5C4033;
+  --color-faded-blush: #F5DCE5;
+  --color-soft-gold: #F5D88C;
+  --color-night-ink: #25243D;
+
+  /* Harmonized Extended Storybook Palette */
+  --color-paper-light: #FFFCF7;
+  --color-paper-border: #EADBCC;
+  --color-stitch: #CCAFA0;
+  --color-berry-deep: #7D2D49;
+  --color-berry-soft: #B85075;
+  --color-cocoa-soft: #7A5B49;
+  --color-blush-tint: #FCF1F5;
+  --color-gold-deep: #D4A843;
+  --color-gold-glow: #FFF4D1;
+  --color-cloud-white: #FFFFFF;
+  --color-night-card: #1D1C33;
+  --color-panic-red: #C52852;
+  --color-panic-bg: #FFE5EC;
+
+  /* Typography */
+  --font-display: 'Fraunces', 'Cooper Black', 'Recurso', Georgia, serif;
+  --font-body: 'Fredoka', 'Quicksand', 'Nunito', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+
+  /* Border Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  /* Physical Shadows & Retro Depth */
+  --shadow-retro-sm: 0 2px 0 var(--color-cocoa);
+  --shadow-retro-md: 0 4px 0 var(--color-cocoa);
+  --shadow-retro-lg: 0 6px 0 var(--color-cocoa);
+  --shadow-retro-active: 0 1px 0 var(--color-cocoa);
+  --shadow-storybook-float: 0 16px 36px rgba(92, 64, 51, 0.12), 0 4px 12px rgba(37, 36, 61, 0.08);
+  --shadow-paper-layer: 0 8px 24px rgba(92, 64, 51, 0.09), 0 2px 6px rgba(92, 64, 51, 0.04);
+  --shadow-frame: 0 20px 48px rgba(37, 36, 61, 0.14), 0 6px 16px rgba(92, 64, 51, 0.08);
+
+  /* Transitions */
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 160ms var(--ease-snappy);
+  --transition-normal: 260ms var(--ease-snappy);
+  --transition-bounce: 380ms var(--ease-bounce);
+}
