@@ -66,7 +66,32 @@ export async function preloadFaahAudio() {
 }
 
 /**
+ * Helper to trim the first N seconds from an AudioBuffer
+ */
+function trimAudioBufferStart(ctx, originalBuffer, secondsToTrim = 5.0) {
+  const sampleRate = originalBuffer.sampleRate;
+  const trimSamples = Math.min(Math.floor(secondsToTrim * sampleRate), originalBuffer.length);
+  const newLength = originalBuffer.length - trimSamples;
+  if (newLength <= 0) return originalBuffer;
+
+  const trimmedBuffer = ctx.createBuffer(
+    originalBuffer.numberOfChannels,
+    newLength,
+    sampleRate
+  );
+
+  for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
+    const origData = originalBuffer.getChannelData(channel);
+    const trimmedData = trimmedBuffer.getChannelData(channel);
+    trimmedData.set(origData.subarray(trimSamples));
+  }
+
+  return trimmedBuffer;
+}
+
+/**
  * Preload and decode the uploaded twinkle_vocal.mp3 file
+ * Trims the first 5.0 seconds of acoustic intro so vocal singing starts immediately
  */
 export async function preloadTwinkleVocalAudio() {
   if (twinkleVocalBuffer || isLoadingVocal) return twinkleVocalBuffer;
@@ -77,7 +102,9 @@ export async function preloadTwinkleVocalAudio() {
     const res = await fetch('/assets/audio/twinkle_vocal.mp3');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const arrayBuffer = await res.arrayBuffer();
-    twinkleVocalBuffer = await ctx.decodeAudioData(arrayBuffer);
+    const rawBuffer = await ctx.decodeAudioData(arrayBuffer);
+    // Trim first 5 seconds of acoustic intro
+    twinkleVocalBuffer = trimAudioBufferStart(ctx, rawBuffer, 5.0);
     return twinkleVocalBuffer;
   } catch (err) {
     console.warn('Could not decode /assets/audio/twinkle_vocal.mp3, will use synthesized fallback:', err);
@@ -327,7 +354,8 @@ export async function playVocalLullaby({ onEnded } = {}) {
       source.buffer = twinkleVocalBuffer;
 
       const vocalGain = ctx.createGain();
-      vocalGain.gain.setValueAtTime(0.75, ctx.currentTime);
+      vocalGain.gain.setValueAtTime(0.001, ctx.currentTime);
+      vocalGain.gain.linearRampToValueAtTime(0.75, ctx.currentTime + 0.04);
 
       source.connect(vocalGain);
       vocalGain.connect(masterGain);
