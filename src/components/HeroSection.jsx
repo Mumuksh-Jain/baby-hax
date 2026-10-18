@@ -5,8 +5,9 @@ import './HeroSection.css';
 
 /**
  * HeroSection Component
- * Implements Pass 01C: The live, interactive hero experience for Pip
- * featuring Pip's Tiny Star Orchestra.
+ * Implements Pass 01C.1 & 01C.2:
+ * - Vocal Lullaby for Pip's Tiny Star Orchestra
+ * - Storybook Puppet Motion for Pip
  */
 export default function HeroSection({
   isPanicking,
@@ -21,6 +22,8 @@ export default function HeroSection({
   collectedStars = [],
   orchestraState = 'idle',
   activeSoundingStar = null,
+  pipMotionState = 'idle',
+  onSkipLullaby,
 }) {
   const isPerforming = orchestraState === 'performing';
 
@@ -74,7 +77,7 @@ export default function HeroSection({
 
             <span className="action-hint" aria-hidden="true">
               {isPerforming
-                ? '♫ Star Orchestra is playing!'
+                ? '♫ Vocal Lullaby is singing!'
                 : isPanicking
                 ? '← Pip heard you!'
                 : 'tap to check on Pip'}
@@ -104,6 +107,8 @@ export default function HeroSection({
             collectedStars={collectedStars}
             orchestraState={orchestraState}
             activeSoundingStar={activeSoundingStar}
+            pipMotionState={pipMotionState}
+            onSkipLullaby={onSkipLullaby}
           />
         </div>
       </div>

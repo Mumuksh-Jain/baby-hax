@@ -1,8 +1,11 @@
 /**
  * Sound Engine for Pip's Bedtime Website
- * Integrates the uploaded faaahhh audio (fahhhhh.mp3) with Web Audio API,
- * plus gentle toy chimes, pops, resonant vocal fallback, and
- * the Twinkle Twinkle Little Star music-box orchestra.
+ * Integrates:
+ * - The uploaded faaahhh audio (fahhhhh.mp3)
+ * - The uploaded vocal recording of Twinkle Twinkle Little Star (twinkle_vocal.mp3)
+ * - Authentic music-box synthesized fallback
+ * - Star collection chimes (single note, complementary two-note, etc.)
+ * - Moon chord swells, tactile paper rustle, and cartoon fluster
  * Default is MUTED / Sound OFF until user opts in.
  */
 
@@ -13,6 +16,12 @@ let soundEnabled = false;
 // Cached decoded buffer for uploaded fahhhhh.mp3
 let faahAudioBuffer = null;
 let isLoadingFaah = false;
+
+// Cached decoded buffer for uploaded twinkle_vocal.mp3
+let twinkleVocalBuffer = null;
+let isLoadingVocal = false;
+let activeVocalSource = null;
+let activeVocalGain = null;
 
 // Active melody tracking for safe cancellation and zero leaks
 let activeMelodyTimers = [];
@@ -57,7 +66,29 @@ export async function preloadFaahAudio() {
 }
 
 /**
- * Stop any active Twinkle melody immediately
+ * Preload and decode the uploaded twinkle_vocal.mp3 file
+ */
+export async function preloadTwinkleVocalAudio() {
+  if (twinkleVocalBuffer || isLoadingVocal) return twinkleVocalBuffer;
+  isLoadingVocal = true;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return null;
+    const res = await fetch('/assets/audio/twinkle_vocal.mp3');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const arrayBuffer = await res.arrayBuffer();
+    twinkleVocalBuffer = await ctx.decodeAudioData(arrayBuffer);
+    return twinkleVocalBuffer;
+  } catch (err) {
+    console.warn('Could not decode /assets/audio/twinkle_vocal.mp3, will use synthesized fallback:', err);
+    return null;
+  } finally {
+    isLoadingVocal = false;
+  }
+}
+
+/**
+ * Stop any active Twinkle synthesized melody immediately
  */
 export function stopTwinkleMelody() {
   activeMelodyTimers.forEach((t) => clearTimeout(t));
@@ -71,6 +102,34 @@ export function stopTwinkleMelody() {
   activeMelodyNodes = [];
 }
 
+/**
+ * Stop any active vocal recording playback immediately
+ */
+export function stopVocalLullaby() {
+  if (activeVocalSource) {
+    try {
+      activeVocalSource.onended = null;
+      activeVocalSource.stop();
+      activeVocalSource.disconnect();
+    } catch (e) {}
+    activeVocalSource = null;
+  }
+  if (activeVocalGain) {
+    try {
+      activeVocalGain.disconnect();
+    } catch (e) {}
+    activeVocalGain = null;
+  }
+}
+
+/**
+ * Stop all orchestra audio (vocal + synthesized) safely
+ */
+export function stopAllOrchestraAudio() {
+  stopVocalLullaby();
+  stopTwinkleMelody();
+}
+
 export function setSoundEnabled(enabled) {
   soundEnabled = Boolean(enabled);
   if (soundEnabled) {
@@ -81,8 +140,11 @@ export function setSoundEnabled(enabled) {
     }
     // Eagerly preload uploaded audio on opt-in
     preloadFaahAudio();
+    preloadTwinkleVocalAudio();
   } else {
-    // Immediately silence audio output without breaking visual animation timers
+    // Immediately stop active vocal recording if playing
+    stopVocalLullaby();
+    // Immediately silence synthesized melody nodes
     activeMelodyNodes.forEach((node) => {
       try {
         node.stop();
@@ -131,7 +193,7 @@ function playTone({ freq, type = 'sine', duration = 0.25, gain = 0.5, detune = 0
   noteGain.connect(masterGain);
 
   osc.start(now);
-  osc.stop(now + duration + 0.05);
+  osc.stop(now + duration);
 
   osc.onended = () => {
     osc.disconnect();
@@ -162,7 +224,7 @@ function playMusicBoxNote(freq, duration = 0.9, gain = 0.38) {
   osc1.connect(gain1);
   gain1.connect(masterGain);
 
-  // Metallic tine strike overtone (2.7x / 3x harmonic, decays fast)
+  // Metallic tine strike overtone (2.76x harmonic, decays fast)
   const osc2 = ctx.createOscillator();
   osc2.type = 'sine';
   osc2.frequency.setValueAtTime(freq * 2.76, now);
@@ -197,22 +259,6 @@ function playMusicBoxNote(freq, duration = 0.9, gain = 0.38) {
 /**
  * Traditional Twinkle Twinkle Little Star pitches (C4 - A4)
  */
-const TWINKLE_PITCHES = {
-  C4: 261.63,
-  D4: 293.66,
-  E4: 329.63,
-  F4: 349.23,
-  G4: 392.00,
-  A4: 440.00,
-  // We can add subtle octave doubling (C5 - A5) for celestial music-box bell sparkle
-  C5: 523.25,
-};
-
-/**
- * 14-note melodic sequence for Twinkle Twinkle Little Star
- * Line 1: C4 C4 G4 G4 A4 A4 G4
- * Line 2: F4 F4 E4 E4 D4 D4 C4
- */
 export const TWINKLE_SEQUENCE = [
   { note: 'C4', freq: 261.63, time: 0, starId: 1, duration: 0.8 },
   { note: 'C4', freq: 261.63, time: 680, starId: 2, duration: 0.8 },
@@ -234,20 +280,16 @@ export const TWINKLE_SEQUENCE = [
 export const TWINKLE_TOTAL_DURATION_MS = 11200; // ~11.2 seconds
 
 /**
- * Phase D — The Musical Surprise:
- * Plays Twinkle Twinkle Little Star using gentle music-box tones,
- * invoking onNote for visual star pulse synchronization, and onComplete.
+ * Fallback: Synthesized Twinkle Twinkle melody
  */
 export function playTwinkleMelody({ onNoteStart, onComplete } = {}) {
   stopTwinkleMelody();
 
   TWINKLE_SEQUENCE.forEach((item, index) => {
     const timer = setTimeout(() => {
-      // Play sound if enabled
       if (soundEnabled) {
         playMusicBoxNote(item.freq, item.duration, 0.4);
       }
-      // Trigger visual star sync callback regardless of mute state
       if (onNoteStart) {
         onNoteStart(index, item.starId);
       }
@@ -264,6 +306,62 @@ export function playTwinkleMelody({ onNoteStart, onComplete } = {}) {
   }, TWINKLE_TOTAL_DURATION_MS);
 
   activeMelodyTimers.push(completionTimer);
+}
+
+/**
+ * PASS 01C.1: Play the uploaded vocal recording of Twinkle Twinkle Little Star
+ * Routes through master sound system, respects mute, falls back to synthesized melody if unreadable.
+ */
+export async function playVocalLullaby({ onEnded } = {}) {
+  stopAllOrchestraAudio();
+
+  // Ensure vocal buffer is ready
+  if (!twinkleVocalBuffer) {
+    await preloadTwinkleVocalAudio();
+  }
+
+  const ctx = getAudioContext();
+  if (twinkleVocalBuffer && ctx && masterGain) {
+    if (soundEnabled) {
+      const source = ctx.createBufferSource();
+      source.buffer = twinkleVocalBuffer;
+
+      const vocalGain = ctx.createGain();
+      vocalGain.gain.setValueAtTime(0.75, ctx.currentTime);
+
+      source.connect(vocalGain);
+      vocalGain.connect(masterGain);
+
+      activeVocalSource = source;
+      activeVocalGain = vocalGain;
+
+      source.onended = () => {
+        if (activeVocalSource === source) {
+          activeVocalSource = null;
+          activeVocalGain = null;
+          try {
+            source.disconnect();
+            vocalGain.disconnect();
+          } catch (e) {}
+          if (onEnded) onEnded();
+        }
+      };
+
+      source.start(0);
+    }
+    return {
+      duration: twinkleVocalBuffer.duration,
+      isVocal: true,
+    };
+  }
+
+  // Fallback to synthesized music box
+  console.info('Twinkle vocal buffer unavailable; using synthesized music-box fallback.');
+  playTwinkleMelody({ onComplete: onEnded });
+  return {
+    duration: TWINKLE_TOTAL_DURATION_MS / 1000,
+    isVocal: false,
+  };
 }
 
 /**
@@ -289,7 +387,6 @@ function playSynthesizedFaah(pitchMultiplier = 1.0) {
   const now = ctx.currentTime;
   const duration = 0.95;
 
-  // Soft "f..." breath puff
   const noiseSource = ctx.createBufferSource();
   noiseSource.buffer = createNoiseBuffer(ctx, duration);
 
@@ -311,7 +408,6 @@ function playSynthesizedFaah(pitchMultiplier = 1.0) {
   noiseSource.start(now);
   noiseSource.stop(now + duration);
 
-  // Vowel "...aaahhh" Formants
   const fundamental = ctx.createOscillator();
   fundamental.type = 'triangle';
   const baseFreq = 310 * pitchMultiplier;
@@ -431,14 +527,13 @@ export function playPipPokeSound(variant = 0) {
 
   playTone({ freq: p.start, pitchEnd: p.end, type: 'triangle', duration: p.dur, gain: 0.38 });
 
-  // Play uploaded "faaahhh" audio
   setTimeout(() => {
     playFaahSound(p.faahPitch);
   }, 100);
 }
 
 /**
- * 3. Star Twinkle — Crystalline music-box chimes (pentatonic scale)
+ * 3. Star 1 Twinkle — Crystalline single music-box chime
  */
 const STAR_NOTES = [1046.5, 1174.66, 1318.51, 1567.98, 1760.0, 2093.0]; // C6, D6, E6, G6, A6, C7
 
@@ -447,6 +542,19 @@ export function playStarSound(index = 0) {
   const freq = STAR_NOTES[index % STAR_NOTES.length];
   playTone({ freq, type: 'sine', duration: 0.35, gain: 0.4 });
   playTone({ freq: freq * 2, type: 'sine', duration: 0.2, gain: 0.15 });
+}
+
+/**
+ * PASS 01C.1: Complementary two-note chime when Star 2 is collected
+ * Harmonic pentatonic interval (E6 1318.51Hz -> G6 1567.98Hz)
+ */
+export function playStarTwoChime() {
+  if (!soundEnabled) return;
+  playTone({ freq: 1318.51, type: 'sine', duration: 0.32, gain: 0.38 });
+  setTimeout(() => {
+    playTone({ freq: 1567.98, type: 'sine', duration: 0.38, gain: 0.42 });
+    playTone({ freq: 1567.98 * 2, type: 'sine', duration: 0.22, gain: 0.15 });
+  }, 110);
 }
 
 /**
@@ -465,7 +573,6 @@ export function playMoonSound(isNightlight) {
   });
 
   if (isNightlight) {
-    // Gentle sleepy "faaahhh" as nursery lights dim
     setTimeout(() => {
       playFaahSound(0.95);
     }, 280);

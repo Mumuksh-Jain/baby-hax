@@ -7,11 +7,12 @@ import {
   playPsstSound,
   playPipPokeSound,
   playStarSound,
+  playStarTwoChime,
   playMoonSound,
   playTabSound,
   playPanicSound,
-  playTwinkleMelody,
-  stopTwinkleMelody,
+  playVocalLullaby,
+  stopAllOrchestraAudio,
   playFaahSound,
 } from './utils/soundEngine';
 import './App.css';
@@ -68,33 +69,51 @@ export const PIP_REACTIONS = [
 ];
 
 /**
- * Pip's Tiny Star Orchestra Finale Dialogue Reactions (Pass 01C)
+ * Pip's Star Orchestra Reactions & Dialogue (PASS 01C.1 & 01C.2)
  */
-export const ORCHESTRA_REACTIONS = [
-  {
-    id: 'orchestra-band',
-    quote: '“Wait... did you just turn my stars into a band?!”',
-    whisperTag: '★ Pip gasps in disbelief:',
-    status: 'PIP IS DUMBFOUNDED (in a musical way)',
+export const STAR_COLLECTION_REACTIONS = {
+  star1: {
+    id: 'star-1-collected',
+    quote: '“One little star? For me?”',
+    whisperTag: '★ Pip blinks in surprise:',
+    status: 'BEDTIME ORCHESTRA: 1/3 (One star for Pip!)',
     overlay: 'stars',
-    animationClass: 'anim-tilt',
-    srText: 'Pip gasps in disbelief: Wait... did you just turn my stars into a band?!',
+    animationClass: '',
+    srText: 'Pip blinks in surprise: One little star? For me? 1 of 3 stars gathered.',
   },
-  {
-    id: 'orchestra-hand',
-    quote: '“My first website has its own orchestra. This is getting out of hand... *faaahhh*”',
-    whisperTag: '★ Pip sighs softly:',
-    status: 'PIP IS IMPRESSED (and sleepy)',
-    overlay: 'zzz',
-    animationClass: 'anim-drift',
-    srText: 'Pip sighs softly: My first website has its own orchestra. This is getting out of hand... faaahhh.',
+  star2: {
+    id: 'star-2-collected',
+    quote: '“Wait... are you starting a band?!”',
+    whisperTag: '★ Pip listens closely:',
+    status: 'BEDTIME ORCHESTRA: 2/3 (Two stars in orbit!)',
+    overlay: 'stars',
+    animationClass: '',
+    srText: 'Pip listens closely: Wait... are you starting a band?! 2 of 3 stars gathered.',
   },
-];
+  performing: {
+    id: 'star-3-singing',
+    quote: '“Wait... they’re singing?!”',
+    whisperTag: '★ Pip is in awe:',
+    status: 'BEDTIME ORCHESTRA: 3/3 (Vocal Lullaby Playing ♫)',
+    overlay: 'stars',
+    animationClass: '',
+    srText: 'Pip is in awe: Wait... they’re singing?! All 3 stars assembled in vocal lullaby.',
+  },
+  finale: {
+    id: 'orchestra-finale',
+    quote: '“Wow! You turned my bedroom into a studio!”',
+    whisperTag: '★ Pip celebrates joyfully:',
+    status: 'BEDTIME ORCHESTRA: FINALE! (Pip is amazed)',
+    overlay: 'stars',
+    animationClass: '',
+    srText: 'Pip celebrates joyfully: Wow! You turned my bedroom into a studio!',
+  },
+};
 
 /**
  * App Root Component
  * haX.baby Hackathon submission — Track 1: Pip the Skull Baby
- * Pass 01C: Pip's Tiny Star Orchestra
+ * Pass 01C.1 & 01C.2: Vocal Lullaby & Pip Puppet Motion
  */
 export default function App() {
   // Navigation tabs: 'bedroom' | 'log' | 'blueprint'
@@ -111,23 +130,51 @@ export default function App() {
   const [showDialogue, setShowDialogue] = useState(false);
   const [reactionIndex, setReactionIndex] = useState(0);
 
-  // Pass 01C: Star Orchestra States
-  // orchestraState: 'idle' | 'collecting' | 'performing' | 'reacting' | 'returning'
+  // Pass 01C.1 & 01C.2: Star Orchestra & Pip Motion States
+  // orchestraState: 'idle' | 'collecting' | 'performing' | 'celebrating' | 'returning'
   const [collectedStars, setCollectedStars] = useState([]);
   const [orchestraState, setOrchestraState] = useState('idle');
   const [activeSoundingStar, setActiveSoundingStar] = useState(null);
-  const [orchestraReactionIndex, setOrchestraReactionIndex] = useState(null);
+
+  // pipMotionState: 'idle' | 'surprised' | 'curious' | 'listening' | 'celebrating'
+  const [pipMotionState, setPipMotionState] = useState('idle');
+
+  // Custom reaction override (for Star 1, 2, 3, and Finale)
+  const [customReaction, setCustomReaction] = useState(null);
 
   // Live accessibility announcements
   const [srAnnouncement, setSrAnnouncement] = useState('');
 
   const panicTimerRef = useRef(null);
   const orchestraTimersRef = useRef([]);
+  const starPulseIntervalRef = useRef(null);
+  const pipMotionTimerRef = useRef(null);
+  const dialogueTimerRef = useRef(null);
+
+  const clearPipMotionTimer = useCallback(() => {
+    if (pipMotionTimerRef.current) {
+      clearTimeout(pipMotionTimerRef.current);
+      pipMotionTimerRef.current = null;
+    }
+  }, []);
+
+  const clearDialogueTimer = useCallback(() => {
+    if (dialogueTimerRef.current) {
+      clearTimeout(dialogueTimerRef.current);
+      dialogueTimerRef.current = null;
+    }
+  }, []);
 
   const clearOrchestraTimers = useCallback(() => {
     orchestraTimersRef.current.forEach((t) => clearTimeout(t));
     orchestraTimersRef.current = [];
-  }, []);
+    if (starPulseIntervalRef.current) {
+      clearInterval(starPulseIntervalRef.current);
+      starPulseIntervalRef.current = null;
+    }
+    clearPipMotionTimer();
+    clearDialogueTimer();
+  }, [clearPipMotionTimer, clearDialogueTimer]);
 
   // Clean up all timers on unmount
   useEffect(() => {
@@ -135,7 +182,7 @@ export default function App() {
       if (panicTimerRef.current) {
         clearTimeout(panicTimerRef.current);
       }
-      stopTwinkleMelody();
+      stopAllOrchestraAudio();
       clearOrchestraTimers();
     };
   }, [clearOrchestraTimers]);
@@ -148,7 +195,6 @@ export default function App() {
       const next = !prev;
       updateSoundEngine(next);
       if (next) {
-        // Welcome chime upon enabling sound
         playStarSound(0);
         setSrAnnouncement('Sound effects enabled.');
       } else {
@@ -175,14 +221,15 @@ export default function App() {
         }`
       );
 
-      // If user switches away from bedroom, safely halt any active orchestra melody
+      // If visitor switches away from bedroom, safely stop any vocal singing or synthesized music
       if (tabId !== 'bedroom') {
-        stopTwinkleMelody();
+        stopAllOrchestraAudio();
         clearOrchestraTimers();
         setCollectedStars([]);
         setOrchestraState('idle');
+        setPipMotionState('idle');
         setActiveSoundingStar(null);
-        setOrchestraReactionIndex(null);
+        setCustomReaction(null);
         setIsPanicking(false);
         setShowDialogue(false);
       }
@@ -208,10 +255,13 @@ export default function App() {
 
   /**
    * Primary Interaction: 'Psst, Pip?'
-   * Triggers signature reaction 0 (panicking politely), preserving Pass 01 behavior.
    */
   const handlePsst = useCallback(() => {
-    if (orchestraState === 'performing' || orchestraState === 'returning') {
+    if (
+      orchestraState === 'performing' ||
+      orchestraState === 'celebrating' ||
+      orchestraState === 'returning'
+    ) {
       return;
     }
 
@@ -220,11 +270,15 @@ export default function App() {
       panicTimerRef.current = null;
     }
 
+    clearPipMotionTimer();
+    clearDialogueTimer();
+
     playPsstSound();
     playPanicSound();
 
-    setOrchestraReactionIndex(null);
+    setCustomReaction(null);
     setReactionIndex(0);
+    setPipMotionState('idle');
     setIsPanicking(false);
     setShowDialogue(false);
 
@@ -240,14 +294,17 @@ export default function App() {
         panicTimerRef.current = null;
       }, 4500);
     });
-  }, [orchestraState]);
+  }, [orchestraState, clearPipMotionTimer, clearDialogueTimer]);
 
   /**
    * Direct Pip Poke Interaction
-   * Cycles sequentially through all 5 funny personality reactions.
    */
   const handlePokePip = useCallback(() => {
-    if (orchestraState === 'performing' || orchestraState === 'returning') {
+    if (
+      orchestraState === 'performing' ||
+      orchestraState === 'celebrating' ||
+      orchestraState === 'returning'
+    ) {
       return;
     }
 
@@ -256,7 +313,11 @@ export default function App() {
       panicTimerRef.current = null;
     }
 
-    setOrchestraReactionIndex(null);
+    clearPipMotionTimer();
+    clearDialogueTimer();
+
+    setCustomReaction(null);
+    setPipMotionState('idle');
     setReactionIndex((prev) => {
       const nextIndex = (prev + 1) % PIP_REACTIONS.length;
       playPipPokeSound(nextIndex);
@@ -279,25 +340,75 @@ export default function App() {
 
       return nextIndex;
     });
-  }, [orchestraState]);
+  }, [orchestraState, clearPipMotionTimer, clearDialogueTimer]);
 
   /**
-   * Pass 01C: Pip's Tiny Star Orchestra Interaction
-   * Visitors collect 3 interactive stars. When the 3rd star is gathered,
-   * the stars assemble into an orbital concert playing Twinkle Twinkle Little Star.
+   * Phase 4 & Finale: Pip's Celebratory Payoff Reaction
+   */
+  const triggerFinale = useCallback(() => {
+    clearPipMotionTimer();
+    clearDialogueTimer();
+
+    if (starPulseIntervalRef.current) {
+      clearInterval(starPulseIntervalRef.current);
+      starPulseIntervalRef.current = null;
+    }
+    setActiveSoundingStar(null);
+
+    setOrchestraState('celebrating');
+    setPipMotionState('celebrating');
+
+    // Celebratory vocal sigh from uploaded fahhhhh.mp3!
+    playFaahSound(1.0);
+
+    setCustomReaction(STAR_COLLECTION_REACTIONS.finale);
+    setIsPanicking(true);
+    setShowDialogue(true);
+    setSrAnnouncement(STAR_COLLECTION_REACTIONS.finale.srText);
+
+    // After celebratory jump and dialogue, glide stars back home
+    const returnTimer = setTimeout(() => {
+      setOrchestraState('returning');
+      setPipMotionState('idle');
+      setShowDialogue(false);
+      setIsPanicking(false);
+      setCustomReaction(null);
+      setSrAnnouncement('The stars gently glide back to their bedtime positions. Ready to play again!');
+
+      // Settle back to idle once return flight finishes (~1100ms)
+      const resetTimer = setTimeout(() => {
+        setCollectedStars([]);
+        setOrchestraState('idle');
+        clearOrchestraTimers();
+      }, 1100);
+      orchestraTimersRef.current.push(resetTimer);
+    }, 4500);
+    orchestraTimersRef.current.push(returnTimer);
+  }, [clearOrchestraTimers, clearPipMotionTimer, clearDialogueTimer]);
+
+  /**
+   * Skip / Early Finish handler when visitor taps Pip during vocal lullaby
+   */
+  const handleSkipLullaby = useCallback(() => {
+    if (orchestraState === 'performing') {
+      stopAllOrchestraAudio();
+      triggerFinale();
+    }
+  }, [orchestraState, triggerFinale]);
+
+  /**
+   * Pass 01C.1 & 01C.2: Star Orchestra Collection & Emotional Progression
    */
   const handleStarClick = useCallback(
     (starId) => {
-      // Disallow clicks during active performance or return sequence
       if (
         orchestraState === 'performing' ||
-        orchestraState === 'reacting' ||
+        orchestraState === 'celebrating' ||
         orchestraState === 'returning'
       ) {
         return;
       }
 
-      // Disallow duplicate collection of the same star
       if (collectedStars.includes(starId)) {
         return;
       }
@@ -305,81 +416,106 @@ export default function App() {
       const nextCollected = [...collectedStars, starId];
       setCollectedStars(nextCollected);
 
-      if (nextCollected.length < 3) {
-        // Phase B — Collecting (Stars 1 & 2)
+      clearPipMotionTimer();
+      clearDialogueTimer();
+
+      if (nextCollected.length === 1) {
+        // --- 1. FIRST STAR COLLECTED ---
         setOrchestraState('collecting');
-        playStarSound(starId - 1);
-        setSrAnnouncement(
-          `Tickled star #${starId}. It joined orbit around Pip! (${nextCollected.length} of 3 stars gathered).`
-        );
-      } else {
-        // Phase D — The Musical Surprise! 3rd Star completes the orchestra
+        setPipMotionState('surprised');
+        playStarSound(0);
+
+        setCustomReaction(STAR_COLLECTION_REACTIONS.star1);
+        setIsPanicking(true);
+        setShowDialogue(true);
+        setSrAnnouncement(STAR_COLLECTION_REACTIONS.star1.srText);
+
+        pipMotionTimerRef.current = setTimeout(() => {
+          setPipMotionState('idle');
+          pipMotionTimerRef.current = null;
+        }, 2200);
+
+        dialogueTimerRef.current = setTimeout(() => {
+          setShowDialogue(false);
+          setIsPanicking(false);
+          dialogueTimerRef.current = null;
+        }, 3600);
+      } else if (nextCollected.length === 2) {
+        // --- 2. SECOND STAR COLLECTED ---
+        setOrchestraState('collecting');
+        setPipMotionState('curious');
+        playStarTwoChime(); // Short complementary two-note chime!
+
+        setCustomReaction(STAR_COLLECTION_REACTIONS.star2);
+        setIsPanicking(true);
+        setShowDialogue(true);
+        setSrAnnouncement(STAR_COLLECTION_REACTIONS.star2.srText);
+
+        pipMotionTimerRef.current = setTimeout(() => {
+          setPipMotionState('idle');
+          pipMotionTimerRef.current = null;
+        }, 2500);
+
+        dialogueTimerRef.current = setTimeout(() => {
+          setShowDialogue(false);
+          setIsPanicking(false);
+          dialogueTimerRef.current = null;
+        }, 3600);
+      } else if (nextCollected.length === 3) {
+        // --- 3. THIRD STAR COLLECTED: BEGIN VOCAL LULLABY PERFORMANCE ---
         setOrchestraState('performing');
-        playStarSound(starId - 1);
-        setSrAnnouncement(
-          "All 3 stars assembled! Pip's Tiny Star Orchestra is now playing Twinkle Twinkle Little Star in orbit."
-        );
+        setPipMotionState('listening'); // Remains in 'listening' motion throughout song!
+        playStarSound(2);
 
-        if (panicTimerRef.current) {
-          clearTimeout(panicTimerRef.current);
-          panicTimerRef.current = null;
-        }
-        setIsPanicking(false);
-        setShowDialogue(false);
-        setOrchestraReactionIndex(null);
+        setCustomReaction(STAR_COLLECTION_REACTIONS.performing);
+        setIsPanicking(true);
+        setShowDialogue(true);
+        setSrAnnouncement(STAR_COLLECTION_REACTIONS.performing.srText);
 
-        // Start bounded musical Twinkle Twinkle sequence (~11.2s)
-        playTwinkleMelody({
-          onNoteStart: (noteIndex, noteStarId) => {
-            setActiveSoundingStar(noteStarId);
-            const pulseTimer = setTimeout(() => {
-              setActiveSoundingStar((curr) => (curr === noteStarId ? null : curr));
-            }, 450);
-            orchestraTimersRef.current.push(pulseTimer);
-          },
-          onComplete: () => {
+        dialogueTimerRef.current = setTimeout(() => {
+          setShowDialogue(false);
+          setIsPanicking(false);
+          dialogueTimerRef.current = null;
+        }, 4000);
+
+        // Start rhythmic star glow pulsing interval
+        let noteCounter = 0;
+        starPulseIntervalRef.current = setInterval(() => {
+          noteCounter = (noteCounter % 3) + 1;
+          setActiveSoundingStar(noteCounter);
+          const pulseOffTimer = setTimeout(() => {
             setActiveSoundingStar(null);
-            setOrchestraState('reacting');
+          }, 450);
+          orchestraTimersRef.current.push(pulseOffTimer);
+        }, 1800);
 
-            // Phase E — Pip Reacts
-            // Part 1: Disbelief
-            setOrchestraReactionIndex(0);
-            setIsPanicking(true);
-            setShowDialogue(true);
-            setSrAnnouncement(ORCHESTRA_REACTIONS[0].srText);
+        let ended = false;
+        const onPlaybackEnd = () => {
+          if (ended) return;
+          ended = true;
+          triggerFinale();
+        };
 
-            // Part 2: Impressed & Sleepy sigh after 3.6s
-            const part2Timer = setTimeout(() => {
-              setOrchestraReactionIndex(1);
-              playFaahSound(1.0); // Exact uploaded faaahhh audio!
-              setSrAnnouncement(ORCHESTRA_REACTIONS[1].srText);
-
-              // Phase F — Return & Replay after 3.8s
-              const returnTimer = setTimeout(() => {
-                setOrchestraState('returning');
-                setIsPanicking(false);
-                setShowDialogue(false);
-                setOrchestraReactionIndex(null);
-                setSrAnnouncement(
-                  'The stars gently glide back to their bedside positions. Ready to play again!'
-                );
-
-                // Reset to idle once return flight finishes (~1100ms)
-                const resetTimer = setTimeout(() => {
-                  setCollectedStars([]);
-                  setOrchestraState('idle');
-                  clearOrchestraTimers();
-                }, 1100);
-                orchestraTimersRef.current.push(resetTimer);
-              }, 3800);
-              orchestraTimersRef.current.push(returnTimer);
-            }, 3600);
-            orchestraTimersRef.current.push(part2Timer);
-          },
+        // Play the recorded vocal lullaby (twinkle_vocal.mp3)
+        playVocalLullaby({ onEnded: onPlaybackEnd }).then(({ duration, isVocal }) => {
+          // If sound is muted or disabled, run visual performance for a graceful 15s duration
+          if (!soundOn) {
+            const silentDurationTimer = setTimeout(() => {
+              onPlaybackEnd();
+            }, 15000);
+            orchestraTimersRef.current.push(silentDurationTimer);
+          }
         });
       }
     },
-    [collectedStars, orchestraState, clearOrchestraTimers]
+    [
+      collectedStars,
+      orchestraState,
+      soundOn,
+      triggerFinale,
+      clearPipMotionTimer,
+      clearDialogueTimer,
+    ]
   );
 
   /**
@@ -390,14 +526,14 @@ export default function App() {
       clearTimeout(panicTimerRef.current);
       panicTimerRef.current = null;
     }
+    clearDialogueTimer();
     setIsPanicking(false);
     setShowDialogue(false);
-    setOrchestraReactionIndex(null);
-  }, []);
+  }, [clearDialogueTimer]);
 
   const currentReaction =
-    orchestraReactionIndex !== null
-      ? ORCHESTRA_REACTIONS[orchestraReactionIndex]
+    customReaction !== null
+      ? customReaction
       : PIP_REACTIONS[reactionIndex];
 
   return (
@@ -442,6 +578,8 @@ export default function App() {
           collectedStars={collectedStars}
           orchestraState={orchestraState}
           activeSoundingStar={activeSoundingStar}
+          pipMotionState={pipMotionState}
+          onSkipLullaby={handleSkipLullaby}
         />
       </RetroBrowserFrame>
     </div>

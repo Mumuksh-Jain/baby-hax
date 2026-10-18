@@ -4,7 +4,8 @@ import './BedsideStatusSign.css';
 /**
  * BedsideStatusSign Component
  * Renders the storybook bedside status indicator sign.
- * Dynamically reflects Pip's reactions, nightlight mode, orchestra state, and default awake status.
+ * Dynamically reflects Pip's reactions, nightlight mode, orchestra progress (1/3, 2/3, 3/3),
+ * vocal lullaby performance, and finale.
  */
 export default function BedsideStatusSign({
   isPanicking,
@@ -16,11 +17,17 @@ export default function BedsideStatusSign({
   const isOrchestraActive = orchestraState !== 'idle';
 
   const getStatusText = () => {
+    if (orchestraState === 'celebrating' || orchestraState === 'reacting') {
+      return 'BEDTIME ORCHESTRA: FINALE! (Pip is amazed) 🌟';
+    }
     if (orchestraState === 'performing') {
-      return 'BEDTIME ORCHESTRA: PLAYING TWINKLE TWINKLE ♫';
+      return 'BEDTIME ORCHESTRA: 3/3 (Vocal Lullaby Playing ♫)';
     }
     if (orchestraState === 'collecting') {
-      return `BEDTIME ORCHESTRA: ${collectedCount} OF 3 STARS GATHERED`;
+      if (collectedCount === 1) {
+        return 'BEDTIME ORCHESTRA: 1/3 (One star for Pip!)';
+      }
+      return 'BEDTIME ORCHESTRA: 2/3 (Two stars in orbit!)';
     }
     if (orchestraState === 'returning') {
       return 'STARS RETURNING TO BEDTIME SLOTS ✨';
@@ -35,8 +42,11 @@ export default function BedsideStatusSign({
   };
 
   const getStatusIcon = () => {
+    if (orchestraState === 'celebrating' || orchestraState === 'reacting') {
+      return <span className="orchestra-note-icon" title="tiny star orchestra finale">🌟</span>;
+    }
     if (orchestraState === 'performing') {
-      return <span className="orchestra-note-icon" title="tiny star orchestra">🎶</span>;
+      return <span className="orchestra-note-icon" title="vocal lullaby playing">🎶</span>;
     }
     if (orchestraState === 'collecting' || orchestraState === 'returning') {
       return <span className="orchestra-note-icon" title="tiny star orchestra">✨</span>;

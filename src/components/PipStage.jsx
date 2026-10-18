@@ -6,8 +6,12 @@ import './PipStage.css';
  * PipStage Component
  * Renders the storybook scrapbook frame for Pip with:
  * - Interactive moon toggle (Nightlight mode)
- * - Pip's Tiny Star Orchestra: collecting, orbiting, performing Twinkle Twinkle, and returning
- * - Interactive Pip portrait cycling through personality reactions
+ * - Pip's Tiny Star Orchestra:
+ *   - Star 1: Solo entry & "One little star? For me?"
+ *   - Star 2: Dual orbit & "Wait... are you starting a band?!"
+ *   - Star 3: Full vocal lullaby performance & listening puppet motion
+ *   - Finale: Delighted celebratory hop, studio dialogue & return flight
+ * - Storybook puppet motion for Pip (PASS 01C.2)
  * - Harmonious cream composition & floating bedtime decorations
  */
 export default function PipStage({
@@ -22,6 +26,8 @@ export default function PipStage({
   collectedStars = [],
   orchestraState = 'idle',
   activeSoundingStar = null,
+  pipMotionState = 'idle',
+  onSkipLullaby,
 }) {
   // Local state for star burst particles
   const [starParticles, setStarParticles] = useState([]);
@@ -31,6 +37,7 @@ export default function PipStage({
     e.stopPropagation();
     if (
       orchestraState === 'performing' ||
+      orchestraState === 'celebrating' ||
       orchestraState === 'reacting' ||
       orchestraState === 'returning'
     ) {
@@ -69,7 +76,17 @@ export default function PipStage({
   };
 
   const isPerforming = orchestraState === 'performing';
+  const isCelebrating = orchestraState === 'celebrating' || orchestraState === 'reacting';
   const isReturning = orchestraState === 'returning';
+
+  const handlePipClick = (e) => {
+    if (isPerforming && onSkipLullaby) {
+      e.stopPropagation();
+      onSkipLullaby();
+      return;
+    }
+    onPokePip(e);
+  };
 
   return (
     <div
@@ -260,10 +277,10 @@ export default function PipStage({
         </div>
       </div>
 
-      {/* Main Pip Polaroid Frame */}
+      {/* Main Pip Polaroid Frame with storybook puppet-motion wrapper */}
       <div
         className={`pip-frame ${isPanicking ? 'is-reacting' : ''} ${
-          isPerforming ? 'anim-orchestra-sway' : currentReaction?.animationClass || ''
+          isPerforming ? 'frame-performing' : currentReaction?.animationClass || ''
         }`}
       >
         {/* Animated Dialogue Bubble */}
@@ -292,11 +309,11 @@ export default function PipStage({
             }`}
             aria-hidden="true"
           >
-            {/* Star 1 in Orbit */}
+            {/* Star 1 in Orbit (Orbits together when Star 2 is collected!) */}
             {collectedStars.includes(1) && (
               <div
                 className={`orbiting-star-carrier carrier-star-1 ${
-                  isPerforming ? 'orbiting' : 'traveling-in'
+                  collectedStars.length >= 2 || isPerforming ? 'orbiting' : 'traveling-in'
                 } ${activeSoundingStar === 1 ? 'is-sounding-chime' : ''} ${
                   isReturning ? 'traveling-out-1' : ''
                 }`}
@@ -310,11 +327,11 @@ export default function PipStage({
               </div>
             )}
 
-            {/* Star 2 in Orbit */}
+            {/* Star 2 in Orbit (Orbits together with Star 1!) */}
             {collectedStars.includes(2) && (
               <div
                 className={`orbiting-star-carrier carrier-star-2 ${
-                  isPerforming ? 'orbiting' : 'traveling-in'
+                  collectedStars.length >= 2 || isPerforming ? 'orbiting' : 'traveling-in'
                 } ${activeSoundingStar === 2 ? 'is-sounding-chime' : ''} ${
                   isReturning ? 'traveling-out-2' : ''
                 }`}
@@ -348,76 +365,106 @@ export default function PipStage({
           </div>
         )}
 
-        {/* Polaroid Inner Screen with Accessible Poke Button */}
-        <button
-          type="button"
-          className="pip-photo-wrapper pip-poke-btn"
-          onClick={onPokePip}
-          aria-label="Poke Pip gently. Cycles through Pip's funny bedtime thoughts."
-          title="Click or tap to check on Pip!"
-          disabled={isPerforming}
-        >
-          <img
-            src="/assets/pip/pip_avatar_cloud.png"
-            alt="Pip, a friendly baby with a round skull face, wearing a starry nightcap with a pink bow, floating on a cozy dream cloud and waving warmly."
-            className="pip-image"
-            width="340"
-            height="408"
-          />
+        {/* Puppet Motion Actor Wrapper (PASS 01C.2) */}
+        <div className={`pip-puppet-actor pip-motion-${pipMotionState}`}>
+          {/* Polaroid Inner Screen with Accessible Poke Button */}
+          <button
+            type="button"
+            className="pip-photo-wrapper pip-poke-btn"
+            onClick={handlePipClick}
+            aria-label={
+              isPerforming
+                ? 'Lullaby is playing. Click or tap to finish early.'
+                : "Poke Pip gently. Cycles through Pip's funny bedtime thoughts."
+            }
+            title={isPerforming ? 'Click to tuck Pip in early' : 'Click or tap to check on Pip!'}
+          >
+            <img
+              src="/assets/pip/pip_avatar_cloud.png"
+              alt="Pip, a friendly baby with a round skull face, wearing a starry nightcap with a pink bow, floating on a cozy dream cloud and waving warmly."
+              className="pip-image"
+              width="340"
+              height="408"
+            />
 
-          {/* Dynamic Floating Decorations for Reactions */}
-          {showDialogue && currentReaction && (
-            <div className="reaction-overlay-layer" aria-hidden="true">
-              {currentReaction.overlay === 'sweat' && (
-                <div className="overlay-badge sweat-badge">
-                  <span className="badge-icon">💦</span>
-                  <span className="badge-text">! !</span>
-                </div>
-              )}
-              {currentReaction.overlay === 'warning' && (
-                <div className="overlay-badge warning-badge">
-                  <span className="badge-icon">⚠️</span>
-                  <span className="badge-text">shhh~</span>
-                </div>
-              )}
-              {currentReaction.overlay === 'milk' && (
-                <div className="overlay-badge milk-badge">
-                  <span className="badge-icon">🍼</span>
-                  <span className="badge-text">oops!</span>
-                </div>
-              )}
-              {currentReaction.overlay === 'zzz' && (
-                <div className="overlay-badge zzz-badge">
-                  <span className="badge-icon">💤</span>
-                  <span className="badge-text">faaahhh~</span>
-                </div>
-              )}
-              {currentReaction.overlay === 'stars' && (
-                <div className="overlay-badge stars-badge">
-                  <span className="badge-icon">✨</span>
-                  <span className="badge-text">orchestra!</span>
-                </div>
-              )}
-            </div>
-          )}
+            {/* Dynamic Floating Decorations for Reactions */}
+            {showDialogue && currentReaction && (
+              <div className="reaction-overlay-layer" aria-hidden="true">
+                {currentReaction.overlay === 'sweat' && (
+                  <div className="overlay-badge sweat-badge">
+                    <span className="badge-icon">💦</span>
+                    <span className="badge-text">! !</span>
+                  </div>
+                )}
+                {currentReaction.overlay === 'warning' && (
+                  <div className="overlay-badge warning-badge">
+                    <span className="badge-icon">⚠️</span>
+                    <span className="badge-text">shhh~</span>
+                  </div>
+                )}
+                {currentReaction.overlay === 'milk' && (
+                  <div className="overlay-badge milk-badge">
+                    <span className="badge-icon">🍼</span>
+                    <span className="badge-text">oops!</span>
+                  </div>
+                )}
+                {currentReaction.overlay === 'zzz' && (
+                  <div className="overlay-badge zzz-badge">
+                    <span className="badge-icon">💤</span>
+                    <span className="badge-text">faaahhh~</span>
+                  </div>
+                )}
+                {currentReaction.overlay === 'stars' && (
+                  <div className="overlay-badge stars-badge">
+                    <span className="badge-icon">✨</span>
+                    <span className="badge-text">orchestra!</span>
+                  </div>
+                )}
+              </div>
+            )}
 
-          {/* Interactive touch hint overlay for first time visitors */}
-          <span className="pip-poke-hint" aria-hidden="true">
-            {isPerforming ? '♫ Twinkle, Twinkle ♫' : '(poke Pip)'}
-          </span>
-        </button>
+            {/* Floating musical notes during vocal lullaby performance */}
+            {isPerforming && (
+              <div className="pip-music-notes-layer" aria-hidden="true">
+                <span className="music-note-float note-1">♪</span>
+                <span className="music-note-float note-2">♫</span>
+                <span className="music-note-float note-3">♩</span>
+              </div>
+            )}
+
+            {/* Floating celebration stars during finale */}
+            {isCelebrating && (
+              <div className="pip-celebrate-sparkles" aria-hidden="true">
+                <span className="celebrate-sparkle sp-1">🌟</span>
+                <span className="celebrate-sparkle sp-2">✨</span>
+                <span className="celebrate-sparkle sp-3">🎉</span>
+              </div>
+            )}
+
+            {/* Interactive touch hint overlay */}
+            <span className="pip-poke-hint" aria-hidden="true">
+              {isPerforming
+                ? '♫ Vocal Lullaby (tap to tuck in) ♫'
+                : isCelebrating
+                ? '★ Bedtime Studio! ★'
+                : '(poke Pip)'}
+            </span>
+          </button>
+        </div>
 
         {/* Handwritten Storybook Caption */}
         <div className="pip-frame-caption">
           <span className="caption-text">
             {isPerforming
-              ? 'Fig. 1.2 — Pip’s Tiny Star Orchestra (playing Twinkle Twinkle)'
+              ? 'Fig. 1.2 — Pip’s Tiny Star Orchestra (singing Twinkle Twinkle)'
+              : isCelebrating
+              ? 'Fig. 1.3 — Pip’s Bedtime Studio (joyful finale)'
               : isNightlight
               ? 'Fig. 1.1 — Pip (bathed in cozy bedside nightlight)'
               : 'Fig. 1.0 — Pip (attempting bedtime code deployment)'}
           </span>
           <span className="caption-sparkle" aria-hidden="true">
-            {isPerforming ? '🎶' : isNightlight ? '🌙' : '✨'}
+            {isPerforming ? '🎶' : isCelebrating ? '🌟' : isNightlight ? '🌙' : '✨'}
           </span>
         </div>
       </div>
