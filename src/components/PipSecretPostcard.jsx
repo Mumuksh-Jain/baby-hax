@@ -8,9 +8,14 @@ import './PipSecretPostcard.css';
 export default function PipSecretPostcard({ isOpen, onClose }) {
   const modalRef = useRef(null);
   const closeBtnRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!isOpen) return;
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
     // Focus close button on open
     const timer = setTimeout(() => {
@@ -21,7 +26,14 @@ export default function PipSecretPostcard({ isOpen, onClose }) {
 
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        onClose();
+        e.preventDefault();
+        onCloseRef.current();
+      }
+      if (e.key === 'Tab') {
+        const controls = [...modalRef.current.querySelectorAll('button, a[href], [tabindex="0"]')].filter(el => el.getClientRects().length);
+        const first = controls[0], last = controls.at(-1);
+        if (e.shiftKey && (document.activeElement === first || !modalRef.current.contains(document.activeElement))) {e.preventDefault();last?.focus();}
+        else if (!e.shiftKey && (document.activeElement === last || !modalRef.current.contains(document.activeElement))) {e.preventDefault();first?.focus();}
       }
     };
 
@@ -29,8 +41,10 @@ export default function PipSecretPostcard({ isOpen, onClose }) {
     return () => {
       clearTimeout(timer);
       window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus({preventScroll:true});
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -73,7 +87,7 @@ export default function PipSecretPostcard({ isOpen, onClose }) {
         <div className="postcard-content">
           <div className="postcard-portrait-wrap">
             <img
-              src="/assets/pip/pip_portrait.png"
+              src="/assets/optimized/pip/pip_portrait.webp"
               alt="Official portrait of Pip the Skull Baby holding a tiny nightlight wrench"
               className="postcard-pip-img"
             />

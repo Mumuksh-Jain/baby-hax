@@ -5,6 +5,10 @@ import {
   playDeliveryDispatchSound,
   playDeliveryArrivedSound,
   playStampEarnedSound,
+  startTrainJourneyChug,
+  stopTrainJourneyChug,
+  playTrainWhistleSound,
+  playTrainChukSound,
 } from '../../utils/soundEngine';
 import './DreamExpressExperience.css';
 
@@ -33,23 +37,39 @@ export default function DreamExpressExperience({
   const [deliveryReceipt, setDeliveryReceipt] = useState(null);
 
   const animRef = useRef(null);
+  const stampTimer = useRef(null);
+  const previewTimers = useRef([]);
+  const clearPreview = () => { previewTimers.current.forEach(clearTimeout); previewTimers.current = []; };
   const pathRefs = useRef({});
 
   useEffect(() => {
     return () => {
       if (animRef.current) cancelAnimationFrame(animRef.current);
+      clearTimeout(stampTimer.current);
+      clearPreview();
+      stopTrainJourneyChug();
     };
   }, []);
 
   useEffect(() => {
     if (!isOpen) {
       cancelAnimationFrame(animRef.current);
+      clearTimeout(stampTimer.current);
+      clearPreview();
+      stopTrainJourneyChug();
       setIsTraveling(false);
       setProgress(0);
       setDeliveredDest(null);
       setDeliveryReceipt(null);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!soundEnabled) {
+      clearPreview();
+      stopTrainJourneyChug();
+    }
+  }, [soundEnabled]);
 
   if (!isOpen) return null;
 
@@ -112,10 +132,16 @@ export default function DreamExpressExperience({
     setDeliveredDest(null);
     setDeliveryReceipt(null);
 
-    if (soundEnabled) playDeliveryDispatchSound();
-
     const dest = DESTINATIONS[selectedDest];
     const duration = dest.duration || 6000;
+
+    if (soundEnabled) {
+      clearPreview();
+      startTrainJourneyChug(duration);
+      playTrainWhistleSound();
+      playDeliveryDispatchSound();
+    }
+
     const startTime = performance.now();
 
     const animateTrip = (now) => {
@@ -131,6 +157,7 @@ export default function DreamExpressExperience({
       } else {
         setIsTraveling(false);
         setProgress(1);
+        stopTrainJourneyChug();
         setDeliveredDest(selectedDest);
         setDeliveryReceipt({
           dest: dest.name,
@@ -142,7 +169,7 @@ export default function DreamExpressExperience({
 
         if (soundEnabled) {
           playDeliveryArrivedSound();
-          setTimeout(() => {
+          stampTimer.current = setTimeout(() => {
             playStampEarnedSound();
           }, 800);
         }
@@ -260,7 +287,8 @@ export default function DreamExpressExperience({
             viewBox={getCameraViewBox()}
             className="express-svg-canvas"
             preserveAspectRatio="xMidYMid meet"
-            aria-hidden="true"
+            role="group"
+            aria-label="Dream Express map. Choose a destination, then dispatch your dream."
           >
             <defs>
               <linearGradient id="expSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -295,7 +323,7 @@ export default function DreamExpressExperience({
             </defs>
 
             {/* Landscape and train share the same SVG coordinates and camera. */}
-            <image href="/assets/production-art/derived/dream_express_world_no_beam.png" x="0" y="0" width="1200" height="792" preserveAspectRatio="none" />
+            <image href="/assets/optimized/production-art/derived/dream_express_world_no_beam.webp" x="0" y="0" width="1200" height="792" preserveAspectRatio="none" />
 
             {/* Railway Track Paths */}
             {/* Route 1: Depot -> Cloud Cottage */}
@@ -386,6 +414,14 @@ export default function DreamExpressExperience({
               )}
             </g>
 
+            <g className="express-map-targets">
+              {[
+                ['cloud-cottage',380,230],['ghost-house',785,570],['moonbeam-tower',1047,260],
+              ].map(([id,x,y],i) => <g key={id} className={`express-map-destination ${selectedDest===id?'is-selected':''}`} transform={`translate(${x},${y})`} role="button" tabIndex={isTraveling?-1:0} aria-label={`Choose ${DESTINATIONS[id].name}`} aria-pressed={selectedDest===id} aria-disabled={isTraveling} onClick={()=>{if(isTraveling)return;setSelectedDest(id);setDeliveredDest(null);setDeliveryReceipt(null);}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(isTraveling)return;setSelectedDest(id);setDeliveredDest(null);setDeliveryReceipt(null);}}}>
+                <circle className="express-map-hit" r="100" />
+                <g className="express-map-pin" transform="translate(-75,-60)"><circle r="20"/><text textAnchor="middle" y="6">{i+1}</text></g>
+              </g>)}
+            </g>
             <DreamTrain positions={trainPos} moving={isTraveling} />
           </svg>
 
@@ -487,9 +523,28 @@ export default function DreamExpressExperience({
             >
               <span>{isTraveling ? 'Dream Express in Flight... 🚂' : 'Dispatch Dream Express ➔'}</span>
             </button>
+            <button
+              type="button"
+              className="express-sound-preview-btn"
+              disabled={isTraveling}
+              onClick={() => {
+                if (!soundEnabled) onToggleSound?.();
+                clearPreview();
+                stopTrainJourneyChug();
+                playTrainWhistleSound();
+                playTrainChukSound({ isAccented: true });
+                previewTimers.current.push(setTimeout(() => playTrainChukSound({ isAccented: false }), 200));
+                previewTimers.current.push(setTimeout(() => playTrainChukSound({ isAccented: false }), 380));
+                previewTimers.current.push(setTimeout(() => playTrainChukSound({ isAccented: true }), 560));
+              }}
+              aria-label="Sound locomotive whistle and train chuk chuk chuk chuk"
+              title="Test the locomotive whistle and chuk chuk chuk chuk sound"
+            >
+              <span>🚂 Toot-Toot &amp; Chuk-Chuk Sound</span>
+            </button>
             <p className="dispatch-hint">
               {isTraveling
-                ? 'Camera tracking locomotive along magical sky-rail...'
+                ? 'Camera tracking locomotive with rhythmic chuk-chuk-chuk along the sky-rail...'
                 : 'Locomotive No. 003 is fueled by starlight & ready!'}
             </p>
           </div>

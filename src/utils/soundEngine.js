@@ -22,6 +22,36 @@ let twinkleVocalBuffer = null;
 let isLoadingVocal = false;
 let activeVocalSource = null;
 let activeVocalGain = null;
+let narrationSource = null;
+let narrationRequest = 0;
+const narrationBuffers = new Map();
+
+export function stopTheaterNarration() {
+  narrationRequest++;
+  if (narrationSource) { try { narrationSource.stop(); narrationSource.disconnect(); } catch {} narrationSource = null; }
+}
+
+export async function preloadTheaterNarration() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  await Promise.all(['arrival','wish','dance','listen','goodnight'].map(async name => {
+    if (narrationBuffers.has(name)) return;
+    try { const response = await fetch(`/assets/audio/narration/${name}.wav`); if(!response.ok)return; narrationBuffers.set(name, await ctx.decodeAudioData(await response.arrayBuffer())); } catch { /* Captions remain available when an audio request fails. */ }
+  }));
+}
+
+export async function playTheaterNarration(name) {
+  stopTheaterNarration();
+  const request = narrationRequest;
+  if (!soundEnabled) return;
+  if (!narrationBuffers.has(name)) await preloadTheaterNarration();
+  if (request !== narrationRequest || !soundEnabled || !narrationBuffers.has(name)) return;
+  const ctx = getAudioContext(), source = ctx.createBufferSource(), gain = ctx.createGain();
+  source.buffer = narrationBuffers.get(name); gain.gain.value = 2.5;
+  source.connect(gain); gain.connect(masterGain); narrationSource = source;
+  source.onended = () => {source.disconnect();gain.disconnect();if(narrationSource===source)narrationSource=null;};
+  source.start();
+}
 
 // Active melody tracking for safe cancellation and zero leaks
 let activeMelodyTimers = [];
@@ -131,6 +161,7 @@ export function stopVocalLullaby() {
  * Stop all orchestra audio (vocal + synthesized) safely
  */
 export function stopAllOrchestraAudio() {
+  stopTheaterNarration();
   stopVocalLullaby();
   stopTwinkleMelody();
 }
@@ -147,6 +178,9 @@ export function setSoundEnabled(enabled) {
     preloadFaahAudio();
     preloadTwinkleVocalAudio();
   } else {
+    stopTheaterNarration();
+    // Immediately stop train locomotive chugging
+    stopTrainJourneyChug();
     // Immediately stop active vocal recording if playing
     stopVocalLullaby();
     // Immediately silence synthesized melody nodes
@@ -692,4 +726,184 @@ export function playStarTwinkleSound() {
   playTone({ freq: chosen, type: 'sine', duration: 0.15, gain: 0.2 });
 }
 
+/**
+ * 14. The Living Dream Express — Steam Locomotive Sound Engine
+ * Provides authentic rhythmic "chuk chuk chuk chuk" sound effects,
+ * acceleration/cruising/deceleration travel loop, and cheerful train whistle.
+ */
+let trainChugTimer = null;
+let trainChugActive = false;
+let activeTrainNodes = [];
 
+export function stopTrainJourneyChug() {
+  trainChugActive = false;
+  if (trainChugTimer) {
+    clearTimeout(trainChugTimer);
+    trainChugTimer = null;
+  }
+  activeTrainNodes.forEach((node) => {
+    try {
+      node.stop?.();
+      node.disconnect?.();
+    } catch (e) {}
+  });
+  activeTrainNodes = [];
+}
+
+/**
+ * Play a single authentic steam locomotive "chuk" puff
+ * Combines shaped bandpass white noise for the steam hiss
+ * with a low punch triangle wave for mechanical piston weight.
+ */
+export function playTrainChukSound({ isAccented = false, volume = 0.3 } = {}) {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx || !masterGain) return;
+
+  const now = ctx.currentTime;
+  const puffDuration = isAccented ? 0.12 : 0.085;
+
+  // 1. Steam Noise Burst (the "chhhuk" steam exhaust)
+  const noiseSource = ctx.createBufferSource();
+  noiseSource.buffer = createNoiseBuffer(ctx, puffDuration + 0.02);
+
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'bandpass';
+  // Accented stroke has a brighter, slightly higher resonant frequency
+  const centerFreq = isAccented ? 1150 : 880;
+  noiseFilter.frequency.setValueAtTime(centerFreq, now);
+  noiseFilter.frequency.exponentialRampToValueAtTime(centerFreq * 0.65, now + puffDuration);
+  noiseFilter.Q.setValueAtTime(isAccented ? 3.2 : 2.6, now);
+
+  const noiseGain = ctx.createGain();
+  const targetGain = (isAccented ? 0.36 : 0.23) * (volume / 0.3);
+  noiseGain.gain.setValueAtTime(0.0001, now);
+  noiseGain.gain.linearRampToValueAtTime(targetGain, now + 0.005);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + puffDuration);
+
+  noiseSource.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(masterGain);
+
+  noiseSource.start(now);
+  noiseSource.stop(now + puffDuration);
+
+  // 2. Mechanical Piston / Driving Rod Thud
+  const thudOsc = ctx.createOscillator();
+  thudOsc.type = 'triangle';
+  const startPitch = isAccented ? 110 : 90;
+  thudOsc.frequency.setValueAtTime(startPitch, now);
+  thudOsc.frequency.exponentialRampToValueAtTime(45, now + 0.06);
+
+  const thudGain = ctx.createGain();
+  const targetThud = (isAccented ? 0.28 : 0.18) * (volume / 0.3);
+  thudGain.gain.setValueAtTime(0.0001, now);
+  thudGain.gain.linearRampToValueAtTime(targetThud, now + 0.004);
+  thudGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+
+  thudOsc.connect(thudGain);
+  thudGain.connect(masterGain);
+
+  thudOsc.start(now);
+  thudOsc.stop(now + 0.06);
+
+  // Track nodes for immediate cleanup if user leaves
+  const nodes = [noiseSource, noiseFilter, noiseGain, thudOsc, thudGain];
+  activeTrainNodes.push(...nodes);
+  setTimeout(() => {
+    nodes.forEach(node => { try { node.disconnect(); } catch {} });
+    activeTrainNodes = activeTrainNodes.filter((n) => !nodes.includes(n));
+  }, (puffDuration + 0.05) * 1000);
+}
+
+/**
+ * Play a charming two-tone storybook train whistle: "Toooot-toot!"
+ */
+export function playTrainWhistleSound() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx || !masterGain) return;
+
+  const now = ctx.currentTime;
+  // Two whistle blasts: long blast then short blast
+  const blasts = [
+    { start: 0, dur: 0.38 },
+    { start: 0.46, dur: 0.26 },
+  ];
+
+  blasts.forEach(({ start, dur }) => {
+    const t0 = now + start;
+    // Harmonic chords for classic steam locomotive whistle (D5 + F#5 + A5 major triad)
+    [587.33, 739.99, 880.0].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t0);
+      osc.frequency.linearRampToValueAtTime(freq * 1.015, t0 + dur * 0.4);
+      osc.frequency.linearRampToValueAtTime(freq * 0.99, t0 + dur);
+
+      const gain = ctx.createGain();
+      const baseGain = idx === 0 ? 0.20 : 0.14;
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.linearRampToValueAtTime(baseGain, t0 + 0.04);
+      gain.gain.setValueAtTime(baseGain, t0 + dur - 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(t0);
+      osc.stop(t0 + dur);
+
+      activeTrainNodes.push(osc, gain);
+      osc.onended = () => { osc.disconnect(); gain.disconnect(); activeTrainNodes = activeTrainNodes.filter(node => node !== osc && node !== gain); };
+    });
+  });
+}
+
+/**
+ * Start rhythmic locomotive chug loop for the duration of the train travel
+ * Accelerates out of depot, cruises at rhythmic chuk-chuk-chuk-chuk, then decelerates to station!
+ */
+export function startTrainJourneyChug(durationMs = 6000) {
+  stopTrainJourneyChug();
+  if (!soundEnabled) return;
+
+  trainChugActive = true;
+  const startTime = Date.now();
+  const accelDuration = Math.min(1400, durationMs * 0.25);
+  const decelStart = durationMs - Math.min(1600, durationMs * 0.28);
+  let strokeCount = 0;
+
+  const scheduleNextChuk = () => {
+    if (!trainChugActive || !soundEnabled) return;
+
+    const elapsed = Date.now() - startTime;
+    if (elapsed >= durationMs) {
+      stopTrainJourneyChug();
+      // Final soft settling steam sigh
+      playTone({ freq: 440, type: 'triangle', duration: 0.18, gain: 0.08 });
+      return;
+    }
+
+    // Determine current speed & rhythm interval
+    let currentInterval = 175; // cruise tempo (ms between chuks)
+    if (elapsed < accelDuration) {
+      // Accelerate from 300ms down to 175ms
+      const p = elapsed / accelDuration;
+      currentInterval = 300 - p * (300 - 175);
+    } else if (elapsed > decelStart) {
+      // Decelerate from 175ms up to 340ms
+      const p = (elapsed - decelStart) / (durationMs - decelStart);
+      currentInterval = 175 + p * (340 - 175);
+    }
+
+    // 4-stroke locomotive cycle: beat 0 is accented (CHUK - chuk - chuk - chuk)
+    const isAccented = strokeCount % 4 === 0;
+    playTrainChukSound({ isAccented, volume: isAccented ? 0.34 : 0.22 });
+    strokeCount++;
+
+    trainChugTimer = setTimeout(scheduleNextChuk, currentInterval);
+  };
+
+  scheduleNextChuk();
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "event": "start",
+    "duration": 2.6891041666666666,
+    "time": 1306.6000000000931
+  },
+  {
+    "event": "ended",
+    "duration": 2.6891041666666666,
+    "time": 3988.8000000000466
+  },
+  {
+    "event": "start",
+    "duration": 1.7392708333333333,
+    "time": 4069.9000000001397
+  },
+  {
+    "event": "ended",
+    "duration": 1.7392708333333333,
+    "time": 5821
+  },
+  {
+    "event": "start",
+    "duration": 2.064125,
+    "time": 5860.300000000047
+  },
+  {
+    "event": "ended",
+    "duration": 2.064125,
+    "time": 7929.300000000047
+  },
+  {
+    "event": "start",
+    "duration": 2.02425,
+    "time": 8761.200000000186
+  },
+  {
+    "event": "ended",
+    "duration": 2.02425,
+    "time": 10789
+  },
+  {
+    "event": "start",
+    "duration": 20,
+    "time": 11262
+  },
+  {
+    "event": "ended",
+    "duration": 20,
+    "time": 31259
+  },
+  {
+    "event": "start",
+    "duration": 3.0539583333333336,
+    "time": 31521.200000000186
+  },
+  {
+    "event": "ended",
+    "duration": 3.0539583333333336,
+    "time": 34578.80000000005
+  }
+]

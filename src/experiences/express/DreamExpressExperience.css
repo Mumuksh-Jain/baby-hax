@@ -13,7 +13,7 @@
 /* Railway Stage Viewport */
 .express-stage-viewport {
   position: relative;
-  background: #0B1124 url('/assets/production-art/backgrounds/dream_express_world.png') no-repeat center center;
+  background: #0B1124 url('/assets/optimized/production-art/backgrounds/dream_express_world.webp') no-repeat center center;
   background-size: cover;
   border-radius: 20px;
   border: 3px solid #2A3B66;
@@ -409,6 +409,37 @@
   color: #7A5C43;
   text-align: center;
   font-style: italic;
+}
+
+.express-sound-preview-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--color-faded-blush, #F5DCE5);
+  border: 1.5px solid var(--color-cocoa, #5C4033);
+  border-radius: 10px;
+  color: var(--color-cocoa, #5C4033);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--color-cocoa, #5C4033);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.express-sound-preview-btn:hover {
+  background: #FFFFFF;
+  color: var(--color-berry, #A34063);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--color-cocoa, #5C4033);
+}
+
+.express-sound-preview-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--color-cocoa, #5C4033);
 }
 
 /* Responsive Breakpoints */

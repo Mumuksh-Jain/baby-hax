@@ -1,12 +1,17 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { OfficialPip } from './OfficialArt';
+import { theaterStarPoses } from './theaterMotion';
 import {
   playVocalLullaby,
+  playTheaterNarration,
+  stopTheaterNarration,
+  preloadTheaterNarration,
   stopAllOrchestraAudio,
   playFaahSound,
   playStarSound,
 } from '../utils/soundEngine';
 import './MagicalStarTheater.css';
+import './TheaterDirector.css';
 
 /**
  * PASS 01C.4A: Pip's Magical Star Theater — Living Paper-Craft World
@@ -33,7 +38,7 @@ export default function MagicalStarTheater({
   completionRef.current = onTheaterComplete;
   // Cinematic phase state:
   // 'curtain' (0-2s) | 'star1-enter' (2-2.8s) | 'stars23-enter' (2.8-4.5s) | 'spiral' (4.5-7.5s) | 'settle' (7.5-10s) | 'performing' (10s+) | 'celebrating' | 'exiting'
-  const [phase, setPhase] = useState('curtain');
+  const [phase, setPhase] = useState('inactive');
   const [pipMotion, setPipMotion] = useState('idle');
   // Pip's cute thought-cloud popup emerging from Pip's head (Problem 2)
   const [pipThought, setPipThought] = useState({ text: '“Uh-oh... where did my bedroom go?!”', visible: true });
@@ -41,9 +46,21 @@ export default function MagicalStarTheater({
   const [subtitle, setSubtitle] = useState(null);
   const [activeSubScene, setActiveSubScene] = useState('A');
   const [curtainsOpen, setCurtainsOpen] = useState(false);
+  const [narrationEnabled, setNarrationEnabled] = useState(true);
+  const [tappedStar, setTappedStar] = useState(null);
+  const tapTimer = useRef(null);
+  useEffect(() => {if(isOpen && soundEnabled) preloadTheaterNarration();}, [isOpen, soundEnabled]);
+  useEffect(() => {
+    if(isOpen && soundEnabled && narrationEnabled && subtitle?.audio) playTheaterNarration(subtitle.audio);
+    else stopTheaterNarration();
+    return stopTheaterNarration;
+  }, [isOpen, soundEnabled, narrationEnabled, subtitle?.audio]);
+  useEffect(() => () => clearTimeout(tapTimer.current), []);
 
   // References
   const stageRef = useRef(null);
+  const stageSizeRef = useRef({width:1200,height:700});
+  useEffect(()=>{if(!isOpen||!stageRef.current)return;const observer=new ResizeObserver(([entry])=>{stageSizeRef.current={width:entry.contentRect.width,height:entry.contentRect.height};});observer.observe(stageRef.current);return()=>observer.disconnect();},[isOpen]);
   const backBtnRef = useRef(null);
   const theaterTimersRef = useRef([]);
   const rAFRef = useRef(null);
@@ -94,12 +111,14 @@ export default function MagicalStarTheater({
   const handleExit = useCallback(() => {
     clearAllTimers();
     stopAllOrchestraAudio();
+    setSubtitle(null);
     audioStartedRef.current = false;
     setPhase('exiting');
-    setTimeout(() => {
+    const exitTimer = setTimeout(() => {
       setCurtainsOpen(false);
       onCloseTheater();
     }, 750);
+    theaterTimersRef.current.push(exitTimer);
   }, [clearAllTimers, onCloseTheater]);
 
   // Keyboard Escape Handler
@@ -130,279 +149,20 @@ export default function MagicalStarTheater({
    * Math-driven graceful flight paths, tangent banking, and stardust particle spray.
    */
   const updateStarPositions = useCallback((elapsedSec, width, height) => {
-    const cx = width / 2;
-    const cy = height / 2;
-
-    const isMobile = width < 600;
-    const scale = isMobile ? 0.72 : 1.0;
-
-    let p1 = { x: -160, y: cy, visible: false, scale: 1, rot: 0 };
-    let p2 = { x: cx + 40, y: -160, visible: false, scale: 1, rot: 0 };
-    let p3 = { x: width + 160, y: cy + 120, visible: false, scale: 1, rot: 0 };
-
-    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    const easeOutQuad = (t) => t * (2 - t);
-
-    // --- SCENE B: STAR 1 ENTERS FROM LEFT (2.0s to 4.5s) ---
-    if (elapsedSec >= 2.0 && elapsedSec < 4.5) {
-      p1.visible = true;
-      if (elapsedSec < 3.0) {
-        const u = (elapsedSec - 2.0) / 1.0;
-        const e = easeOutCubic(u);
-        p1.x = -120 + (cx - 200 * scale + 120) * e;
-        p1.y = cy - 45 * scale - Math.sin(u * Math.PI) * 150 * scale;
-        p1.scale = 1 + Math.sin(u * Math.PI) * 0.35;
-        p1.rot = (1 - u) * -35 + Math.sin(u * Math.PI * 2) * 12;
-      } else {
-        const hoverT = (elapsedSec - 3.0) * 2.8;
-        p1.x = cx - 200 * scale + Math.cos(hoverT) * 5;
-        p1.y = cy - 45 * scale + Math.sin(hoverT) * 6;
-        p1.rot = Math.sin(hoverT) * 8;
-        p1.scale = 1;
-      }
-    }
-
-    // --- SCENE C: STAR 2 LOOPS FROM ABOVE & STAR 3 FROM RIGHT (2.8s to 4.5s) ---
-    if (elapsedSec >= 2.8 && elapsedSec < 4.5) {
-      p2.visible = true;
-      if (elapsedSec < 3.8) {
-        const u = (elapsedSec - 2.8) / 1.0;
-        const e = easeOutCubic(u);
-        // Loops in gracefully past the moon with an S-curve banking swoop
-        p2.x = cx + 80 * scale + Math.sin(u * Math.PI * 1.4) * 120 * scale;
-        p2.y = -110 + (cy - 195 * scale + 110) * e;
-        p2.scale = 1 + Math.sin(u * Math.PI) * 0.32;
-        p2.rot = Math.cos(u * Math.PI) * 35;
-      } else {
-        const hoverT = (elapsedSec - 3.8) * 2.8;
-        p2.x = cx + 25 * scale + Math.sin(hoverT) * 5;
-        p2.y = cy - 195 * scale + Math.cos(hoverT) * 5;
-        p2.rot = Math.cos(hoverT) * 6;
-        p2.scale = 1;
-      }
-    }
-
-    if (elapsedSec >= 3.6 && elapsedSec < 4.5) {
-      p3.visible = true;
-      if (elapsedSec < 4.5) {
-        const u = (elapsedSec - 3.6) / 0.9;
-        const e = easeOutCubic(u);
-        // Swoops in gracefully from lower-right across the paper clouds
-        p3.x = width + 70 - (width + 70 - (cx + 185 * scale)) * e;
-        p3.y = height * 0.82 - (height * 0.82 - (cy + 20 * scale)) * e + Math.sin(u * Math.PI) * 65 * scale;
-        p3.scale = 1 + Math.sin(u * Math.PI) * 0.38;
-        p3.rot = Math.sin(u * Math.PI) * -38;
-      }
-    }
-
-    // --- SCENE D: A REAL CHOREOGRAPHED SPIRAL DANCE (4.5s to 7.5s) ---
-    if (elapsedSec >= 4.5 && elapsedSec < 7.5) {
-      p1.visible = true;
-      p2.visible = true;
-      p3.visible = true;
-
-      const u = (elapsedSec - 4.5) / 3.0; // 0 to 1 over 3 full seconds
-      const e = easeInOutCubic(u);
-
-      // 2 full sweeping orbital rotations
-      const revs = 2.0 * Math.PI * 2;
-      const angleOffset = e * revs;
-
-      // Contracting spiral radius from 315px to 195px
-      const r = (315 - 120 * e) * scale;
-      const rY = r * 0.82; // Elliptical 2.5D tilt keeping stars clear of Pip's face
-
-      // Dynamic breathing offsets for living choreography (playful chasing & diving)
-      const breath1 = 0.05 * Math.sin(angleOffset * 2);
-      const breath2 = 0.05 * Math.sin(angleOffset * 2 + 2);
-      const breath3 = 0.05 * Math.sin(angleOffset * 2 + 4);
-
-      // Star 1 (starts at 240 deg)
-      const a1 = (4 * Math.PI / 3) + angleOffset;
-      const r1 = r * (1 + breath1);
-      p1.x = cx + r1 * Math.cos(a1);
-      p1.y = cy + (r1 * 0.82) * Math.sin(a1);
-      p1.rot = (a1 * 180 / Math.PI) + 90;
-      p1.scale = 1.05 + breath1 * 2;
-
-      // Star 2 (starts at 0 deg)
-      const a2 = 0 + angleOffset + 0.06 * Math.sin(angleOffset);
-      const r2 = r * (1 + breath2);
-      p2.x = cx + r2 * Math.cos(a2);
-      p2.y = cy + (r2 * 0.82) * Math.sin(a2);
-      p2.rot = (a2 * 180 / Math.PI) + 90;
-      p2.scale = 1.05 + breath2 * 2;
-
-      // Star 3 (starts at 120 deg)
-      const a3 = (2 * Math.PI / 3) + angleOffset - 0.06 * Math.cos(angleOffset);
-      const r3 = r * (1 + breath3);
-      p3.x = cx + r3 * Math.cos(a3);
-      p3.y = cy + (r3 * 0.82) * Math.sin(a3);
-      p3.rot = (a3 * 180 / Math.PI) + 90;
-      p3.scale = 1.05 + breath3 * 2;
-    }
-
-    // --- SCENE E: THE STARS SETTLE INTO CONSTELLATION (7.5s to 10.0s+) ---
-    if (elapsedSec >= 7.5) {
-      p1.visible = true;
-      p2.visible = true;
-      p3.visible = true;
-
-      // Base settled targets (Scenes 1 & Intro settle)
-      const base1 = { x: cx - 215 * scale, y: cy - 90 * scale };
-      const base2 = { x: cx + 215 * scale, y: cy - 70 * scale };
-      const base3 = { x: cx, y: cy - 240 * scale };
-
-      if (elapsedSec < 8.7) {
-        // --- Intro Settle into Triangle (7.5s - 8.7s) ---
-        const u = (elapsedSec - 7.5) / 1.2;
-        const e = easeOutCubic(u);
-        p1.x = p1.x + (base1.x - p1.x) * e;
-        p1.y = p1.y + (base1.y - p1.y) * e;
-        p1.rot = (1 - e) * p1.rot;
-
-        p2.x = p2.x + (base2.x - p2.x) * e;
-        p2.y = p2.y + (base2.y - p2.y) * e;
-        p2.rot = (1 - e) * p2.rot;
-
-        p3.x = p3.x + (base3.x - p3.x) * e;
-        p3.y = p3.y + (base3.y - p3.y) * e;
-        p3.rot = (1 - e) * p3.rot;
-      } else if (elapsedSec < 10.0) {
-        // --- Anticipation Hover (8.7s - 10.0s) ---
-        const tIdle = (elapsedSec - 8.7) * 2;
-        p1.x = base1.x + Math.sin(tIdle) * 3;
-        p1.y = base1.y + Math.cos(tIdle) * 3;
-        p2.x = base2.x + Math.cos(tIdle + 1) * 3;
-        p2.y = base2.y + Math.sin(tIdle + 1) * 3;
-        p3.x = base3.x + Math.sin(tIdle + 2) * 3;
-        p3.y = base3.y + Math.cos(tIdle + 2) * 3;
-      } else if (elapsedSec < 14.5) {
-        // --- SCENE 1: "Twinkle, twinkle, little star" (10.0s - 14.5s) ---
-        // Stars bloom and pulse like paper flowers to the music rhythm
-        const tSong1 = elapsedSec - 10.0;
-        const bloom1 = Math.sin(tSong1 * 3.6);
-        const bloom2 = Math.sin(tSong1 * 3.6 + 1.2);
-        const bloom3 = Math.sin(tSong1 * 3.6 + 2.4);
-
-        p1.x = base1.x + Math.sin(tSong1 * 2.2) * 6;
-        p1.y = base1.y + Math.cos(tSong1 * 2.2) * 6;
-        p1.scale = 1.0 + bloom1 * 0.18;
-        p1.rot = Math.sin(tSong1 * 2) * 6;
-
-        p2.x = base2.x + Math.cos(tSong1 * 2.2) * 6;
-        p2.y = base2.y + Math.sin(tSong1 * 2.2) * 6;
-        p2.scale = 1.0 + bloom2 * 0.18;
-        p2.rot = Math.cos(tSong1 * 2) * 6;
-
-        p3.x = base3.x + Math.sin(tSong1 * 2.2 + 1) * 6;
-        p3.y = base3.y + Math.cos(tSong1 * 2.2 + 1) * 6;
-        p3.scale = 1.0 + bloom3 * 0.18;
-        p3.rot = Math.sin(tSong1 * 2 + 1) * 6;
-      } else if (elapsedSec < 19.0) {
-        // --- SCENE 2: "How I wonder what you are" (14.5s - 19.0s) ---
-        // Stars drift outward to frame the Question-Mark constellation & paper telescope
-        const s2_1 = { x: cx - 235 * scale, y: cy - 65 * scale };
-        const s2_2 = { x: cx + 235 * scale, y: cy - 65 * scale };
-        const s2_3 = { x: cx + 135 * scale, y: cy - 205 * scale };
-
-        const u = Math.min(1, (elapsedSec - 14.5) / 1.1);
-        const e = easeOutCubic(u);
-        const tIdle = (elapsedSec - 14.5) * 2;
-
-        p1.x = base1.x + (s2_1.x - base1.x) * e + Math.sin(tIdle) * 4;
-        p1.y = base1.y + (s2_1.y - base1.y) * e + Math.cos(tIdle) * 4;
-        p1.scale = 1.0 + Math.sin(tIdle * 1.5) * 0.08;
-
-        p2.x = base2.x + (s2_2.x - base2.x) * e + Math.cos(tIdle + 1) * 4;
-        p2.y = base2.y + (s2_2.y - base2.y) * e + Math.sin(tIdle + 1) * 4;
-        p2.scale = 1.0 + Math.cos(tIdle * 1.5) * 0.08;
-
-        p3.x = base3.x + (s2_3.x - base3.x) * e + Math.sin(tIdle + 2) * 4;
-        p3.y = base3.y + (s2_3.y - base3.y) * e + Math.cos(tIdle + 2) * 4;
-        p3.scale = 1.0 + Math.sin(tIdle * 1.5 + 1) * 0.08;
-      } else if (elapsedSec < 24.0) {
-        // --- SCENE 3: "Up above the world so high" (19.0s - 24.0s) ---
-        // Perspective rises: Stars lift higher into the sky, framing the sleeping village below
-        const s3_1 = { x: cx - 210 * scale, y: cy - 135 * scale };
-        const s3_2 = { x: cx + 210 * scale, y: cy - 115 * scale };
-        const s3_3 = { x: cx, y: cy - 275 * scale };
-
-        const u = Math.min(1, (elapsedSec - 19.0) / 1.2);
-        const e = easeOutCubic(u);
-        const tIdle = (elapsedSec - 19.0) * 1.8;
-
-        p1.x = cx - 235 * scale + (s3_1.x - (cx - 235 * scale)) * e + Math.sin(tIdle) * 5;
-        p1.y = cy - 65 * scale + (s3_1.y - (cy - 65 * scale)) * e + Math.cos(tIdle) * 5;
-        p1.scale = 1.0 + Math.sin(tIdle * 1.2) * 0.06;
-
-        p2.x = cx + 235 * scale + (s3_2.x - (cx + 235 * scale)) * e + Math.cos(tIdle + 1) * 5;
-        p2.y = cy - 65 * scale + (s3_2.y - (cy - 65 * scale)) * e + Math.sin(tIdle + 1) * 5;
-        p2.scale = 1.0 + Math.cos(tIdle * 1.2) * 0.06;
-
-        p3.x = cx + 135 * scale + (s3_3.x - (cx + 135 * scale)) * e + Math.sin(tIdle + 2) * 5;
-        p3.y = cy - 205 * scale + (s3_3.y - (cy - 205 * scale)) * e + Math.cos(tIdle + 2) * 5;
-        p3.scale = 1.0 + Math.sin(tIdle * 1.2 + 1) * 0.06;
-      } else if (elapsedSec < 30.0) {
-        // --- SCENE 4: "Like a diamond in the sky" (24.0s - 30.0s) ---
-        // Stars swoop into the vertices of the illuminated diamond constellation
-        const s4_1 = { x: cx - 150 * scale, y: cy - 120 * scale }; // Left diamond vertex
-        const s4_2 = { x: cx + 150 * scale, y: cy - 120 * scale }; // Right diamond vertex
-        const s4_3 = { x: cx, y: cy - 20 * scale };                // Bottom diamond vertex
-
-        const u = Math.min(1, (elapsedSec - 24.0) / 1.3);
-        const e = easeOutCubic(u);
-        const tIdle = (elapsedSec - 24.0) * 2.2;
-
-        p1.x = cx - 210 * scale + (s4_1.x - (cx - 210 * scale)) * e + Math.sin(tIdle) * 3;
-        p1.y = cy - 135 * scale + (s4_1.y - (cy - 135 * scale)) * e + Math.cos(tIdle) * 3;
-        p1.scale = 1.1 + Math.sin(tIdle * 2) * 0.12;
-
-        p2.x = cx + 210 * scale + (s4_2.x - (cx + 210 * scale)) * e + Math.cos(tIdle + 1) * 3;
-        p2.y = cy - 115 * scale + (s4_2.y - (cy - 115 * scale)) * e + Math.sin(tIdle + 1) * 3;
-        p2.scale = 1.1 + Math.cos(tIdle * 2) * 0.12;
-
-        p3.x = cx + (s4_3.x - cx) * e + Math.sin(tIdle + 2) * 3;
-        p3.y = cy - 275 * scale + (s4_3.y - (cy - 275 * scale)) * e + Math.cos(tIdle + 2) * 3;
-        p3.scale = 1.15 + Math.sin(tIdle * 2 + 1) * 0.14;
-      } else {
-        // --- GRAND FINALE CELEBRATION (30.0s+) ---
-        const tCelebrate = (elapsedSec - 30.0) * 3.5;
-        p1.x = cx - 180 * scale + Math.sin(tCelebrate) * 8;
-        p1.y = cy - 130 * scale - Math.abs(Math.sin(tCelebrate)) * 18;
-        p1.scale = 1.15 + Math.sin(tCelebrate) * 0.15;
-
-        p2.x = cx + 180 * scale + Math.cos(tCelebrate) * 8;
-        p2.y = cy - 130 * scale - Math.abs(Math.cos(tCelebrate)) * 18;
-        p2.scale = 1.15 + Math.cos(tCelebrate) * 0.15;
-
-        p3.x = cx + Math.sin(tCelebrate + 1) * 6;
-        p3.y = cy - 230 * scale - Math.abs(Math.sin(tCelebrate + 1)) * 22;
-        p3.scale = 1.25 + Math.sin(tCelebrate + 1) * 0.18;
-      }
-    }
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      p1 = {x: width * .23, y: height * .36, rot: 0, scale: 1, visible: elapsedSec >= 2};
-      p2 = {x: width * .5, y: height * .18, rot: 0, scale: 1, visible: elapsedSec >= 2.8};
-      p3 = {x: width * .77, y: height * .36, rot: 0, scale: 1, visible: elapsedSec >= 3.6};
-    }
-    // Keep animated stars within the stage on narrow phones.
-    for (const p of [p1, p2, p3]) if (p.visible) {
-      p.x = Math.max(32, Math.min(width - 50, p.x));
-      p.y = Math.max(38, Math.min(height - 55, p.y));
-    }
-    // Direct DOM transform updates for 60fps performance (zero React re-renders)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const [p1,p2,p3] = theaterStarPoses(elapsedSec,width,height,reduced);
     if (star1Ref.current) {
+      star1Ref.current.tabIndex = p1.visible ? 0 : -1;
       star1Ref.current.style.opacity = p1.visible ? '1' : '0';
       star1Ref.current.style.transform = `translate(${p1.x - 36}px, ${p1.y - 44}px) rotate(${p1.rot.toFixed(1)}deg) scale(${p1.scale.toFixed(2)})`;
     }
     if (star2Ref.current) {
+      star2Ref.current.tabIndex = p2.visible ? 0 : -1;
       star2Ref.current.style.opacity = p2.visible ? '1' : '0';
       star2Ref.current.style.transform = `translate(${p2.x - 36}px, ${p2.y - 44}px) rotate(${p2.rot.toFixed(1)}deg) scale(${p2.scale.toFixed(2)})`;
     }
     if (star3Ref.current) {
+      star3Ref.current.tabIndex = p3.visible ? 0 : -1;
       star3Ref.current.style.opacity = p3.visible ? '1' : '0';
       star3Ref.current.style.transform = `translate(${p3.x - 36}px, ${p3.y - 44}px) rotate(${p3.rot.toFixed(1)}deg) scale(${p3.scale.toFixed(2)})`;
     }
@@ -462,7 +222,7 @@ export default function MagicalStarTheater({
       (elapsedSec >= 10.0 && elapsedSec < 14.2 && Math.sin(elapsedSec * 4) > 0.6) ||
       (elapsedSec >= 24.2 && elapsedSec < 29.8);
 
-    if (isSpraying) {
+    if (isSpraying && !reduced) {
       const spawnCount = (elapsedSec >= 4.5 && elapsedSec < 7.5) || elapsedSec >= 24.2 ? 2 : 1;
       activeStars.forEach((star) => {
         if (glitterPoolRef.current.length < 95) {
@@ -601,9 +361,11 @@ export default function MagicalStarTheater({
     // --- 0.0s to 2.0s: SCENE A (Paper Sky Opens) ---
     // Pip reaction appears as cute thought-cloud popup near Pip's head (Problem 2)
     setPhase('curtain');
+    setActiveSubScene('A');
+    setTappedStar(null);
     setPipMotion('looking-up');
     setPipThought({ text: '“Uh-oh... where did my bedroom go?!”', visible: true });
-    setSubtitle(null);
+    setSubtitle({ speaker: 'The Night Sky', text: 'Tonight, three stars found Pip.', audio: 'arrival' });
 
     const tCurtains = setTimeout(() => {
       setCurtainsOpen(true);
@@ -616,12 +378,12 @@ export default function MagicalStarTheater({
       setPipMotion('tilt-left');
       if (soundEnabledRef.current) playStarSound(0);
       setPipThought({ text: '“Look! The stars followed us into the sky!”', visible: true });
-      setSubtitle(null);
     }, 2000);
     theaterTimersRef.current.push(tSceneB);
 
     // --- 2.8s to 4.5s: SCENE C (Stars 2 & 3 Enter) ---
     const tSceneC1 = setTimeout(() => {
+      setSubtitle({speaker:'The Night Sky',text:'They had a tiny wish.',audio:'wish'});
       setPhase('stars23-enter');
       setPipMotion('tilt-right');
       if (soundEnabledRef.current) playStarSound(1);
@@ -646,15 +408,15 @@ export default function MagicalStarTheater({
       setPipMotion('spiral-dance');
       setPipThought({ text: '', visible: false });
       // Bottom subtitle strictly reserved for cosmic narration (Problem 2)
-      setSubtitle({ speaker: 'Night Sky', text: '★ The stars dance in cosmic harmony... ★' });
-    }, 4500);
+      setSubtitle({ speaker: 'The Night Sky', text: 'Teach the whole sky to sing.', audio: 'dance' });
+    }, 4600);
     theaterTimersRef.current.push(tSceneD);
 
     // --- 7.5s to 10.0s: SCENE E (The Stars Settle into Constellation) ---
     const tSceneE = setTimeout(() => {
       setPhase('settle');
       setPipMotion('looking-up');
-      setSubtitle(null);
+      setSubtitle({speaker:'The Night Sky',text:'And then, a lullaby.',audio:'listen'});
       // Pip reaction thought cloud pops up (Problem 2)
       setPipThought({ text: '“Whoa... did I just invent a galaxy?!”', visible: true });
     }, 7500);
@@ -718,7 +480,7 @@ export default function MagicalStarTheater({
         const tGrandCeleb = setTimeout(() => {
           setPhase('celebrating');
           setPipMotion('celebrate-jump');
-          if (soundEnabledRef.current) playFaahSound(1.0);
+          setSubtitle({speaker:'The Night Sky',text:'And one small room became a sky full of friends.',audio:'goodnight'});
           setPipThought({ text: '“WOOHOO! You turned my bedroom into a STUDIO!”', visible: true });
 
           const tReturn = setTimeout(() => {
@@ -744,7 +506,7 @@ export default function MagicalStarTheater({
     const tick = (now) => {
       const elapsedSec = (now - startTimeRef.current) / 1000;
       if (stageRef.current) {
-        const rect = stageRef.current.getBoundingClientRect();
+        const rect = stageSizeRef.current;
         updateStarPositions(elapsedSec, rect.width, rect.height);
       }
       rAFRef.current = requestAnimationFrame(tick);
@@ -760,6 +522,9 @@ export default function MagicalStarTheater({
   // Interactive star click during theater
   const handleTapStar = (starIndex, e) => {
     e.stopPropagation();
+    setTappedStar(starIndex);
+    clearTimeout(tapTimer.current);
+    tapTimer.current = setTimeout(() => setTappedStar(null), 900);
     if (soundEnabled) {
       playStarSound(starIndex);
     }
@@ -769,7 +534,8 @@ export default function MagicalStarTheater({
 
   return (
     <div
-      className={`magical-star-theater theater-active phase-${phase} subscene-${activeSubScene || 'none'}`}
+      className={`magical-star-theater theater-active phase-${phase} subscene-${activeSubScene || 'none'} ${tappedStar !== null ? 'star-answered' : ''}`}
+      data-tapped-star={tappedStar}
       role="dialog"
       aria-modal="true"
       aria-label="Pip's Magical Star Theater Film"
@@ -778,6 +544,7 @@ export default function MagicalStarTheater({
          LAYER A: Deep Midnight Paper Sky (#08102B -> #182E62)
          ========================================================= */}
       <div className="layer-a-midnight-sky" aria-hidden="true">
+        <div className="theater-atmosphere"/>
         <div className="sky-paper-fiber-overlay" />
         <div className="sky-celestial-nebula" />
       </div>
@@ -844,7 +611,7 @@ export default function MagicalStarTheater({
          LAYER C: Left-Side Cut-Paper Formations & Quilled Spirals
          ========================================================= */}
       <div className="layer-c-left-paper-clouds" aria-hidden="true">
-        <svg viewBox="0 0 380 650" className="left-paper-cloud-svg">
+        <svg viewBox="0 0 380 650" preserveAspectRatio="none" className="left-paper-cloud-svg">
           <defs>
             <filter id="paperShadowL" x="-10%" y="-10%" width="140%" height="140%">
               <feDropShadow dx="6" dy="12" stdDeviation="10" floodColor="#060C1F" floodOpacity="0.75" />
@@ -966,7 +733,7 @@ export default function MagicalStarTheater({
          LAYER D: Right-Side Cut-Paper Formations & Rolled Cloud Shapes
          ========================================================= */}
       <div className="layer-d-right-paper-clouds" aria-hidden="true">
-        <svg viewBox="0 0 380 650" className="right-paper-cloud-svg">
+        <svg viewBox="0 0 380 650" preserveAspectRatio="none" className="right-paper-cloud-svg">
           <defs>
             <filter id="paperShadowR" x="-10%" y="-10%" width="140%" height="140%">
               <feDropShadow dx="-6" dy="12" stdDeviation="10" floodColor="#060C1F" floodOpacity="0.75" />
@@ -1094,7 +861,9 @@ export default function MagicalStarTheater({
       {/* =========================================================
          LAYERS G & H: Stage with Pip Cloud Cradle & Moving Stars
          ========================================================= */}
-      <main className="theater-stage" ref={stageRef}>
+      <main className="theater-stage" ref={stageRef} onPointerMove={e=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--conduct-x',((e.clientX-r.left)/r.width*100)+'%');e.currentTarget.style.setProperty('--conduct-y',((e.clientY-r.top)/r.height*100)+'%');}}>
+        <div className="theater-conductor-light" aria-hidden="true"/>
+        <div className="theater-story-chapter" aria-hidden="true"><span>{phase==='performing'?({A:'01 · A LITTLE WONDER',B:'02 · A QUESTION FOR THE SKY',C:'03 · ABOVE THE SLEEPING WORLD',D:'04 · A POCKET FULL OF LIGHT'}[activeSubScene]):phase==='celebrating'?'FINALE · A SKY FULL OF FRIENDS':'PROLOGUE · THREE STARS, ONE WISH'}</span></div>
         {/* Dynamic SVG Layer for Luminous Ribbon Comet Trails, Constellation & Glitter Spray */}
         <svg className="theater-trails-svg" aria-hidden="true">
           <defs>
@@ -1247,7 +1016,7 @@ export default function MagicalStarTheater({
           onClick={(e) => handleTapStar(0, e)}
           aria-label="Star 1: Click to hear bedtime chime"
         >
-          <img className="star-sprite-img production-star-1" src="/assets/production-art/sprites/orchestra_star_1.png" alt="" />
+          <img className="star-sprite-img production-star-1" src="/assets/optimized/production-art/sprites/orchestra_star_1.webp" alt="" />
           <span className="star-glow-halo" aria-hidden="true" />
         </button>
 
@@ -1258,7 +1027,7 @@ export default function MagicalStarTheater({
           onClick={(e) => handleTapStar(1, e)}
           aria-label="Star 2: Click to hear bedtime chime"
         >
-          <img className="star-sprite-img production-star-2" src="/assets/production-art/sprites/orchestra_star_2.png" alt="" />
+          <img className="star-sprite-img production-star-2" src="/assets/optimized/production-art/sprites/orchestra_star_2.webp" alt="" />
           <span className="star-glow-halo" aria-hidden="true" />
         </button>
 
@@ -1269,7 +1038,7 @@ export default function MagicalStarTheater({
           onClick={(e) => handleTapStar(2, e)}
           aria-label="Star 3: Click to hear bedtime chime"
         >
-          <img className="star-sprite-img production-star-3" src="/assets/production-art/sprites/orchestra_star_3.png" alt="" />
+          <img className="star-sprite-img production-star-3" src="/assets/optimized/production-art/sprites/orchestra_star_3.webp" alt="" />
           <span className="star-glow-halo" aria-hidden="true" />
         </button>
 
@@ -1492,14 +1261,13 @@ export default function MagicalStarTheater({
          LAYER J: Dedicated Readable Cinematic Subtitle Plaque
          (Strictly reserved for Narration and Song Lyrics - Problem 2)
          ========================================================= */}
-      {subtitle && subtitle.text && (
         <footer className="layer-j-cinematic-subtitles">
           <div className="subtitle-card" aria-live="polite">
-            {subtitle.speaker && <span className="subtitle-speaker">{subtitle.speaker}:</span>}
-            <p className="subtitle-text">{subtitle.text}</p>
+            {subtitle?.speaker && <span className="subtitle-speaker">{subtitle.speaker}:</span>}
+            <p className="subtitle-text">{subtitle?.text || '\u00a0'}</p>
+            <div className="theater-caption-tools"><button type="button" aria-pressed={narrationEnabled} onClick={()=>setNarrationEnabled(v=>!v)}>Narration {narrationEnabled?'on':'off'}</button><span>{tappedStar!==null?'A little note, just from you.':'Touch a star. Add your note.'}</span></div>
           </div>
         </footer>
-      )}
     </div>
   );
 }

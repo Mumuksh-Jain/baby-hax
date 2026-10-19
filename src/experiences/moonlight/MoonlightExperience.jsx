@@ -53,18 +53,28 @@ export default function MoonlightExperience({
 
   const ghostMood = getGhostMood();
 
+  const cancelTest = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setIsTesting(false);
+    setTestOutcome(null);
+  };
+
   const handleColorChange = (color) => {
+    cancelTest();
     setLightColor(color);
     setTestOutcome(null);
     if (soundEnabled) playLanternSwitchSound(color);
   };
 
   const handleBrightnessChange = (e) => {
+    cancelTest();
     setBrightness(parseInt(e.target.value, 10));
     setTestOutcome(null);
   };
 
   const handlePatternChange = (pat) => {
+    cancelTest();
     setStarPattern(pat);
     setTestOutcome(null);
   };
@@ -213,7 +223,7 @@ export default function MoonlightExperience({
           {/* Wooden Bedside Table with Official Lantern Artwork */}
           <div className="chamber-bedside-table">
             {/* Official Lantern sitting physically on table */}
-            <div className="chamber-lantern-wrap">
+            <button type="button" className="chamber-lantern-wrap" aria-label={`Lantern glow: ${lightColor}. Tap to change color.`} onClick={() => handleColorChange({warm:'sleepy',sleepy:'starlight',starlight:'warm'}[lightColor])}>
               <OfficialLantern className="chamber-lantern-img" />
               {/* Dynamic Glow Halo modulated by brightness & color */}
               <div
@@ -223,7 +233,8 @@ export default function MoonlightExperience({
                   transform: `scale(${0.7 + (brightness / 100) * 0.6})`,
                 }}
               ></div>
-            </div>
+              <span className="lantern-touch-hint">Tap to change the glow</span>
+            </button>
             <div className="table-top"></div>
             <div className="table-legs"></div>
           </div>

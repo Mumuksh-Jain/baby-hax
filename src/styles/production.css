@@ -18,7 +18,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 .dreamspace-paper-clouds-frame::after {
   content: ''; position: absolute; width: 440px; height: 240px; right: -290px; top: -30px;
-  background: url('/assets/production-art/sprites/dreamspace_paper_clouds.png') right bottom / cover;
+  background: url('/assets/optimized/production-art/sprites/dreamspace_paper_clouds.webp') right bottom / cover;
   transform: rotate(180deg); pointer-events: none;
 }
 .dreamspace-cloud { display: none; }
@@ -100,6 +100,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .chamber-bedside-table { bottom: 25%; right: 24%; width: 26%; z-index: 3; }
 .chamber-bedside-table .table-top, .chamber-bedside-table .table-legs { display: none; }
 .chamber-lantern-wrap { width: 230px; max-width: 160%; height: auto; aspect-ratio: 1.12; margin: 0 0 -24px; }
+button.chamber-lantern-wrap { border:0;background:transparent;padding:0;cursor:pointer;color:var(--color-bg-cream);font-family:var(--font-body); }
+button.chamber-lantern-wrap:focus-visible { outline:2px solid var(--color-soft-gold);outline-offset:6px;border-radius:35%; }
+.lantern-touch-hint { position:absolute;left:0;right:0;bottom:-10px;font-size:10px;white-space:nowrap;text-align:center;text-shadow:0 1px 5px var(--color-stage);opacity:.9; }
 .chamber-lantern-img { width: 100%; height: 100%; max-width: none; border-radius: 0; mask-image: none; -webkit-mask-image: none; filter: drop-shadow(0 8px 8px var(--color-stage-shadow)); z-index: 2; }
 .chamber-lantern-halo { width: 200px; height: 220px; background: radial-gradient(ellipse, var(--room-light), transparent 68%) !important; filter: blur(8px); z-index: 1; }
 .table-top { width: 100%; height: 14px; background: var(--color-room-trim); border: 2px solid var(--color-room-wood); }
@@ -142,9 +145,17 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .exp-receipt-footer { gap: 12px; font-size: .6rem; }
 .exp-receipt-close { min-width: 44px; min-height: 44px; }
 .dest-btn-sub, .cargo-btn-sub { white-space: normal; line-height: 1.3; }
+.express-map-destination {cursor:pointer;outline:none;}
+.express-map-hit {fill:transparent;stroke:transparent;stroke-width:3;pointer-events:all;}
+.express-map-destination:focus-visible .express-map-hit {stroke:var(--color-soft-gold);stroke-dasharray:8 5;}
+.express-map-pin circle {fill:var(--color-stage-glass);stroke:var(--color-soft-gold);stroke-width:2;}
+.express-map-pin text {fill:var(--color-stage-ink);font:600 17px var(--font-mono);}
+.express-map-destination.is-selected .express-map-pin circle,.express-map-destination:hover .express-map-pin circle {fill:var(--color-soft-gold);}
+.express-map-destination.is-selected .express-map-pin text,.express-map-destination:hover .express-map-pin text {fill:var(--color-stage);}
+.express-map-destination[aria-disabled=true] {cursor:default;}
 
 /* Cinematic owner retained. The illustrated set replaces only redundant static scenery. */
-.magical-star-theater { background: var(--color-stage) url('/assets/production-art/backgrounds/star_theater.png') center / cover; font-family: var(--font-body); height: 100dvh; }
+.magical-star-theater { background: var(--color-stage) url('/assets/optimized/production-art/backgrounds/star_theater.webp') center / cover; font-family: var(--font-body); height: 100dvh; }
 .magical-star-theater .layer-a-midnight-sky { background: linear-gradient(var(--color-stage-shadow), transparent 30%, var(--color-stage-shadow)); }
 .magical-star-theater .sky-paper-fiber-overlay, .magical-star-theater .sky-celestial-nebula { display: none; }
 .magical-star-theater .layer-c-left-paper-clouds, .magical-star-theater .layer-d-right-paper-clouds { opacity: .22; width: 14%; }
@@ -155,6 +166,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .theater-top-controls { z-index: 100; }
 .theater-ctrl-btn { min-height: 44px; }
 .layer-j-cinematic-subtitles { z-index: 90; pointer-events: none; }
+.magical-star-theater .theater-conductor-light { position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 180px 210px at var(--conduct-x,50%) var(--conduct-y,42%),var(--color-gold-halo),transparent);opacity:.3;transition:opacity .6s; }
+.magical-star-theater .theater-story-chapter {position:absolute;top:83px;left:20px;right:20px;text-align:center;z-index:4;pointer-events:none;color:var(--color-soft-gold);font:10px var(--font-mono);letter-spacing:.2em;opacity:.8;}
+.magical-star-theater .theater-caption-tools {display:flex;justify-content:center;align-items:center;gap:18px;margin-top:8px;}
+.magical-star-theater .theater-caption-tools button {pointer-events:auto;min-height:34px;border:1px solid var(--color-stage-muted);background:var(--color-stage-glass);color:var(--color-stage-ink);border-radius:20px;padding:5px 12px;font:11px var(--font-body);cursor:pointer;}
+.magical-star-theater .theater-caption-tools span {color:var(--color-stage-muted);font:11px var(--font-body);}
+.magical-star-theater .theater-caption-tools button:focus-visible {outline:3px solid var(--color-soft-gold);outline-offset:3px;}
+.magical-star-theater.star-answered .theater-conductor-light {opacity:.8;}
+.magical-star-theater[data-tapped-star="0"] .star-node-1 img,.magical-star-theater[data-tapped-star="1"] .star-node-2 img,.magical-star-theater[data-tapped-star="2"] .star-node-3 img {filter:drop-shadow(0 0 20px var(--color-soft-gold));}
+@media(max-width:600px){.magical-star-theater .theater-story-chapter{top:76px;font-size:8px;letter-spacing:.1em}.magical-star-theater .theater-caption-tools{gap:9px;margin-top:5px}.magical-star-theater .theater-caption-tools span{font-size:9px}.magical-star-theater .subtitle-card{padding:10px 13px}.magical-star-theater .theater-caption-tools button{min-height:36px;font-size:10px}}
 .cinematic-star-node { z-index: 35; }
 .magical-star-theater .cinematic-star-node { top: 0; left: 0; right: auto; bottom: auto; width: 72px; height: 88px; padding: 0; }
 .magical-star-theater .cradle-character-wrap { mask: none; -webkit-mask: none; clip-path: none; -webkit-clip-path: none; overflow: visible; border-radius: 0; background: none; }
@@ -174,7 +194,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .doorway-badge-row { padding: 12px 18px; margin: 0; gap: 8px; flex-wrap: wrap; }
 .doorway-exp-tag { font-family: var(--font-mono); font-size: .58rem; }
 .doorway-preview-art { height: 225px; border: 0; border-radius: 0; margin: 0; }
-.doorway-preview-art.orchestra-art { background: var(--color-stage) url('/assets/production-art/backgrounds/star_theater.png') center 65% / cover; }
+.doorway-preview-art.orchestra-art { background: var(--color-stage) url('/assets/optimized/production-art/backgrounds/star_theater.webp') center 65% / cover; }
 .gallery-pip { width: 165px; height: 205px; align-self: end; }
 .orchestra-art .music-box-preview-wrap { display: none; }
 .music-box-preview-wrap { background: var(--color-bg-cream); border-radius: 50%; padding: 10px; width: 122px; height: 122px; }
@@ -195,7 +215,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .doorway-launch-btn { margin-top: 12px; font-family: var(--font-body); font-size: .9rem; min-height: 46px; border: 0; border-radius: 8px; background: var(--color-berry-deep); box-shadow: none; padding: 10px 14px; white-space: nowrap; }
 .doorway-launch-btn span { color: var(--color-paper-light); }
 .express-doorway-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0,1fr); gap: 0; }
-.express-preview-mini-stage { margin: 0; height: 100%; min-height: 280px; border: 0; border-radius: 0; background: var(--color-stage) url('/assets/production-art/backgrounds/dream_express_world.png') center / cover; }
+.express-preview-mini-stage { margin: 0; height: 100%; min-height: 280px; border: 0; border-radius: 0; background: var(--color-stage) url('/assets/optimized/production-art/backgrounds/dream_express_world.webp') center / cover; }
 .express-mini-svg { display: none; }
 .archival-seal-trigger-btn { font-family: var(--font-body); font-size: .8rem; min-height: 44px; max-width: 100%; border-radius: 8px; }
 

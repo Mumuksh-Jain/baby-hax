@@ -5,6 +5,8 @@ import InventionWorkshop from './components/InventionWorkshop';
 import MagicalStarTheater from './components/MagicalStarTheater';
 import RetroAchievementPopup from './components/RetroAchievementPopup';
 import PipOriginStory from './components/PipOriginStory';
+import DreamClub from './components/club/DreamClub';
+import ScrollJourney from './components/club/ScrollJourney';
 import LivingDreamspace from './components/LivingDreamspace';
 import BedtimeEndingModal from './components/BedtimeEndingModal';
 import CreditsFooter from './components/CreditsFooter';
@@ -347,17 +349,27 @@ export default function App() {
    * Interactive Moon Toggle (Nightlight Mode)
    */
   const handleToggleMoon = useCallback(() => {
-    setIsNightlight((prev) => {
-      const next = !prev;
-      playMoonSound(next);
-      setSrAnnouncement(
-        next
-          ? 'Cozy bedtime nightlight turned ON.'
-          : 'Switched back to warm nursery daytime.'
-      );
-      return next;
-    });
-  }, []);
+    const next = !isNightlight;
+    setIsNightlight(next);
+    playMoonSound(next);
+    setSrAnnouncement(next ? 'Cozy bedtime nightlight turned on. Pip is getting sleepy.' : 'Warm nursery daytime. Pip is wide awake again.');
+    if (orchestraState === 'idle') {
+      clearDialogueTimer();
+      clearPipMotionTimer();
+      clearTimeout(panicTimerRef.current);
+      setCustomReaction({
+        id: next ? 'nightlight-yawn' : 'morning-wave',
+        quote: next ? '“Oh… that is very cozy. Just one more tiny yawn.”' : '“Good morning! Wait… is it morning? Let’s make something!”',
+        whisperTag: next ? 'Pip whispers sleepily:' : 'Pip perks up:',
+        status: next ? 'PIP IS GETTING SLEEPY' : 'PIP IS READY TO PLAY',
+        overlay: next ? 'zzz' : 'stars',
+        animationClass: next ? 'anim-drift' : 'anim-hop',
+      });
+      setIsPanicking(true);
+      setShowDialogue(true);
+      dialogueTimerRef.current = setTimeout(() => {setShowDialogue(false);setIsPanicking(false);}, 4200);
+    }
+  }, [isNightlight, orchestraState, clearDialogueTimer, clearPipMotionTimer]);
 
   /**
    * Primary Interaction: 'Psst, Pip?'
@@ -737,6 +749,8 @@ export default function App() {
         />
 
         {/* PASS 02 MASTER: Pip's Canonical Origin Story Flipbook */}
+        <ScrollJourney />
+        <DreamClub soundEnabled={soundOn} />
         <PipOriginStory />
 
         {/* PASS 03: Credits and Attribution Footer */}

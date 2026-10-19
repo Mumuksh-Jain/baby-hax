@@ -67,6 +67,10 @@
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(245, 216, 140, 0.22) 0%, rgba(212, 168, 67, 0.08) 35%, transparent 65%),
+    radial-gradient(ellipse at 12% 80%, rgba(163, 64, 99, 0.12) 0%, rgba(245, 220, 229, 0.05) 40%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(102, 82, 123, 0.08) 0%, transparent 60%);
 }
 
 .ambient-star {

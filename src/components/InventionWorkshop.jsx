@@ -62,7 +62,9 @@ export default function InventionWorkshop({
               <OfficialPip className="gallery-pip" />
               <div className="music-box-preview-wrap">
                 <img
-                  src="/assets/pip/pip_lullaby_box.png"
+                  src="/assets/optimized/pip/pip_lullaby_box.webp"
+                  loading="lazy"
+                  decoding="async"
                   alt="Official Lullaby Music Box"
                   className="preview-music-box-img"
                 />
@@ -85,7 +87,7 @@ export default function InventionWorkshop({
                 type="button"
                 className="doorway-launch-btn btn-orchestra"
                 onClick={() => onOpenExperience?.('orchestra')}
-                aria-label="Enter the Star Orchestra experience"
+                aria-label="Conduct the stars: Enter the Star Orchestra experience"
               >
                 <span>Conduct the stars →</span>
               </button>
@@ -124,7 +126,7 @@ export default function InventionWorkshop({
                 type="button"
                 className="doorway-launch-btn btn-moonlight"
                 onClick={() => onOpenExperience?.('moonlight')}
-                aria-label="Open the Moonlight Lab experience"
+                aria-label="Make a little moonlight: Open the Moonlight Lab experience"
               >
                 <span>Make a little moonlight →</span>
               </button>
@@ -148,7 +150,7 @@ export default function InventionWorkshop({
                 {/* Track lines */}
                 <path d="M 40 140 Q 200 40 320 80 T 560 130" fill="none" stroke="#2A3B66" strokeWidth="3" strokeDasharray="6 4" />
                 <path d="M 40 140 Q 200 40 320 80 T 560 130" fill="none" stroke="#F5D88C" strokeWidth="1.5" />
-                
+
                 {/* Station landmarks */}
                 <g transform="translate(180, 50)">
                   <ellipse cx="20" cy="15" rx="30" ry="16" fill="#F0F4F8" opacity="0.85" />
@@ -187,7 +189,7 @@ export default function InventionWorkshop({
                 type="button"
                 className="doorway-launch-btn btn-express"
                 onClick={() => onOpenExperience?.('express')}
-                aria-label="Board the Living Dream Express experience"
+                aria-label="Deliver a dream: Board the Living Dream Express experience"
               >
                 <span>Deliver a dream →</span>
               </button>
@@ -202,7 +204,7 @@ export default function InventionWorkshop({
           type="button"
           className="archival-seal-trigger-btn"
           onClick={() => setIsEasterEggOpen(true)}
-          aria-label="Open Pip's Archival Secret Postcard"
+
         >
           <span className="seal-star-icon">★</span>
           <span className="seal-text">Official Dream Office Seal · Click to Read Pip's Personal Letter</span>

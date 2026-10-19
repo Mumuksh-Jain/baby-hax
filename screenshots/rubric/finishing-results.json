@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Pip follows pointer",
+    "Mood toggle changes theme and Pip response",
+    "Real touch swipe changes story",
+    "Closing train preview cancels future sounds",
+    "Preview disabled during delivery",
+    "Delivery still completes",
+    "No console errors"
+  ],
+  "errors": []
+}

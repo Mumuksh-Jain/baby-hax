@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './PipOriginStory.css';
 
 /**
@@ -8,6 +8,7 @@ import './PipOriginStory.css';
  */
 export default function PipOriginStory() {
   const [currentScene, setCurrentScene] = useState(0);
+  const touchStart = useRef(null);
 
   const SCENES = [
     {
@@ -160,19 +161,20 @@ export default function PipOriginStory() {
       </header>
 
       {/* Storybook Flipbook Container */}
-      <div className="story-flipbook" role="region" aria-label="Storybook Flipbook">
+      <div className="story-flipbook" role="region" aria-label="Storybook Flipbook. Use left and right arrows or swipe to turn pages." aria-keyshortcuts="ArrowLeft ArrowRight" tabIndex={0} onKeyDown={e => { if(e.key === "ArrowRight") {e.preventDefault();handleNext();} if(e.key === "ArrowLeft") {e.preventDefault();handlePrev();} }} onTouchStart={e => {touchStart.current = [e.touches[0].clientX,e.touches[0].clientY];}} onTouchEnd={e => {if(!touchStart.current)return;const dx=e.changedTouches[0].clientX-touchStart.current[0],dy=e.changedTouches[0].clientY-touchStart.current[1];if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5) {if(e.cancelable)e.preventDefault();if(dx<0)handleNext();else handlePrev();}touchStart.current=null;}}>
         {/* Storybook Spine & Top Bookmark */}
         <div className="flipbook-bookmark" aria-hidden="true">
           <span className="ribbon-tail"></span>
         </div>
 
         {/* Active Scene Card */}
-        <article className="scene-page-spread" aria-live="polite">
+        <article key={scene.id} className="scene-page-spread" aria-live="polite">
           {/* Scene Illustration Canvas */}
-          <div className="scene-visual-pane">
+          <button type="button" className="scene-visual-pane" onClick={handleNext} >
             {scene.illustration}
             <span className="scene-time-tag">{scene.badge}</span>
-          </div>
+            <span className="scene-turn-hint" aria-hidden="true">TAP TO TURN ↗</span>
+          </button>
 
           {/* Scene Narrative Text */}
           <div className="scene-text-pane">
@@ -185,7 +187,7 @@ export default function PipOriginStory() {
 
             {/* Scene Footer & Page Turn Controls */}
             <div className="scene-controls">
-              <div className="scene-dots-indicator" aria-label={`Page ${currentScene + 1} of 3`}>
+              <div className="scene-dots-indicator" role="group" aria-label={`Page ${currentScene + 1} of 3`}>
                 {SCENES.map((s, idx) => (
                   <button
                     key={s.id}
@@ -202,7 +204,7 @@ export default function PipOriginStory() {
                   type="button"
                   className="scene-nav-btn prev-btn"
                   onClick={handlePrev}
-                  aria-label="Previous story chapter"
+                  aria-label="Prev story chapter"
                 >
                   <span>⬅ Prev</span>
                 </button>
@@ -210,7 +212,7 @@ export default function PipOriginStory() {
                   type="button"
                   className="scene-nav-btn next-btn"
                   onClick={handleNext}
-                  aria-label="Next story chapter"
+                  aria-label={currentScene === SCENES.length - 1 ? "Start Over: first story chapter" : "Turn Page to the next story chapter"}
                 >
                   <span>{currentScene === SCENES.length - 1 ? 'Start Over ↺' : 'Turn Page ➔'}</span>
                 </button>

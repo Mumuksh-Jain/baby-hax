@@ -1,0 +1,44 @@
+/* A stable proscenium, deliberate reveals, and a caption dock outside the acting space. */
+.magical-star-theater.theater-active .theater-stage{animation:none;transform:none;min-height:0;flex:1 1 0;max-width:1200px;}
+.magical-star-theater.theater-active .theater-top-controls{flex:0 0 68px;box-sizing:border-box;align-items:center;padding-top:12px;padding-bottom:12px;}
+.magical-star-theater.theater-active .layer-j-cinematic-subtitles{flex:0 0 126px;min-height:126px;max-width:800px;align-items:center;padding:10px 20px 20px;}
+.magical-star-theater.theater-active .subtitle-card{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;width:100%;max-width:650px;border:0;border-top:1px solid var(--color-gold-halo);border-radius:16px;padding:13px 24px 11px;background:var(--color-stage-glass);box-shadow:0 8px 30px var(--color-stage-shadow);backdrop-filter:blur(10px);animation:none;}
+.magical-star-theater.theater-active .subtitle-speaker{font:9px var(--font-mono);letter-spacing:.16em;color:var(--color-soft-gold);}
+.magical-star-theater.theater-active .subtitle-text{font:500 clamp(16px,1.5vw,22px)/1.35 var(--font-display);color:var(--color-stage-ink);letter-spacing:0;min-height:1.35em;}
+.magical-star-theater.theater-active .theater-caption-tools{margin-top:3px;gap:18px;}
+.magical-star-theater.theater-active .theater-story-chapter{top:12px;left:20px;right:20px;z-index:50;font:10px var(--font-mono);letter-spacing:.16em;}
+.theater-atmosphere{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,var(--color-stage-shadow),var(--color-stage-glass));opacity:.12;transition:opacity 1.7s;}
+.magical-star-theater.theater-active.phase-performing .theater-atmosphere{opacity:.6;}
+.magical-star-theater.theater-active.phase-performing.subscene-C .theater-atmosphere{opacity:.85;}
+.magical-star-theater.theater-active.phase-performing.subscene-D .theater-atmosphere{opacity:.72;}
+.magical-star-theater.theater-active.phase-celebrating .theater-atmosphere{opacity:.2;}
+.magical-star-theater.theater-active .layer-c-left-paper-clouds,.magical-star-theater.theater-active .layer-d-right-paper-clouds{opacity:.1;}
+.magical-star-theater.theater-active .layer-f-midground-clouds{opacity:.08;}
+.magical-star-theater.theater-active .scene-storybook-village{bottom:115px;height:min(27vh,250px);left:8%;right:8%;z-index:18;}
+.magical-star-theater.theater-active .scene-storybook-village .village-svg{filter:drop-shadow(0 0 20px var(--color-stage-shadow));}
+.magical-star-theater.theater-active.subscene-C .layer-i-foreground-paper-clouds{opacity:.2;}
+.magical-star-theater.theater-active .scene-storybook-question-mark{top:9%;width:125px;height:155px;}
+.magical-star-theater.theater-active .scene-storybook-telescope{left:calc(50% - 245px);bottom:18%;width:120px;height:145px;}
+.magical-star-theater.theater-active .scene-storybook-diamond{top:30%;width:min(360px,64vw);height:min(360px,64vw);z-index:18;}
+.magical-star-theater.theater-active .pip-storybook-cradle{transition:translate 1.5s var(--ease-out);}
+.magical-star-theater.theater-active.phase-performing.subscene-C .pip-storybook-cradle{translate:0 -18px;}
+.magical-star-theater.theater-active.phase-performing.subscene-D .pip-storybook-cradle{translate:0 20px;}
+.magical-star-theater.theater-active .cinematic-star-node:focus-visible{outline:2px solid var(--color-soft-gold);outline-offset:5px;border-radius:50%;}
+.magical-star-theater.theater-active .cradle-character-wrap:focus-visible{outline:2px solid var(--color-soft-gold);outline-offset:8px;border-radius:40%;}
+.magical-star-theater.theater-active .theater-ctrl-btn{font-family:var(--font-body);font-weight:500;}
+@media(max-width:600px){
+ .magical-star-theater.theater-active .theater-top-controls{flex-basis:62px;padding:8px 10px;gap:12px;}
+ .magical-star-theater.theater-active .layer-j-cinematic-subtitles{flex-basis:132px;min-height:132px;padding:5px 10px 14px;}
+ .magical-star-theater.theater-active .subtitle-card{padding:10px 12px;gap:4px;}
+ .magical-star-theater.theater-active .subtitle-text{font-size:16px;min-height:43px;display:flex;align-items:center;justify-content:center;}
+ .magical-star-theater.theater-active .subtitle-speaker{font-size:8px;}
+ .magical-star-theater.theater-active .theater-story-chapter{font-size:8px;top:8px;letter-spacing:.08em;}
+ .magical-star-theater.theater-active .scene-storybook-village{left:-25%;right:-25%;bottom:125px;height:155px;}
+ .magical-star-theater.theater-active .scene-storybook-question-mark{top:10%;width:85px;height:105px;}
+ .magical-star-theater.theater-active .scene-storybook-telescope{left:5%;bottom:14%;width:75px;height:95px;}
+ .magical-star-theater.theater-active .scene-storybook-diamond{top:28%;width:210px;height:210px;}
+ .magical-star-theater.theater-active .theater-caption-tools{gap:10px;}
+ .magical-star-theater.theater-active .theater-caption-tools button{min-height:36px;}
+}
+@media(max-height:560px) and (min-width:600px){.magical-star-theater.theater-active .layer-j-cinematic-subtitles{flex-basis:100px;min-height:100px;padding-bottom:5px}.magical-star-theater.theater-active .subtitle-card{padding:6px 14px;gap:2px}.magical-star-theater.theater-active .pip-storybook-cradle{scale:.7}.magical-star-theater.theater-active .theater-story-chapter{top:0}.magical-star-theater.theater-active .scene-storybook-village{bottom:95px}}
+@media(prefers-reduced-motion:reduce){.magical-star-theater.theater-active .theater-atmosphere,.magical-star-theater.theater-active .pip-storybook-cradle{transition:none;translate:none}.magical-star-theater.theater-active .theater-conductor-light{display:none}.magical-star-theater.theater-active .scene-storybook-question-mark,.magical-star-theater.theater-active .scene-storybook-village,.magical-star-theater.theater-active .scene-storybook-diamond{transition:opacity .15s;}}

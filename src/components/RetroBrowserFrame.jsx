@@ -51,11 +51,19 @@ export default function RetroBrowserFrame({
       )}
 
       {/* Accessible Scrapbook Paper Tabs Strip */}
-      <nav className="browser-tabs-strip" role="tablist" aria-label="Nursery Document Tabs">
+      <nav className="browser-tabs-strip" role="tablist" aria-label="Nursery Document Tabs" onKeyDown={event => {
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+        event.preventDefault();
+        const ids=['bedroom','log','blueprint'],index=ids.indexOf(activeTab);
+        const next=event.key==='Home'?0:event.key==='End'?2:(index+(event.key==='ArrowRight'?1:2))%3;
+        onSelectTab(ids[next]);
+        document.getElementById(`tab-${ids[next]}`)?.focus();
+      }}>
         <button
           type="button"
           role="tab"
           id="tab-bedroom"
+          tabIndex={activeTab==='bedroom'?0:-1}
           aria-selected={activeTab === 'bedroom'}
           aria-controls="panel-bedroom"
           className={`paper-tab ${activeTab === 'bedroom' ? 'active-tab' : 'idle-tab'}`}
@@ -71,6 +79,7 @@ export default function RetroBrowserFrame({
           type="button"
           role="tab"
           id="tab-log"
+          tabIndex={activeTab==='log'?0:-1}
           aria-selected={activeTab === 'log'}
           aria-controls="panel-log"
           className={`paper-tab ${activeTab === 'log' ? 'active-tab' : 'idle-tab'}`}
@@ -86,6 +95,7 @@ export default function RetroBrowserFrame({
           type="button"
           role="tab"
           id="tab-blueprint"
+          tabIndex={activeTab==='blueprint'?0:-1}
           aria-selected={activeTab === 'blueprint'}
           aria-controls="panel-blueprint"
           className={`paper-tab ${activeTab === 'blueprint' ? 'active-tab' : 'idle-tab'}`}
@@ -144,7 +154,7 @@ export default function RetroBrowserFrame({
               className={`sound-toggle-btn ${soundEnabled ? 'is-enabled' : 'is-muted'}`}
               onClick={onToggleSound}
               aria-pressed={soundEnabled}
-              aria-label={`Sound effects are currently ${soundEnabled ? 'ON' : 'OFF'}. Click to toggle sound.`}
+              aria-label={`Sound: ${soundEnabled ? 'ON' : 'OFF'}. Click to toggle sound.`}
               title={soundEnabled ? 'Mute sound effects' : 'Enable gentle sound effects'}
             >
               <span className="sound-icon" aria-hidden="true">
@@ -164,7 +174,7 @@ export default function RetroBrowserFrame({
 
         {/* Address / Location Bar */}
         <div className="browser-address-bar">
-          <div className="nav-arrows" aria-hidden="true">
+          <div className="nav-arrows" role="group" aria-label="Nursery navigation">
             <button
               type="button"
               className="nav-arrow"

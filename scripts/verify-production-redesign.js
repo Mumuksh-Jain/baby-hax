@@ -104,7 +104,7 @@ try {
   await page.click('.cargo-select-btn:nth-child(2)');
   await page.click('.dispatch-train-btn');
   const wheel1=await page.$eval('.train-wheel.is-spinning',e=>getComputedStyle(e).transform);
-  await sleep(120);
+  await page.waitForFunction(first=>getComputedStyle(document.querySelector('.train-wheel.is-spinning')).transform!==first,{timeout:1200},wheel1);
   const wheel2=await page.$eval('.train-wheel.is-spinning',e=>getComputedStyle(e).transform);
   check(`${width} independent SVG wheels rotate`,wheel1!==wheel2);
   await page.$eval('.experience-shell-body',e=>e.scrollTo({top:0,behavior:'instant'}));

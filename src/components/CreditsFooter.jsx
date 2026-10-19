@@ -26,7 +26,7 @@ export default function CreditsFooter() {
         <div className="credits-grid">
           {/* Col 1: Submission Details */}
           <div className="credits-col">
-            <h4 className="credits-heading">haX.baby Track 1</h4>
+            <h3 className="credits-heading">haX.baby Track 1</h3>
             <p className="credits-text">
               <strong>Pip's Website Won't Go to Bed!</strong>
               <br />
@@ -38,7 +38,7 @@ export default function CreditsFooter() {
 
           {/* Col 2: Character & Asset Attribution */}
           <div className="credits-col">
-            <h4 className="credits-heading">Official Assets</h4>
+            <h3 className="credits-heading">Official Assets</h3>
             <p className="credits-text">
               Official Pip character artworks, lantern, and music box courtesy of{' '}
               <a
@@ -56,11 +56,11 @@ export default function CreditsFooter() {
 
           {/* Col 3: Audio & Tech Architecture */}
           <div className="credits-col">
-            <h4 className="credits-heading">Audio & Engineering</h4>
+            <h3 className="credits-heading">Audio & Engineering</h3>
             <p className="credits-text">
               Synthesized via pure <strong>Web Audio API</strong> (zero external audio libs).
               <br />
-              Crafted with React, Vite, and paper-craft SVG illustration.
+              Crafted with React, Vite, Three.js, and paper-craft SVG illustration.
             </p>
           </div>
         </div>

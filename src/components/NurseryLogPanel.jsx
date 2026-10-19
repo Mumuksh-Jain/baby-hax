@@ -29,10 +29,18 @@ export default function NurseryLogPanel({ onClose }) {
       aria-labelledby="log-panel-title"
     >
       <div className="log-panel-inner">
+        {/* Brass Clipboard Clip */}
+        <div className="log-clipboard-clip" aria-hidden="true">
+          <span className="clip-star">★</span>
+        </div>
+
         <header className="log-panel-header">
           <div className="log-header-left">
-            <span className="log-badge" aria-hidden="true">📋 SYSTEM LOG</span>
-            <h2 id="log-panel-title" className="log-title">midnight_nursery.log</h2>
+            <span className="log-badge" aria-hidden="true">📋 NURSERY DISPATCH</span>
+            <div className="log-titles">
+              <h2 id="log-panel-title" className="log-title">midnight_nursery.log</h2>
+              <span className="log-subtitle">Bedtime Incident Journal · Wing A</span>
+            </div>
           </div>
           <button
             type="button"

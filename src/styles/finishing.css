@@ -1,0 +1,31 @@
+.doorway-preview-art.orchestra-art {
+  background-image: url('/assets/optimized/production-art/backgrounds/star_theater.webp');
+}
+.express-preview-mini-stage {
+  background-image: url('/assets/optimized/production-art/backgrounds/dream_express_world.webp');
+}
+.dreamspace-paper-clouds-frame::after {
+  background-image: url('/assets/optimized/production-art/sprites/dreamspace_paper_clouds.webp');
+}
+.psst-button .btn-tag { color: var(--color-paper-light); opacity: 1; }
+.journey-chapters button { opacity: 1; }
+.journey-chapters button:not([aria-pressed=true]) { border-top-style: dashed; }
+.scene-dot-btn, .scene-dot-btn.is-active {
+  min-width: 32px;
+  min-height: 32px;
+  border: 9px solid var(--color-bg-cream);
+  box-sizing: border-box;
+  transform: none;
+}
+.scene-dot-btn:focus-visible { outline: 3px solid var(--color-berry); outline-offset: 1px; }
+.club-model-tools button { min-height: 44px; min-width: 44px; }
+.hero-after-hours{display:flex;flex-wrap:wrap;gap:4px 20px;margin-top:14px;}
+.hero-after-hours a{font:13px var(--font-body);color:var(--color-berry-deep);text-decoration:underline;text-underline-offset:5px;min-height:44px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;}
+.hero-after-hours a:focus-visible{outline:2px solid var(--color-berry);outline-offset:4px;border-radius:3px;}
+@media(max-width:600px){.hero-after-hours{justify-content:center;gap:0 18px}.hero-after-hours a{font-size:12px}.hero-section .hero-title{font-size:clamp(1.9rem,7.8vw,2.65rem);line-height:1.12}}
+.club-model-tools button:hover { transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) {
+  .club-model-tools button:hover { transform: none; }
+}
+
+.topbar-status-badge { color: var(--color-berry-deep); }

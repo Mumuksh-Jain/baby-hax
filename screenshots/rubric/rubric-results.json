@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "Malformed stored chat does not crash page",
+    "Nickname persisted",
+    "Returning personalized greeting",
+    "Contextual joke response",
+    "3D turn responds",
+    "3D wave responds",
+    "Keyboard game completes six dreams",
+    "Replay resets game",
+    "Manual route reaches destination",
+    "Keyboard route control",
+    "Scroll moves train",
+    "Story keyboard turns page",
+    "Secret dialog opened",
+    "Secret focus trapped",
+    "Secret closes and restores focus",
+    "Wish broadcasts to independent browser session",
+    "1440 no page overflow",
+    "768 no page overflow",
+    "375 no page overflow",
+    "320 no page overflow",
+    "Reduced-motion game stars static",
+    "No runtime errors"
+  ],
+  "errors": []
+}

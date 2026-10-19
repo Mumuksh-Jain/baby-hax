@@ -5,6 +5,7 @@
     "1440 constellation stars reachable",
     "1440 constellation chime responds",
     "1440 orchestra no horizontal clipping/overflow",
+    "1440 header buttons have separate hit targets",
     "1440 three independent star buttons",
     "1440 equal star sizes",
     "1440 keyboard star collection",
@@ -14,7 +15,10 @@
     "1440 actual worried ghost state",
     "1440 one official lamp",
     "1440 no original occupied room plate",
+    "1440-lantern-warm-worried scene visible in capture",
     "1440 moon mood and squinting ghost",
+    "1440-lantern-moon-bright scene visible in capture",
+    "1440-lantern-starlight-asleep scene visible in capture",
     "1440 moonlight stamp earned",
     "1440 express no horizontal clipping/overflow",
     "1440 live rotating lighthouse",
@@ -35,6 +39,7 @@
     "768 constellation stars reachable",
     "768 constellation chime responds",
     "768 orchestra no horizontal clipping/overflow",
+    "768 header buttons have separate hit targets",
     "768 three independent star buttons",
     "768 equal star sizes",
     "768 keyboard star collection",
@@ -44,7 +49,10 @@
     "768 actual worried ghost state",
     "768 one official lamp",
     "768 no original occupied room plate",
+    "768-lantern-warm-worried scene visible in capture",
     "768 moon mood and squinting ghost",
+    "768-lantern-moon-bright scene visible in capture",
+    "768-lantern-starlight-asleep scene visible in capture",
     "768 moonlight stamp earned",
     "768 express no horizontal clipping/overflow",
     "768 live rotating lighthouse",
@@ -65,6 +73,7 @@
     "375 constellation stars reachable",
     "375 constellation chime responds",
     "375 orchestra no horizontal clipping/overflow",
+    "375 header buttons have separate hit targets",
     "375 three independent star buttons",
     "375 equal star sizes",
     "375 keyboard star collection",
@@ -74,7 +83,10 @@
     "375 actual worried ghost state",
     "375 one official lamp",
     "375 no original occupied room plate",
+    "375-lantern-warm-worried scene visible in capture",
     "375 moon mood and squinting ghost",
+    "375-lantern-moon-bright scene visible in capture",
+    "375-lantern-starlight-asleep scene visible in capture",
     "375 moonlight stamp earned",
     "375 express no horizontal clipping/overflow",
     "375 live rotating lighthouse",
@@ -95,6 +107,7 @@
     "320 constellation stars reachable",
     "320 constellation chime responds",
     "320 orchestra no horizontal clipping/overflow",
+    "320 header buttons have separate hit targets",
     "320 three independent star buttons",
     "320 equal star sizes",
     "320 keyboard star collection",
@@ -104,7 +117,10 @@
     "320 actual worried ghost state",
     "320 one official lamp",
     "320 no original occupied room plate",
+    "320-lantern-warm-worried scene visible in capture",
     "320 moon mood and squinting ghost",
+    "320-lantern-moon-bright scene visible in capture",
+    "320-lantern-starlight-asleep scene visible in capture",
     "320 moonlight stamp earned",
     "320 express no horizontal clipping/overflow",
     "320 live rotating lighthouse",
@@ -125,6 +141,7 @@
     "414 constellation stars reachable",
     "414 constellation chime responds",
     "414 orchestra no horizontal clipping/overflow",
+    "414 header buttons have separate hit targets",
     "414 three independent star buttons",
     "414 equal star sizes",
     "414 keyboard star collection",
@@ -134,7 +151,10 @@
     "414 actual worried ghost state",
     "414 one official lamp",
     "414 no original occupied room plate",
+    "414-lantern-warm-worried scene visible in capture",
     "414 moon mood and squinting ghost",
+    "414-lantern-moon-bright scene visible in capture",
+    "414-lantern-starlight-asleep scene visible in capture",
     "414 moonlight stamp earned",
     "414 express no horizontal clipping/overflow",
     "414 live rotating lighthouse",
@@ -244,25 +264,69 @@
   "audio": [
     {
       "type": "start",
-      "id": 0.49497255991545663,
-      "duration": 20,
-      "wall": 12494.800000000745
+      "id": 0.05256837138365067,
+      "duration": 2.6891041666666666,
+      "wall": 1770.9000000000233
     },
     {
       "type": "ended",
-      "id": 0.49497255991545663,
-      "wall": 32488.599999997765
+      "id": 0.05256837138365067,
+      "wall": 4455.300000000047
     },
     {
       "type": "start",
-      "id": 0.5037026947303066,
-      "duration": 2.2826458333333335,
-      "wall": 32751.5
+      "id": 0.5221333336346002,
+      "duration": 1.7392708333333333,
+      "wall": 4552.100000000093
     },
     {
       "type": "ended",
-      "id": 0.5037026947303066,
-      "wall": 35038.599999997765
+      "id": 0.5221333336346002,
+      "wall": 6285.20000000007
+    },
+    {
+      "type": "start",
+      "id": 0.09219935238147425,
+      "duration": 2.064125,
+      "wall": 6351.800000000047
+    },
+    {
+      "type": "ended",
+      "id": 0.09219935238147425,
+      "wall": 8415.5
+    },
+    {
+      "type": "start",
+      "id": 0.049358681095568624,
+      "duration": 2.02425,
+      "wall": 9249
+    },
+    {
+      "type": "ended",
+      "id": 0.049358681095568624,
+      "wall": 11277.20000000007
+    },
+    {
+      "type": "start",
+      "id": 0.9682943829650498,
+      "duration": 20,
+      "wall": 11749.800000000047
+    },
+    {
+      "type": "ended",
+      "id": 0.9682943829650498,
+      "wall": 31745.300000000047
+    },
+    {
+      "type": "start",
+      "id": 0.1677580614037274,
+      "duration": 3.0539583333333336,
+      "wall": 32003.100000000093
+    },
+    {
+      "type": "ended",
+      "id": 0.1677580614037274,
+      "wall": 35055.40000000002
     }
   ]
 }

@@ -1,0 +1,77 @@
+{
+  "operation": "Format conversion only. Original dimensions and source artwork preserved.",
+  "images": [
+    {
+      "source": "pip/pip_avatar_cloud.png",
+      "output": "public/assets/optimized/pip/pip_avatar_cloud.webp",
+      "originalBytes": 732409,
+      "optimizedBytes": 26452
+    },
+    {
+      "source": "pip/pip_dream_lantern.png",
+      "output": "public/assets/optimized/pip/pip_dream_lantern.webp",
+      "originalBytes": 826675,
+      "optimizedBytes": 17880
+    },
+    {
+      "source": "pip/pip_lullaby_box.png",
+      "output": "public/assets/optimized/pip/pip_lullaby_box.webp",
+      "originalBytes": 887578,
+      "optimizedBytes": 26628
+    },
+    {
+      "source": "pip/pip_portrait.png",
+      "output": "public/assets/optimized/pip/pip_portrait.webp",
+      "originalBytes": 716309,
+      "optimizedBytes": 35512
+    },
+    {
+      "source": "production-art/backgrounds/star_theater.png",
+      "output": "public/assets/optimized/production-art/backgrounds/star_theater.webp",
+      "originalBytes": 1777199,
+      "optimizedBytes": 150206
+    },
+    {
+      "source": "production-art/backgrounds/dream_express_world.png",
+      "output": "public/assets/optimized/production-art/backgrounds/dream_express_world.webp",
+      "originalBytes": 1707565,
+      "optimizedBytes": 175844
+    },
+    {
+      "source": "production-art/derived/moonlight_room_empty.png",
+      "output": "public/assets/optimized/production-art/derived/moonlight_room_empty.webp",
+      "originalBytes": 2026666,
+      "optimizedBytes": 167960
+    },
+    {
+      "source": "production-art/derived/dream_express_world_no_beam.png",
+      "output": "public/assets/optimized/production-art/derived/dream_express_world_no_beam.webp",
+      "originalBytes": 1982290,
+      "optimizedBytes": 170938
+    },
+    {
+      "source": "production-art/sprites/dreamspace_paper_clouds.png",
+      "output": "public/assets/optimized/production-art/sprites/dreamspace_paper_clouds.webp",
+      "originalBytes": 73686,
+      "optimizedBytes": 19250
+    },
+    {
+      "source": "production-art/sprites/orchestra_star_1.png",
+      "output": "public/assets/optimized/production-art/sprites/orchestra_star_1.webp",
+      "originalBytes": 12171,
+      "optimizedBytes": 3186
+    },
+    {
+      "source": "production-art/sprites/orchestra_star_2.png",
+      "output": "public/assets/optimized/production-art/sprites/orchestra_star_2.webp",
+      "originalBytes": 12151,
+      "optimizedBytes": 3236
+    },
+    {
+      "source": "production-art/sprites/orchestra_star_3.png",
+      "output": "public/assets/optimized/production-art/sprites/orchestra_star_3.webp",
+      "originalBytes": 12487,
+      "optimizedBytes": 3238
+    }
+  ]
+}

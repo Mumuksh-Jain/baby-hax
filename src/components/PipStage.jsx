@@ -90,6 +90,10 @@ export default function PipStage({
 
   return (
     <div
+      onPointerMove={e => {if(orchestraState !== 'idle' || matchMedia('(prefers-reduced-motion: reduce)').matches)return;const r=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--pip-look-x', ((e.clientX-r.left)/r.width-.5)*12+'deg');e.currentTarget.style.setProperty('--pip-look-y', -((e.clientY-r.top)/r.height-.5)*8+'deg');}}
+      onPointerLeave={e => {e.currentTarget.style.setProperty('--pip-look-x','0deg');e.currentTarget.style.setProperty('--pip-look-y','0deg');}}
+      onPointerDown={e => {if(e.pointerType==='touch') e.currentTarget.style.setProperty('--pip-look-x','6deg');}}
+      onPointerUp={e => {if(e.pointerType==='touch') e.currentTarget.style.setProperty('--pip-look-x','0deg');}}
       className={`pip-stage-container ${isNightlight ? 'nightlight-active' : ''} orchestra-${orchestraState}`}
     >
       {/* Dream Atmosphere (Interactive Moon & Home Stars) */}
@@ -99,7 +103,7 @@ export default function PipStage({
           type="button"
           className={`mini-moon-btn ${isNightlight ? 'is-glowing-night' : ''}`}
           onClick={onToggleMoon}
-          aria-label={`Cozy nightlight is currently ${isNightlight ? 'ON' : 'OFF'}. Click to toggle nightlight.`}
+          aria-label={`Tap to toggle cozy nightlight. Currently ${isNightlight ? 'ON' : 'OFF'}.`}
           aria-pressed={isNightlight}
           title={isNightlight ? 'Switch to warm nursery daytime' : 'Turn on cozy bedtime nightlight'}
         >
@@ -380,11 +384,12 @@ export default function PipStage({
             title={isPerforming ? 'Click to tuck Pip in early' : 'Click or tap to check on Pip!'}
           >
             <img
-              src="/assets/pip/pip_avatar_cloud.png"
+              src="/assets/optimized/pip/pip_avatar_cloud.webp"
+              width="896"
+              height="1090"
+              fetchPriority="high"
               alt="Pip, a friendly baby with a round skull face, wearing a starry nightcap with a pink bow, floating on a cozy dream cloud and waving warmly."
               className="pip-image"
-              width="340"
-              height="408"
             />
 
             {/* Dynamic Floating Decorations for Reactions */}

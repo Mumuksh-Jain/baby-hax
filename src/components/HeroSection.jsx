@@ -78,13 +78,13 @@ export default function HeroSection({
 
               {/* PASS 02: Discoverable Link to Invention Workshop */}
               <a
-                href="#invention-workshop"
+                href="#workshop"
                 className="hero-inventions-link"
                 onClick={(e) => {
                   e.preventDefault();
-                  document.getElementById('invention-workshop')?.scrollIntoView({ behavior: 'smooth' });
+                  document.getElementById('workshop')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                aria-label="Scroll down to Pip's Little Invention Workshop"
+
               >
                 <span className="inventions-link-icon" aria-hidden="true">🧸</span>
                 <span className="inventions-link-text">See My Inventions</span>
@@ -109,6 +109,10 @@ export default function HeroSection({
               Made with 3 stars, 1 moonbeam &amp; absolutely no bedtime discipline.
             </p>
           </footer>
+          <nav className="hero-after-hours" aria-label="More nursery adventures">
+            <a href="#after-hours">Meet Pip & leave a wish <span aria-hidden="true">↗</span></a>
+            <a href="#origin-story">Read Pip’s story <span aria-hidden="true">↓</span></a>
+          </nav>
         </div>
 
         {/* Right Column: Handcrafted Illustrated Pip Stage */}

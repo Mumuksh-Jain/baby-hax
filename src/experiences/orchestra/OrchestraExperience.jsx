@@ -123,7 +123,7 @@ export default function OrchestraExperience({
                   aria-label="Star 1: Tap to wake soprano bell"
                 >
                   <img
-                    src="/assets/production-art/sprites/orchestra_star_1.png"
+                    src="/assets/optimized/production-art/sprites/orchestra_star_1.webp"
                     alt="Soprano Star"
                     className="star-sprite-img"
                   />
@@ -141,7 +141,7 @@ export default function OrchestraExperience({
                   aria-label="Star 2: Tap to wake alto chime"
                 >
                   <img
-                    src="/assets/production-art/sprites/orchestra_star_2.png"
+                    src="/assets/optimized/production-art/sprites/orchestra_star_2.webp"
                     alt="Alto Star"
                     className="star-sprite-img"
                   />
@@ -159,7 +159,7 @@ export default function OrchestraExperience({
                   aria-label="Star 3: Tap to assemble full choir"
                 >
                   <img
-                    src="/assets/production-art/sprites/orchestra_star_3.png"
+                    src="/assets/optimized/production-art/sprites/orchestra_star_3.webp"
                     alt="Choir Star"
                     className="star-sprite-img"
                   />

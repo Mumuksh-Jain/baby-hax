@@ -62,7 +62,7 @@
   max-width: 860px;
   height: 420px;
   position: relative;
-  background: url('/assets/production-art/backgrounds/star_theater.png') no-repeat center bottom;
+  background: url('/assets/optimized/production-art/backgrounds/star_theater.webp') no-repeat center bottom;
   background-size: cover;
   border: 3px solid #F5D88C;
   border-radius: var(--radius-md);

@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Wish saved",
+    "Wish survives process restart",
+    "Invalid null body rejected",
+    "Cross-origin write rejected",
+    "Oversize payload rejected"
+  ]
+}

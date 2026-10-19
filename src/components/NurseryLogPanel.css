@@ -1,7 +1,15 @@
+/* ==========================================================================
+   NurseryLogPanel Component
+   Theme: Whimsical Bedtime Nursery Clipboard & Incident Journal
+   Palette: Storybook Cream (#FFFDF8), Cocoa (#5C4033), Berry (#A34063),
+            Faded Blush (#F5DCE5), Soft Gold (#F5D88C), Midnight Ink (#25243D)
+   Typography: Fraunces (Headings), Fredoka (Body), Space Mono (Meta/Stamps)
+   ========================================================================== */
+
 .nursery-log-panel {
   position: relative;
   width: 100%;
-  padding: 1.5rem 1rem;
+  padding: 2rem 1rem 1.5rem;
   animation: panel-fade-in 0.25s var(--ease-snappy) forwards;
 }
 
@@ -10,25 +18,54 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Desk Clipboard / Ledger Container */
 .log-panel-inner {
-  background-color: #212032;
-  color: #E2DFE8;
-  border: 2.5px solid var(--color-cocoa);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-storybook-float);
-  overflow: hidden;
+  position: relative;
+  background-color: var(--color-paper-light, #FFFCF7);
+  color: var(--color-night-ink, #25243D);
+  border: 2.5px solid var(--color-cocoa, #5C4033);
+  border-radius: var(--radius-lg, 22px);
+  box-shadow: 0 6px 0 var(--color-cocoa, #5C4033), var(--shadow-storybook-float, 0 16px 36px rgba(92, 64, 51, 0.12));
+  overflow: visible;
   max-width: 860px;
   margin: 0 auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
 }
 
+/* Brass Clipboard Clip perched at the top */
+.log-clipboard-clip {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 22px;
+  background: linear-gradient(180deg, var(--color-soft-gold, #F5D88C) 0%, #D4A843 100%);
+  border: 2px solid var(--color-cocoa, #5C4033);
+  border-radius: 6px 6px 3px 3px;
+  box-shadow: 0 3px 6px rgba(92, 64, 51, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+
+.clip-star {
+  color: var(--color-cocoa, #5C4033);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* Header */
 .log-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
-  background-color: #171624;
-  border-bottom: 2px solid #322F4A;
+  padding: 14px 20px;
+  background-color: var(--color-blush-tint, #FCF1F5);
+  border-bottom: 2px solid var(--color-paper-border, #EADBCC);
+  border-top-left-radius: calc(var(--radius-lg, 22px) - 2.5px);
+  border-top-right-radius: calc(var(--radius-lg, 22px) - 2.5px);
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -36,146 +73,254 @@
 .log-header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .log-badge {
+  font-family: var(--font-mono);
   font-size: 0.68rem;
-  background-color: var(--color-berry);
-  color: var(--color-paper-light);
-  padding: 2px 8px;
-  border-radius: var(--radius-xs);
+  background-color: var(--color-berry, #A34063);
+  color: #FFFFFF;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill, 9999px);
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  box-shadow: 0 1px 2px rgba(163, 64, 99, 0.2);
+}
+
+.log-titles {
+  display: flex;
+  flex-direction: column;
 }
 
 .log-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-soft-gold);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-cocoa, #5C4033);
   margin: 0;
+  line-height: 1.2;
+}
+
+.log-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-berry, #A34063);
+  font-weight: 600;
 }
 
 .log-close-btn {
-  background-color: var(--color-faded-blush);
-  color: var(--color-night-ink);
+  background-color: var(--color-faded-blush, #F5DCE5);
+  color: var(--color-berry-deep, #7D2D49);
   font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 700;
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid var(--color-cocoa);
-  box-shadow: 0 2px 0 var(--color-cocoa);
+  padding: 8px 16px;
+  min-height: 40px;
+  border-radius: var(--radius-pill, 9999px);
+  border: 1.5px solid var(--color-cocoa, #5C4033);
+  box-shadow: 0 2px 0 var(--color-cocoa, #5C4033);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-fast, 160ms);
 }
 
 .log-close-btn:hover {
-  background-color: #FFF;
+  background-color: #FFFFFF;
   transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--color-cocoa, #5C4033);
 }
 
+.log-close-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--color-cocoa, #5C4033);
+}
+
+/* Meta Strip (Official Nursery Docket) */
 .log-meta-strip {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 8px 18px;
-  background-color: #1B1A2C;
-  border-bottom: 1px dashed #3D3A58;
+  padding: 10px 20px;
+  background-color: #F8EFE4;
+  border-bottom: 1.5px dashed var(--color-stitch, #CCAFA0);
+  font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: #A3A0B8;
+  font-weight: 600;
+  color: var(--color-cocoa-soft, #7A5B49);
 }
 
+.log-meta-strip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Console / Ledger Body */
 .log-console-body {
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-size: 0.82rem;
+  gap: 10px;
+  font-size: 0.88rem;
   line-height: 1.55;
-  max-height: 420px;
+  max-height: 440px;
   overflow-y: auto;
+  background-color: var(--color-paper-light, #FFFCF7);
+  background-image: linear-gradient(rgba(92, 64, 51, 0.03) 1px, transparent 1px);
+  background-size: 100% 28px;
 }
 
+/* Individual Log Entry Card */
 .log-entry {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: baseline;
+  gap: 12px;
   flex-wrap: wrap;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 8px);
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(234, 219, 204, 0.7);
+  transition: background-color 0.15s ease;
+}
+
+.log-entry:hover {
+  background-color: #FFF8EE;
+  border-color: #E2CFBE;
 }
 
 .log-time {
-  color: #7A7893;
+  font-family: var(--font-mono);
+  color: var(--color-cocoa-soft, #7A5B49);
   font-size: 0.76rem;
+  font-weight: 600;
   flex-shrink: 0;
 }
 
 .log-tag {
-  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill, 9999px);
   flex-shrink: 0;
+  border: 1px solid;
+  letter-spacing: 0.03em;
 }
 
-.tag-info { background-color: #2F4858; color: #9EE493; }
-.tag-warn { background-color: #5C4325; color: #F5D88C; }
-.tag-action { background-color: #4D2852; color: #F5DCE5; }
-.tag-alert { background-color: #5C2438; color: #FFA6BF; }
-.tag-quote { background-color: #2D3A50; color: #8BE9FD; }
-.tag-live { background-color: #1E5C38; color: #50FA7B; animation: pulse-live 1.5s infinite; }
+/* Harmonized Storybook Badge Colors */
+.tag-info   { background-color: #E6F4EA; color: #1E5A32; border-color: #BDE4C8; }
+.tag-warn   { background-color: #FEF3D6; color: #8A4F00; border-color: #F8D88C; }
+.tag-action { background-color: #FCE6EE; color: #8C294C; border-color: #EFADC2; }
+.tag-alert  { background-color: #FDE8EB; color: #9C1F3B; border-color: #F6B8C2; }
+.tag-quote  { background-color: #EAF2FC; color: #1B4C7D; border-color: #BED8F7; }
+.tag-live   { background-color: #FFF6D1; color: #7A5200; border-color: #E5C358; animation: pulse-live 1.8s infinite; }
 
 @keyframes pulse-live {
-  0% { opacity: 0.7; }
-  50% { opacity: 1; }
-  100% { opacity: 0.7; }
+  0%   { opacity: 0.75; transform: scale(0.98); }
+  50%  { opacity: 1;    transform: scale(1.02); }
+  100% { opacity: 0.75; transform: scale(0.98); }
 }
 
 .log-msg {
   flex: 1;
-  color: #E2DFE8;
+  color: var(--color-night-ink, #25243D);
+  font-family: var(--font-body);
+  font-size: 0.90rem;
 }
 
 .quote-text {
   font-style: italic;
-  color: #F5D88C;
+  color: var(--color-berry, #A34063);
+  font-weight: 500;
+  background-color: #FCF1F5;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border-left: 3px solid var(--color-berry, #A34063);
 }
 
 .current-entry {
-  padding: 6px 10px;
-  background-color: rgba(80, 250, 123, 0.08);
-  border-left: 3px solid #50FA7B;
-  border-radius: 4px;
+  background-color: #FFF8E6;
+  border-left: 4px solid var(--color-soft-gold, #F5D88C);
+  border-color: #F5D88C;
+  box-shadow: 0 2px 8px rgba(92, 64, 51, 0.06);
 }
 
+/* Footer with Certified Cozy Stamp */
 .log-panel-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 18px;
-  background-color: #171624;
-  border-top: 1px solid #322F4A;
-  font-size: 0.72rem;
-  color: #8C8A9E;
+  padding: 12px 20px;
+  background-color: var(--color-blush-tint, #FCF1F5);
+  border-top: 1.5px solid var(--color-paper-border, #EADBCC);
+  border-bottom-left-radius: calc(var(--radius-lg, 22px) - 2.5px);
+  border-bottom-right-radius: calc(var(--radius-lg, 22px) - 2.5px);
+  font-size: 0.76rem;
+  color: var(--color-cocoa-soft, #7A5B49);
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
+}
+
+.log-footer-hint {
+  margin: 0;
+  font-family: var(--font-body);
+}
+
+.log-footer-hint strong {
+  color: var(--color-cocoa, #5C4033);
 }
 
 .log-stamp {
-  color: #50FA7B;
-  border: 1px dashed #50FA7B;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-weight: 700;
-  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--color-berry, #A34063);
+  background-color: rgba(163, 64, 99, 0.08);
+  border: 1.8px dashed var(--color-berry, #A34063);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.70rem;
+  letter-spacing: 0.05em;
+  transform: rotate(-1.5deg);
+  display: inline-block;
+}
+
+/* Nightlight Theme Support */
+.theme-nightlight .log-panel-inner {
+  background-color: #FFF2E0;
+}
+
+.theme-nightlight .log-panel-header {
+  background-color: #F8D8C8;
+}
+
+.theme-nightlight .log-meta-strip {
+  background-color: #F3E2CF;
+}
+
+.theme-nightlight .log-console-body {
+  background-color: #FFF2E0;
+}
+
+.theme-nightlight .log-entry {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+.theme-nightlight .log-panel-footer {
+  background-color: #F8D8C8;
 }
 
 @media (max-width: 600px) {
   .log-console-body {
     padding: 12px 14px;
-    font-size: 0.75rem;
+    font-size: 0.82rem;
   }
   .log-entry {
-    gap: 6px;
+    gap: 8px;
+  }
+  .log-clipboard-clip {
+    width: 80px;
+    height: 18px;
+    top: -12px;
   }
 }

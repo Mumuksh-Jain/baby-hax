@@ -65,7 +65,7 @@ export default function BedtimeEndingModal({
             {/* Pip Sleeping with nightcap & soft quilt */}
             <div className="bedtime-pip-sleeper">
               <img
-                src="/assets/pip/pip_avatar_cloud.png"
+                src="/assets/optimized/pip/pip_avatar_cloud.webp"
                 alt="Pip sleeping soundly"
                 className="bedtime-pip-avatar"
               />
@@ -84,7 +84,7 @@ export default function BedtimeEndingModal({
             {/* Bedside Table with Official Dream Lantern */}
             <div className="bedtime-nightstand" aria-hidden="true">
               <img
-                src="/assets/pip/pip_dream_lantern.png"
+                src="/assets/optimized/pip/pip_dream_lantern.webp"
                 alt=""
                 className="bedtime-lantern-glow"
               />

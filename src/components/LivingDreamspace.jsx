@@ -39,7 +39,7 @@ export default function LivingDreamspace({ stamps = {}, soundEnabled = false }) 
       {/* Production Art Cut-Paper Clouds Frame (Decorative, zero pointer events) */}
       <div className="dreamspace-paper-clouds-frame" aria-hidden="true">
         <img
-          src="/assets/production-art/sprites/dreamspace_paper_clouds.png"
+          src="/assets/optimized/production-art/sprites/dreamspace_paper_clouds.webp"
           alt=""
           className="dreamspace-paper-clouds-img"
         />
