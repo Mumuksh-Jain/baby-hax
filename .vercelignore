@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+recordings
+screenshots
+scripts
+data
+server
+*.log

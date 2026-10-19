@@ -29,3 +29,4 @@ screenshots/redesign/after-clean-art/
 # Persistent visitor wishes (never commit personal messages)
 data/
 screenshots/rubric/test-data*/
+.vercel
